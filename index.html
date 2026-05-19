@@ -762,7 +762,7 @@
     function enviarWhatsAppLink(tipo) {
         const urlFinal = window.location.href.split('?')[0] + (tipo === 'bvi' ? '?form=bvi' : '');
         const msg = tipo === 'bvi' 
-            ? `Olá equipe!\n\nInscrições abertas para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nLink:\n${urlFinal}`
+            ? `Olá equipe! 🔥🧯\n\nEste é o link para se candidatar à vaga da *Brigada Voluntária de Incêndio (BVI) - 2026*.\n\nApós o preenchimento, sua inscrição será avaliada pelo *SESMT*, e você receberá um retorno em breve sobre o resultado da seleção.\n\n🔗 Acesse o link abaixo e realize sua inscrição:\n${urlFinal}\n\n_Drogaria Venâncio - SESMT_`
             : `Olá equipe! 🚀\n\nAcedam ao link abaixo e realizem o Mapeamento Logístico:\n${urlFinal}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }

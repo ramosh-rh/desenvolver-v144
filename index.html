@@ -55,6 +55,7 @@
         .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); font-size: 0.9rem;}
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border 0.2s; background: #f8fafc; font-family: inherit;}
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: var(--purple-light); background: var(--white); }
+        .input-group input[readonly] { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
 
         .btn { background: var(--purple-grad); color: var(--white); border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: opacity 0.2s; text-transform: uppercase; letter-spacing: 1px;}
         .btn:hover { opacity: 0.9; }
@@ -90,7 +91,6 @@
         .btn-excluir:hover { background: #dc2626; }
         .btn-acao { background: var(--purple-light); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
         
-        /* SISTEMA DE ESTRELAS */
         .star-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .star-label { font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
         .star-rating { display: flex; gap: 5px; cursor: pointer; }
@@ -98,6 +98,7 @@
         .star.active { color: var(--star-gold); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -165,126 +166,108 @@
 
         <div id="view-form-bvi" class="view">
             <div class="card" style="border-top: 5px solid var(--red-sesmt);">
+                
                 <div style="text-align: center; margin-bottom: 20px;">
                     <h2 style="color: var(--red-sesmt);">INSCRIÇÃO BVI</h2>
                     <p style="font-weight: 600;">Brigada Voluntária de Incêndio - 2026</p>
                     <p style="font-size: 0.85rem; color: var(--text-light);">Período: 18/05/2026 a 29/05/2026</p>
                 </div>
-                
-                <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">Dados Pessoais</h3>
-                <div class="input-group">
-                    <label>Nome Completo</label>
-                    <input type="text" id="bvi-nome" placeholder="Digite seu nome completo">
-                </div>
-                <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>Matrícula</label>
-                        <input type="text" id="bvi-matricula" placeholder="Ex: 4589">
+
+                <div id="bvi-step-1">
+                    <div style="background: #fee2e2; border-left: 5px solid var(--red-sesmt); padding: 15px; margin-bottom: 25px; border-radius: 4px;">
+                        <strong style="color: #991b1b; font-size: 1.1rem;">⚠️ AVISO DE SEGURANÇA:</strong>
+                        <p style="color: #7f1d1d; font-size: 0.95rem; margin-top: 5px; line-height: 1.4;">Este formulário é de preenchimento EXCLUSIVO para colaboradores da <strong>Equipe Noturna (20:12 às 05:00)</strong>. O seu acesso precisará ser autorizado pelo Gestor.</p>
                     </div>
-                    <div style="flex: 1;">
-                        <label>Turno</label>
-                        <select id="bvi-turno">
+
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="req-nome" placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="input-group">
+                        <label>Matrícula</label>
+                        <input type="text" id="req-matricula" placeholder="Ex: 4589">
+                    </div>
+                    
+                    <button class="btn btn-red" onclick="solicitarAcessoBVI()">Solicitar Acesso ao Formulário</button>
+                </div>
+
+                <div id="bvi-step-waiting" style="display: none; text-align: center; padding: 30px 10px;">
+                    <div class="avatar-icon" style="margin: 0 auto 20px; animation: pulse 1.5s infinite; background: #fee2e2; border-color: #fef2f2;">
+                        <svg viewBox="0 0 24 24" style="fill: var(--red-sesmt);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                    </div>
+                    <h3 style="color: var(--red-sesmt);">Aguardando Liberação da Liderança...</h3>
+                    <p style="color: var(--text-light); margin-top: 10px; font-size: 0.95rem;">O seu pedido foi enviado ao Gestor do turno. <strong>Não feche esta tela.</strong> Assim que ele autorizar, o formulário abrirá automaticamente.</p>
+                </div>
+
+                <div id="bvi-step-2" style="display: none;">
+                    <div style="background: #dcfce7; color: #166534; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 20px;">
+                        ✅ Acesso Liberado pelo Gestor
+                    </div>
+
+                    <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">Dados Pessoais</h3>
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="bvi-nome" readonly>
+                    </div>
+                    <div class="input-group" style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>Matrícula</label>
+                            <input type="text" id="bvi-matricula" readonly>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Turno Confirmado</label>
+                            <input type="text" id="bvi-turno" value="Noite (20:12 às 05:00)" readonly>
+                        </div>
+                    </div>
+                    <div class="input-group" style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>Setor / Função</label>
+                            <input type="text" id="bvi-setor" placeholder="Ex: Separação">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>WhatsApp</label>
+                            <input type="text" id="bvi-telefone" placeholder="(21) 99999-9999">
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin: 25px 0 15px;">Perfil Técnico para a Brigada</h3>
+                    <div class="input-group">
+                        <label>1. Já atuou como Brigadista de Incêndio anteriormente?</label>
+                        <select id="bvi-exp">
                             <option value="">Selecione...</option>
-                            <option value="Manhã">Manhã</option>
-                            <option value="Tarde">Tarde</option>
-                            <option value="Noite">Noite</option>
-                            <option value="Comercial">Comercial</option>
+                            <option value="Sim, já tenho experiência">Sim, já tenho experiência como Brigadista</option>
+                            <option value="Não, é minha primeira vez">Não, será minha primeira vez</option>
                         </select>
                     </div>
-                </div>
-                <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>Setor / Função</label>
-                        <input type="text" id="bvi-setor" placeholder="Ex: Separação / Conferente">
+                    <div class="input-group">
+                        <label>2. Possui alguma fobia ou restrição (Ex: altura, local fechado, sangue)?</label>
+                        <select id="bvi-fobia">
+                            <option value="">Selecione...</option>
+                            <option value="Não possuo nenhuma restrição">Não possuo restrições</option>
+                            <option value="Sim, possuo restrições/fobias">Sim, possuo algumas restrições/fobias</option>
+                        </select>
                     </div>
-                    <div style="flex: 1;">
-                        <label>Telefone / WhatsApp</label>
-                        <input type="text" id="bvi-telefone" placeholder="(21) 99999-9999">
+                    <div class="input-group">
+                        <label>3. Possui Cursos Técnicos ou Conhecimentos Relevantes? (Opcional)</label>
+                        <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Curso de Primeiros Socorros, Técnico em Enfermagem, etc..."></textarea>
                     </div>
-                </div>
+                    
+                    <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #991b1b; margin-top: 25px;">
+                        <label style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer;">
+                            <input type="checkbox" id="bvi-termo" style="width: auto; margin-top: 3px;">
+                            <span>Confirmo meu interesse em participar da Brigada e declaro que as informações acima são verdadeiras.</span>
+                        </label>
+                    </div>
 
-                <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin: 25px 0 15px;">Perfil Técnico para a Brigada</h3>
-                
-                <div class="input-group">
-                    <label>1. Já atuou como Brigadista de Incêndio anteriormente?</label>
-                    <select id="bvi-exp">
-                        <option value="">Selecione...</option>
-                        <option value="Sim, já tenho experiência">Sim, já tenho experiência como Brigadista</option>
-                        <option value="Não, é minha primeira vez">Não, será minha primeira vez</option>
-                    </select>
+                    <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar e Enviar ao SESMT</button>
                 </div>
-
-                <div class="input-group">
-                    <label>2. Possui alguma fobia ou restrição (Ex: medo de altura, locais fechados, sangue)?</label>
-                    <select id="bvi-fobia">
-                        <option value="">Selecione...</option>
-                        <option value="Não possuo nenhuma restrição">Não, não possuo nenhuma restrição</option>
-                        <option value="Sim, possuo restrições/fobias">Sim, possuo algumas restrições/fobias</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>3. Possui condição física para realizar esforço moderado (correr, carregar equipamentos, usar EPI)?</label>
-                    <select id="bvi-condicao-fisica">
-                        <option value="">Selecione...</option>
-                        <option value="Sim, estou apto fisicamente">Sim, estou apto fisicamente</option>
-                        <option value="Tenho algumas limitações físicas">Tenho algumas limitações físicas</option>
-                        <option value="Não, possuo restrição médica">Não, possuo restrição médica</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>4. Como você age diante de uma situação de emergência ou pânico coletivo?</label>
-                    <select id="bvi-reacao-emergencia">
-                        <option value="">Selecione...</option>
-                        <option value="Mantenho a calma e ajudo a organizar as pessoas">Mantenho a calma e ajudo a organizar as pessoas</option>
-                        <option value="Fico nervoso mas sigo as instruções">Fico nervoso, mas sigo as instruções recebidas</option>
-                        <option value="Ainda não sei como reagiria">Ainda não sei como reagiria em uma situação assim</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>5. Você consegue participar dos treinos e simulações fora do seu horário normal de trabalho?</label>
-                    <select id="bvi-disponibilidade">
-                        <option value="">Selecione...</option>
-                        <option value="Sim, tenho total disponibilidade">Sim, tenho total disponibilidade</option>
-                        <option value="Tenho disponibilidade parcial">Tenho disponibilidade parcial (depende da data)</option>
-                        <option value="Tenho dificuldade de disponibilidade">Tenho dificuldade de disponibilidade extra</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>6. Qual é a sua principal motivação para entrar na Brigada Voluntária?</label>
-                    <select id="bvi-motivacao">
-                        <option value="">Selecione...</option>
-                        <option value="Contribuir com a segurança de todos no local de trabalho">Contribuir com a segurança de todos no trabalho</option>
-                        <option value="Interesse em aprender primeiros socorros e combate a incêndio">Aprender primeiros socorros e combate a incêndio</option>
-                        <option value="Reconhecimento e crescimento profissional">Reconhecimento e crescimento profissional</option>
-                        <option value="Indicação da liderança ou colegas">Indicação da liderança ou colegas</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>7. Possui Cursos Técnicos ou Conhecimentos Relevantes? (Opcional)</label>
-                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Curso de Primeiros Socorros, Técnico em Enfermagem, Seg. do Trabalho, etc..."></textarea>
-                    <small style="color: var(--text-light); font-size: 0.8rem;">Descreva acima cursos extras que possam contribuir com o SESMT e a Brigada.</small>
-                </div>
-                
-                <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #991b1b; margin-top: 25px;">
-                    <label style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer;">
-                        <input type="checkbox" id="bvi-termo" style="width: auto; margin-top: 3px;">
-                        <span>Confirmo meu interesse em participar da Brigada, estou ciente dos treinos práticos/teóricos e declaro que as informações acima são verdadeiras.</span>
-                    </label>
-                </div>
-
-                <button class="btn btn-red" onclick="enviarInscricaoBVI()">Enviar Inscrição ao SESMT</button>
             </div>
         </div>
 
         <div id="view-sucesso-bvi" class="view" style="text-align: center;">
             <div class="card">
-                <h2 style="color: var(--red-sesmt);">✅ Inscrição Recebida com Sucesso!</h2>
-                <p style="margin-top: 15px;">Sua inscrição e seu perfil técnico foram enviados para análise da Liderança e do SESMT.</p>
+                <h2 style="color: var(--red-sesmt);">✅ Inscrição Concluída!</h2>
+                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram enviados com sucesso para análise do SESMT.</p>
                 <button class="btn btn-outline" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
@@ -313,10 +296,15 @@
                             Link (BVI)
                         </button>
                         <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">
-                            🖨️ Imprimir PDF (Relação)
+                            🖨️ Imprimir PDF (Ranking)
                         </button>
                     </div>
-                    <div id="lista-bvi" style="margin-top: 15px;"></div>
+
+                    <h3 style="margin: 25px 0 10px; color: #b45309; font-size: 1.1rem; border-bottom: 2px solid #fef3c7; padding-bottom: 5px;">⏳ Pedidos de Acesso (Aguardando Liberação)</h3>
+                    <div id="lista-solicitacoes-bvi"></div>
+
+                    <h3 style="margin: 30px 0 10px; color: var(--purple-dark); font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 5px;">✅ Inscrições Concluídas</h3>
+                    <div id="lista-bvi"></div>
                 </div>
                 
                 <button class="btn btn-outline" style="margin-top: 20px;" onclick="location.reload()">Sair do Painel</button>
@@ -330,49 +318,32 @@
                 
                 <h3 id="estrela-nome-candidato" style="margin-bottom: 10px; color: var(--red-sesmt);">Candidato: -</h3>
                 
-                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;">
-                    </div>
+                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;"></div>
 
                 <div class="star-row">
                     <span class="star-label">Postura e Comportamento</span>
-                    <div class="star-rating" id="stars-postura">
-                        <span class="star" onclick="setStar('postura', 1)">★</span><span class="star" onclick="setStar('postura', 2)">★</span><span class="star" onclick="setStar('postura', 3)">★</span><span class="star" onclick="setStar('postura', 4)">★</span><span class="star" onclick="setStar('postura', 5)">★</span>
-                    </div>
+                    <div class="star-rating" id="stars-postura"><span class="star" onclick="setStar('postura', 1)">★</span><span class="star" onclick="setStar('postura', 2)">★</span><span class="star" onclick="setStar('postura', 3)">★</span><span class="star" onclick="setStar('postura', 4)">★</span><span class="star" onclick="setStar('postura', 5)">★</span></div>
                 </div>
                 <div class="star-row">
                     <span class="star-label">Desenvolvimento Técnico</span>
-                    <div class="star-rating" id="stars-desenvolvimento">
-                        <span class="star" onclick="setStar('desenvolvimento', 1)">★</span><span class="star" onclick="setStar('desenvolvimento', 2)">★</span><span class="star" onclick="setStar('desenvolvimento', 3)">★</span><span class="star" onclick="setStar('desenvolvimento', 4)">★</span><span class="star" onclick="setStar('desenvolvimento', 5)">★</span>
-                    </div>
+                    <div class="star-rating" id="stars-desenvolvimento"><span class="star" onclick="setStar('desenvolvimento', 1)">★</span><span class="star" onclick="setStar('desenvolvimento', 2)">★</span><span class="star" onclick="setStar('desenvolvimento', 3)">★</span><span class="star" onclick="setStar('desenvolvimento', 4)">★</span><span class="star" onclick="setStar('desenvolvimento', 5)">★</span></div>
                 </div>
                 <div class="star-row">
                     <span class="star-label">Aptidão Física / Disposição</span>
-                    <div class="star-rating" id="stars-aptidao">
-                        <span class="star" onclick="setStar('aptidao', 1)">★</span><span class="star" onclick="setStar('aptidao', 2)">★</span><span class="star" onclick="setStar('aptidao', 3)">★</span><span class="star" onclick="setStar('aptidao', 4)">★</span><span class="star" onclick="setStar('aptidao', 5)">★</span>
-                    </div>
+                    <div class="star-rating" id="stars-aptidao"><span class="star" onclick="setStar('aptidao', 1)">★</span><span class="star" onclick="setStar('aptidao', 2)">★</span><span class="star" onclick="setStar('aptidao', 3)">★</span><span class="star" onclick="setStar('aptidao', 4)">★</span><span class="star" onclick="setStar('aptidao', 5)">★</span></div>
                 </div>
                 <div class="star-row">
                     <span class="star-label">Assiduidade (Presença)</span>
-                    <div class="star-rating" id="stars-assiduidade">
-                        <span class="star" onclick="setStar('assiduidade', 1)">★</span><span class="star" onclick="setStar('assiduidade', 2)">★</span><span class="star" onclick="setStar('assiduidade', 3)">★</span><span class="star" onclick="setStar('assiduidade', 4)">★</span><span class="star" onclick="setStar('assiduidade', 5)">★</span>
-                    </div>
+                    <div class="star-rating" id="stars-assiduidade"><span class="star" onclick="setStar('assiduidade', 1)">★</span><span class="star" onclick="setStar('assiduidade', 2)">★</span><span class="star" onclick="setStar('assiduidade', 3)">★</span><span class="star" onclick="setStar('assiduidade', 4)">★</span><span class="star" onclick="setStar('assiduidade', 5)">★</span></div>
                 </div>
                 <div class="star-row" style="border-bottom: none;">
                     <span class="star-label">Iniciativa / Engajamento</span>
-                    <div class="star-rating" id="stars-iniciativa">
-                        <span class="star" onclick="setStar('iniciativa', 1)">★</span><span class="star" onclick="setStar('iniciativa', 2)">★</span><span class="star" onclick="setStar('iniciativa', 3)">★</span><span class="star" onclick="setStar('iniciativa', 4)">★</span><span class="star" onclick="setStar('iniciativa', 5)">★</span>
-                    </div>
+                    <div class="star-rating" id="stars-iniciativa"><span class="star" onclick="setStar('iniciativa', 1)">★</span><span class="star" onclick="setStar('iniciativa', 2)">★</span><span class="star" onclick="setStar('iniciativa', 3)">★</span><span class="star" onclick="setStar('iniciativa', 4)">★</span><span class="star" onclick="setStar('iniciativa', 5)">★</span></div>
                 </div>
 
-                <div class="input-group" style="margin-top: 15px;">
-                    <label style="color: var(--purple-dark);">Observações do Gestor (Opcional)</label>
-                    <div style="position: relative;">
-                        <textarea id="avalia-obs" rows="3" placeholder="Digite uma observação sobre o perfil do candidato... (Isso sairá no relatório do SESMT)" style="resize: vertical; padding-right: 130px;"></textarea>
-                        <button onclick="gerarObsComIA()" id="btn-ia-obs" style="position: absolute; bottom: 10px; right: 10px; background: linear-gradient(135deg, #7e22ce, #dc2626); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
-                            ✨ Sugerir com IA
-                        </button>
-                    </div>
-                    <small id="ia-status" style="color: var(--purple-light); font-size: 0.8rem; display:none;">⏳ A IA está analisando o perfil do candidato...</small>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px;" onclick="gerarParecerIA()">✨ Sugerir Observação com IA</button>
+                    <textarea id="avalia-obs" rows="3" placeholder="A IA preencherá aqui ou você pode digitar manualmente..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -402,7 +373,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // ROTEAMENTO
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.get('form') === 'bvi') {
@@ -419,129 +389,114 @@
     }
 
     // ==========================================
-    // 2. FUNÇÕES GERAIS (EXCLUIR)
+    // 2. FUNÇÕES DO GESTOR (EXCLUIR E AUTORIZAR)
     // ==========================================
     function excluirItem(caminho, id) {
-        if(confirm("Renato, você tem certeza que deseja EXCLUIR este registro definitivamente?")) {
+        if(confirm("Tem certeza que deseja EXCLUIR este registro definitivamente?")) {
             database.ref(caminho + '/' + id).remove()
             .then(() => alert("Registro apagado com sucesso!"))
             .catch(err => alert("Erro ao excluir: " + err.message));
         }
     }
 
-    // ==========================================
-    // 3. SISTEMA DE AVALIAÇÃO EM ESTRELAS (BVI)
-    // ==========================================
-    let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '', candidatoInfo: {} };
-
-    function gerarObsComIA() {
-        const n = avaliacaoAtualBVI.notas;
-        const info = avaliacaoAtualBVI.candidatoInfo || {};
-        const btn = document.getElementById('btn-ia-obs');
-        const status = document.getElementById('ia-status');
-
-        const soma = (n.postura||0) + (n.desenvolvimento||0) + (n.aptidao||0) + (n.assiduidade||0) + (n.iniciativa||0);
-        const media = soma / 5;
-
-        btn.disabled = true;
-        btn.innerText = '⏳ Gerando...';
-        status.style.display = 'block';
-
-        // --- Bloco 1: perfil geral pela média ---
-        let parteMedia = '';
-        if (media >= 4.5) {
-            parteMedia = `${info.nome} apresenta perfil altamente destacado para a BVI, com desempenho superior em todos os critérios avaliados pela liderança.`;
-        } else if (media >= 3.5) {
-            parteMedia = `${info.nome} demonstra bom desempenho geral, sendo considerado um candidato sólido para integrar a Brigada Voluntária de Incêndio.`;
-        } else if (media >= 2.5) {
-            parteMedia = `${info.nome} apresenta desempenho razoável, com potencial de desenvolvimento identificado pela liderança para atuar na BVI.`;
-        } else if (soma > 0) {
-            parteMedia = `${info.nome} apresenta desempenho abaixo do esperado em alguns critérios, sendo recomendada atenção antes da efetivação na brigada.`;
-        } else {
-            parteMedia = `${info.nome} ainda não recebeu avaliação completa de todos os critérios pela liderança.`;
-        }
-
-        // --- Bloco 2: destaques positivos e pontos de atenção ---
-        const criteriosNomes = { postura: 'postura', desenvolvimento: 'desenvolvimento técnico', aptidao: 'aptidão física', assiduidade: 'assiduidade', iniciativa: 'iniciativa' };
-        const destaques = Object.keys(n).filter(k => (n[k]||0) >= 4).map(k => criteriosNomes[k]);
-        const atencao  = Object.keys(n).filter(k => (n[k]||0) > 0 && (n[k]||0) <= 2).map(k => criteriosNomes[k]);
-
-        let parteDetalhe = '';
-        if (destaques.length > 0 && atencao.length === 0) {
-            parteDetalhe = `Pontos de destaque: ${destaques.join(', ')}.`;
-        } else if (destaques.length > 0 && atencao.length > 0) {
-            parteDetalhe = `Destaque em ${destaques.join(' e ')}; requer atenção em ${atencao.join(' e ')}.`;
-        } else if (atencao.length > 0) {
-            parteDetalhe = `Necessita de desenvolvimento em ${atencao.join(' e ')} antes de ser integrado à brigada.`;
-        }
-
-        // --- Bloco 3: perfil técnico do candidato ---
-        const extras = [];
-        if (info.exp && info.exp.toLowerCase().includes('sim')) extras.push('possui experiência prévia como brigadista');
-        if (info.fobia && info.fobia.toLowerCase().includes('não')) extras.push('sem restrições ou fobias declaradas');
-        if (info.fobia && info.fobia.toLowerCase().includes('sim')) extras.push('possui restrições/fobias declaradas — verificar compatibilidade com as atividades');
-        if (info.condFisica && info.condFisica.toLowerCase().includes('apto')) extras.push('apto fisicamente para as atividades');
-        if (info.condFisica && info.condFisica.toLowerCase().includes('limitação')) extras.push('apresenta limitações físicas a serem avaliadas');
-        if (info.condFisica && info.condFisica.toLowerCase().includes('restrição')) extras.push('possui restrição médica — requer avaliação do SESMT');
-        if (info.disponib && info.disponib.toLowerCase().includes('total')) extras.push('disponibilidade total para treinos');
-        if (info.disponib && info.disponib.toLowerCase().includes('parcial')) extras.push('disponibilidade parcial para treinos');
-        if (info.cursos && info.cursos.trim() !== '' && info.cursos !== 'Nenhum curso extra informado') extras.push(`formação complementar: ${info.cursos}`);
-
-        let parteTecnica = extras.length > 0 ? `Perfil técnico: ${extras.join('; ')}.` : '';
-
-        // --- Montagem final ---
-        const partes = [parteMedia, parteDetalhe, parteTecnica].filter(p => p.trim() !== '');
-        const obs = partes.join(' ');
-
-        setTimeout(() => {
-            document.getElementById('avalia-obs').value = obs;
-            btn.disabled = false;
-            btn.innerText = '✨ Sugerir com IA';
-            status.style.display = 'none';
-        }, 600);
+    function gerenciarSolicitacaoBVI(matricula, statusDecisao) {
+        database.ref('bvi_solicitacoes/' + matricula).update({ status: statusDecisao });
     }
 
-    function abrirTelaEstrelas(idCandidate, nome, notasSalvas, obsSalva, exp, fobia, cursos, condFisica, reacao, disponib, motivacao) {
+    // ==========================================
+    // 3. FLUXO DO COLABORADOR (SALA DE ESPERA BVI)
+    // ==========================================
+    function solicitarAcessoBVI() {
+        const nome = document.getElementById('req-nome').value.trim();
+        const mat = document.getElementById('req-matricula').value.trim();
+        
+        if(!nome || !mat) return alert("Preencha o Nome e a Matrícula para solicitar acesso.");
+
+        // Verifica se já concluiu tudo antes
+        database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(mat).once('value').then(snap => {
+            if(snap.exists()) return alert("Sua matrícula já possui uma inscrição concluída!");
+
+            // Envia para a sala de espera
+            const reqRef = database.ref('bvi_solicitacoes/' + mat);
+            reqRef.set({ nome: nome, matricula: mat, status: 'pendente' });
+
+            document.getElementById('bvi-step-1').style.display = 'none';
+            document.getElementById('bvi-step-waiting').style.display = 'block';
+
+            // Fica escutando a resposta do Gestor em tempo real
+            reqRef.on('value', snapshot => {
+                const data = snapshot.val();
+                if(data && data.status === 'autorizado') {
+                    reqRef.off(); // Para de escutar
+                    document.getElementById('bvi-step-waiting').style.display = 'none';
+                    document.getElementById('bvi-step-2').style.display = 'block';
+                    
+                    document.getElementById('bvi-nome').value = data.nome;
+                    document.getElementById('bvi-matricula').value = data.matricula;
+                } else if (data && data.status === 'negado') {
+                    reqRef.off();
+                    alert("Seu acesso foi negado pela Liderança. Procure o gestor do turno.");
+                    location.reload();
+                }
+            });
+        });
+    }
+
+    function enviarInscricaoBVI() {
+        const nome = document.getElementById('bvi-nome').value;
+        const matricula = document.getElementById('bvi-matricula').value;
+        const turno = document.getElementById('bvi-turno').value;
+        const setor = document.getElementById('bvi-setor').value.trim();
+        const telefone = document.getElementById('bvi-telefone').value.trim();
+        const exp = document.getElementById('bvi-exp').value;
+        const fobia = document.getElementById('bvi-fobia').value;
+        const cursos = document.getElementById('bvi-cursos').value.trim();
+        const termo = document.getElementById('bvi-termo').checked;
+
+        if(!setor || !telefone) return alert("Preencha Setor e Telefone!");
+        if(!exp || !fobia) return alert("Responda as perguntas do Perfil Técnico.");
+        if(!termo) return alert("É necessário aceitar os termos da Brigada.");
+
+        const dadosBVI = { 
+            nome, matricula, setor, turno, telefone, 
+            exp, fobia, cursos,
+            data: new Date().toLocaleDateString('pt-BR') 
+        };
+
+        // Salva a inscrição final e deleta a solicitação da sala de espera
+        database.ref('inscricoes_bvi').push(dadosBVI).then(() => {
+            database.ref('bvi_solicitacoes/' + matricula).remove(); 
+            switchTab('sucesso-bvi');
+        });
+    }
+
+    // ==========================================
+    // 4. SISTEMA DE AVALIAÇÃO EM ESTRELAS E IA
+    // ==========================================
+    let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
+
+    function abrirTelaEstrelas(idCandidate, nome, notasSalvas, obsSalva, exp, fobia, cursos) {
         let notas = { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 };
         let obs = '';
         
-        if(notasSalvas && notasSalvas !== 'undefined') {
-            try { notas = JSON.parse(decodeURIComponent(notasSalvas)); } catch(e){}
-        }
-        if(obsSalva && obsSalva !== 'undefined') {
-            obs = decodeURIComponent(obsSalva);
-        }
+        if(notasSalvas && notasSalvas !== 'undefined') { try { notas = JSON.parse(decodeURIComponent(notasSalvas)); } catch(e){} }
+        if(obsSalva && obsSalva !== 'undefined') { obs = decodeURIComponent(obsSalva); }
         
         avaliacaoAtualBVI.id = idCandidate;
         avaliacaoAtualBVI.notas = notas;
-        // Store candidate info for AI
-        avaliacaoAtualBVI.candidatoInfo = {
-            nome,
-            exp: decodeURIComponent(exp) || 'Não informado',
-            fobia: decodeURIComponent(fobia) || 'Não informado',
-            cursos: decodeURIComponent(cursos) || 'Nenhum curso extra informado',
-            condFisica: decodeURIComponent(condFisica) || 'Não informado',
-            reacao: decodeURIComponent(reacao) || 'Não informado',
-            disponib: decodeURIComponent(disponib) || 'Não informado',
-            motivacao: decodeURIComponent(motivacao) || 'Não informado'
-        };
 
         document.getElementById('estrela-nome-candidato').innerText = nome;
         document.getElementById('avalia-obs').value = obs; 
-        document.getElementById('ia-status').style.display = 'none';
         
-        // Exibir o mini currículo na tela do gestor
-        const info = avaliacaoAtualBVI.candidatoInfo;
+        const expTexto = decodeURIComponent(exp) || 'Não informado';
+        const fobiaTexto = decodeURIComponent(fobia) || 'Não informado';
+        const cursosTexto = decodeURIComponent(cursos) || 'Nenhum curso extra informado';
 
         document.getElementById('mini-curriculo').innerHTML = `
             <strong>Respostas do Candidato:</strong><br>
-            <span style="color:#475569;">Experiência prévia:</span> ${info.exp}<br>
-            <span style="color:#475569;">Fobias/Restrições:</span> ${info.fobia}<br>
-            <span style="color:#475569;">Condição Física:</span> ${info.condFisica}<br>
-            <span style="color:#475569;">Reação a Emergências:</span> ${info.reacao}<br>
-            <span style="color:#475569;">Disponibilidade Extra:</span> ${info.disponib}<br>
-            <span style="color:#475569;">Motivação:</span> ${info.motivacao}<br>
-            <span style="color:#475569;">Cursos/Técnicos:</span> ${info.cursos}
+            <span style="color:#475569;">Experiência prévia:</span> ${expTexto}<br>
+            <span style="color:#475569;">Fobias/Restrições:</span> ${fobiaTexto}<br>
+            <span style="color:#475569;">Cursos/Técnicos:</span> ${cursosTexto}
         `;
 
         Object.keys(notas).forEach(crit => setStar(crit, notas[crit]));
@@ -557,195 +512,36 @@
         }
     }
 
-    function cancelarAvaliacaoBVI() {
-        switchTab('gestor');
-        switchGestorTab('bvi');
+    function gerarParecerIA() {
+        const n = avaliacaoAtualBVI.notas;
+        if(n.postura===0 || n.desenvolvimento===0 || n.aptidao===0 || n.assiduidade===0 || n.iniciativa===0){
+            return alert("Por favor, preencha as 5 estrelas antes de pedir para a IA gerar o texto.");
+        }
+
+        const media = (n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa) / 5;
+        let parecer = "O colaborador apresenta ";
+
+        if(media >= 4.5) parecer += "excelente perfil para a Brigada de Incêndio, demonstrando alta iniciativa, postura exemplar e assiduidade constante no turno. Totalmente recomendado para compor a equipe.";
+        else if(media >= 3.5) parecer += "bom perfil técnico e comportamento adequado no dia a dia. Possui potencial para atuar na Brigada e agregar ao time de segurança com acompanhamento padrão.";
+        else parecer += "perfil com pontos de atenção identificados pela Liderança. Recomendamos que o SESMT faça uma entrevista direcionada para validar o engajamento e a disponibilidade necessária para a função.";
+
+        document.getElementById('avalia-obs').value = parecer;
     }
+
+    function cancelarAvaliacaoBVI() { switchTab('gestor'); switchGestorTab('bvi'); }
 
     function salvarAvaliacaoBVI() {
         const n = avaliacaoAtualBVI.notas;
-        if(n.postura===0 || n.desenvolvimento===0 || n.aptidao===0 || n.assiduidade===0 || n.iniciativa===0){
-            return alert("Por favor, dê uma nota de 1 a 5 para TODOS os critérios.");
-        }
-
+        if(n.postura===0 || n.desenvolvimento===0 || n.aptidao===0 || n.assiduidade===0 || n.iniciativa===0) return alert("Dê uma nota de 1 a 5 para TODOS os critérios.");
         const obsTexto = document.getElementById('avalia-obs').value.trim();
 
         database.ref('inscricoes_bvi/' + avaliacaoAtualBVI.id).update({
             avaliacao_gestor: avaliacaoAtualBVI.notas,
             observacao_gestor: obsTexto
         }).then(() => {
-            alert("Avaliação e observação salvas com sucesso!");
+            alert("Avaliação salva com sucesso!");
             cancelarAvaliacaoBVI();
         }).catch(err => alert("Erro ao salvar: " + err.message));
-    }
-
-
-    // ==========================================
-    // 4. FORMULÁRIO BVI E IMPRESSÃO (PDF TURBINADO)
-    // ==========================================
-    function enviarInscricaoBVI() {
-        const nome = document.getElementById('bvi-nome').value.trim();
-        const matricula = document.getElementById('bvi-matricula').value.trim();
-        const setor = document.getElementById('bvi-setor').value.trim();
-        const turno = document.getElementById('bvi-turno').value;
-        const telefone = document.getElementById('bvi-telefone').value.trim();
-        const termo = document.getElementById('bvi-termo').checked;
-
-        // Novos campos:
-        const exp = document.getElementById('bvi-exp').value;
-        const fobia = document.getElementById('bvi-fobia').value;
-        const condicaoFisica = document.getElementById('bvi-condicao-fisica').value;
-        const reacaoEmergencia = document.getElementById('bvi-reacao-emergencia').value;
-        const disponibilidade = document.getElementById('bvi-disponibilidade').value;
-        const motivacao = document.getElementById('bvi-motivacao').value;
-        const cursos = document.getElementById('bvi-cursos').value.trim();
-
-        if(!nome || !matricula || !setor || !turno || !telefone) return alert("Por favor, preencha todos os campos pessoais!");
-        if(!exp || !fobia || !condicaoFisica || !reacaoEmergencia || !disponibilidade || !motivacao) return alert("Por favor, responda todas as perguntas do Perfil Técnico (1 a 6).");
-        if(!termo) return alert("É necessário aceitar os termos da Brigada.");
-
-        database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(matricula).once('value')
-        .then(snapshot => {
-            if(snapshot.exists()) {
-                alert("Esta matrícula já possui uma inscrição ativa na Brigada de Incêndio!");
-            } else {
-                const dadosBVI = { 
-                    nome, matricula, setor, turno, telefone, 
-                    exp, fobia, condicaoFisica, reacaoEmergencia, disponibilidade, motivacao, cursos,
-                    data: new Date().toLocaleDateString('pt-BR') 
-                };
-                database.ref('inscricoes_bvi').push(dadosBVI).then(() => switchTab('sucesso-bvi'));
-            }
-        });
-    }
-
-    function imprimirBVI() {
-        database.ref('inscricoes_bvi').once('value').then(snap => {
-            if(!snap.exists()) return alert("Não há inscritos para imprimir no momento!");
-            
-            // Build sorted array: compute scores then sort highest to lowest
-            const allItems = Object.values(snap.val()).map(item => {
-                if(item.avaliacao_gestor) {
-                    const n = item.avaliacao_gestor;
-                    item._score = n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa;
-                } else {
-                    item._score = -1;
-                }
-                return item;
-            });
-            const sorted = allItems.sort((a, b) => b._score - a._score);
-
-            let printWindow = window.open('', '_blank');
-            let dataEmissao = new Date().toLocaleString('pt-BR');
-            
-            let html = `
-                <html>
-                <head>
-                    <title>Relação de Inscritos - BVI 2026</title>
-                    <style>
-                        body { font-family: 'Arial', sans-serif; color: #1e293b; padding: 20px; }
-                        .header { text-align: left; margin-bottom: 25px; border-bottom: 3px solid #dc2626; padding-bottom: 12px; }
-                        .header h1 { color: #1e1b4b; margin: 0 0 5px 0; font-size: 22px; font-weight: 800; }
-                        .header p { margin: 0; font-size: 13px; color: #64748b; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; font-size: 11px; vertical-align: top;}
-                        th { background-color: #1e1b4b; font-weight: bold; color: #ffffff; text-transform: uppercase; font-size: 10px;}
-                        tr:nth-child(even) td { background-color: #f8fafc; }
-                        .nota-box { background: #1e1b4b; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom:5px;}
-                        .footer { margin-top: 40px; text-align: center; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px;}
-                        .detalhe-avaliacao { font-size: 10px; line-height: 1.5; color: #475569; }
-                        .obs-texto { font-style: italic; color: #334155; margin-top: 5px;}
-                        .info-extra { margin-top: 8px; font-size: 9px; background: #e2e8f0; padding: 5px; border-radius: 4px; color: #334155;}
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <p style="text-transform: uppercase; font-weight:bold; color: #64748b; margin-bottom: 5px; font-size: 11px;">Drogaria Venâncio - SESMT</p>
-                        <h1>RELAÇÃO DE INSCRITOS - BVI</h1>
-                        <p>Brigada Voluntária de Incêndio - Avaliação da Liderança | Emitido em: ${dataEmissao}</p>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 25%;">Candidato / Perfil Técnico</th>
-                                <th style="width: 15%;">Setor / Turno</th>
-                                <th style="width: 60%;">Avaliação do Gestor (Estrelas e Observação)</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-            
-            sorted.forEach((item, index) => {
-                let mediaTexto = "-";
-                let avaliacaoDetalhada = "<em>O Gestor ainda não realizou a avaliação de perfil.</em>";
-
-                // Formatar a exibição do Perfil do Candidato
-                const expTexto = item.exp || 'Não informado';
-                const fobiaTexto = item.fobia || 'Não informado';
-                const cursosTexto = item.cursos || 'Nenhum curso informado';
-                const condFisicaTexto = item.condicaoFisica || 'Não informado';
-                const reacaoTexto = item.reacaoEmergencia || 'Não informado';
-                const dispTexto = item.disponibilidade || 'Não informado';
-                const motivacaoTexto = item.motivacao || 'Não informado';
-                const posicao = item._score >= 0 ? `<span style="display:inline-block;background:#1e1b4b;color:#fff;border-radius:50%;width:20px;height:20px;text-align:center;line-height:20px;font-size:10px;font-weight:bold;margin-right:4px;">${index+1}</span>` : '';
-
-                // Se o gestor avaliou
-                if(item.avaliacao_gestor) {
-                    const n = item.avaliacao_gestor;
-                    const soma = n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa;
-                    const media = (soma / 5).toFixed(1);
-                    mediaTexto = `<span class="nota-box">⭐ Média Geral: ${media} / 5.0</span>`;
-                    
-                    let obsGestorHTML = '';
-                    if (item.observacao_gestor && item.observacao_gestor.trim() !== '') {
-                        obsGestorHTML = `<div class="obs-texto"><strong>Obs. do Líder:</strong> "${item.observacao_gestor}"</div>`;
-                    }
-
-                    avaliacaoDetalhada = `
-                        ${mediaTexto}<br>
-                        <div class="detalhe-avaliacao">
-                            <strong>Postura:</strong> ${n.postura} &nbsp;|&nbsp; 
-                            <strong>Técnico:</strong> ${n.desenvolvimento} &nbsp;|&nbsp;
-                            <strong>Aptidão:</strong> ${n.aptidao} &nbsp;|&nbsp; 
-                            <strong>Assiduidade:</strong> ${n.assiduidade} &nbsp;|&nbsp; 
-                            <strong>Iniciativa:</strong> ${n.iniciativa}
-                        </div>
-                        ${obsGestorHTML}
-                    `;
-                }
-
-                html += `
-                    <tr>
-                        <td>
-                            <strong style="font-size: 12px; color:#dc2626;">${posicao}${item.nome}</strong><br>
-                            <span style="color:#64748b;">Mat: ${item.matricula}</span>
-                            <div class="info-extra">
-                                <strong>Experiência:</strong> ${expTexto}<br>
-                                <strong>Fobia/Restrição:</strong> ${fobiaTexto}<br>
-                                <strong>Cond. Física:</strong> ${condFisicaTexto}<br>
-                                <strong>Reação Emergência:</strong> ${reacaoTexto}<br>
-                                <strong>Disponibilidade:</strong> ${dispTexto}<br>
-                                <strong>Motivação:</strong> ${motivacaoTexto}<br>
-                                <strong>Cursos:</strong> ${cursosTexto}
-                            </div>
-                        </td>
-                        <td>${item.setor}<br>${item.turno}<br>${item.telefone}</td>
-                        <td>${avaliacaoDetalhada}</td>
-                    </tr>`;
-            });
-            
-            html += `
-                        </tbody>
-                    </table>
-                    <div class="footer">Portal Vena144 - Relatório Oficial SESMT Drogaria Venâncio (Aprovado pela Liderança)</div>
-                    <script>
-                        window.onload = function() { window.print(); window.close(); }
-                    <\/script>
-                </body>
-                </html>`;
-            
-            printWindow.document.write(html);
-            printWindow.document.close();
-        });
     }
 
     // ==========================================
@@ -761,39 +557,61 @@
 
     function enviarWhatsAppLink(tipo) {
         const urlFinal = window.location.href.split('?')[0] + (tipo === 'bvi' ? '?form=bvi' : '');
-        const msg = tipo === 'bvi' 
-            ? `Olá equipe! 🔥🧯\n\nEste é o link para se candidatar à vaga da *Brigada Voluntária de Incêndio (BVI) - 2026*.\n\nApós o preenchimento, sua inscrição será avaliada pelo *SESMT*, e você receberá um retorno em breve sobre o resultado da seleção.\n\n🔗 Acesse o link abaixo e realize sua inscrição:\n${urlFinal}\n\n_Drogaria Venâncio - SESMT_`
-            : `Olá equipe! 🚀\n\nAcedam ao link abaixo e realizem o Mapeamento Logístico:\n${urlFinal}`;
+        const msg = tipo === 'bvi' ? `Olá equipe!\n\nInscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nLink:\n${urlFinal}` : `Acessem o Mapeamento Logístico:\n${urlFinal}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function loadAdminData() {
+        // Carrega as Avaliações Logísticas Antigas
         database.ref('avaliacoes').on('value', snap => {
             const container = document.getElementById('lista-avaliacoes');
             container.innerHTML = '';
             if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light);">Nenhuma avaliação.</p>';
-            
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div');
                 div.className = 'gestor-item';
-                div.innerHTML = `
-                    <div><strong style="color:var(--purple-dark);font-size:1.1rem;">${item.nome}</strong> (${item.matricula || '-'})<br><small style="color:var(--text-light);">${item.date}</small></div>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-acao" onclick="renderDevolutivaView('${item.nome}', '${item.date}', ${JSON.stringify(item.pctScores)}, false)">Ver</button>
-                        <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button>
-                    </div>`;
+                div.innerHTML = `<div><strong style="color:var(--purple-dark);font-size:1.1rem;">${item.nome}</strong><br><small style="color:var(--text-light);">${item.date}</small></div>
+                                 <div style="display:flex; gap:10px;"><button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button></div>`;
                 container.appendChild(div);
             });
         });
 
+        // ESCUTA A SALA DE ESPERA (PEDIDOS PENDENTES)
+        database.ref('bvi_solicitacoes').on('value', snap => {
+            const container = document.getElementById('lista-solicitacoes-bvi');
+            container.innerHTML = '';
+            let temPendente = false;
+            if(snap.exists()) {
+                Object.values(snap.val()).forEach(req => {
+                    if(req.status === 'pendente') {
+                        temPendente = true;
+                        const div = document.createElement('div');
+                        div.className = 'gestor-item';
+                        div.style.background = '#fffbeb';
+                        div.style.borderColor = '#fcd34d';
+                        div.innerHTML = `
+                            <div><strong style="color:#b45309; font-size:1.05rem;">${req.nome}</strong> (${req.matricula})</div>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-acao" style="background:#16a34a;" onclick="gerenciarSolicitacaoBVI('${req.matricula}', 'autorizado')">✓ Liberar</button>
+                                <button class="btn-excluir" onclick="gerenciarSolicitacaoBVI('${req.matricula}', 'negado')">X Negar</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    }
+                });
+            }
+            if(!temPendente) container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma solicitação aguardando.</p>';
+        });
+
+        // ESCUTA AS INSCRIÇÕES CONCLUÍDAS
         database.ref('inscricoes_bvi').on('value', snap => {
             const container = document.getElementById('lista-bvi');
             container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light);">Nenhum inscrito na BVI ainda.</p>';
+            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light);">Nenhum inscrito concluído.</p>';
             
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const jaAvaliou = !!item.avaliacao_gestor;
-                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Nota" : "Avaliar";
+                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Nota" : "Avaliar (IA)";
                 const corBtnAvalia = jaAvaliou ? "background: #f59e0b; color: white;" : "background: var(--purple-light); color: white;";
                 
                 const obsEnc = item.observacao_gestor ? encodeURIComponent(item.observacao_gestor) : '';
@@ -801,14 +619,7 @@
                 const expEnc = item.exp ? encodeURIComponent(item.exp) : '';
                 const fobiaEnc = item.fobia ? encodeURIComponent(item.fobia) : '';
                 const cursosEnc = item.cursos ? encodeURIComponent(item.cursos) : '';
-                const condFisicaEnc = item.condicaoFisica ? encodeURIComponent(item.condicaoFisica) : '';
-                const reacaoEnc = item.reacaoEmergencia ? encodeURIComponent(item.reacaoEmergencia) : '';
-                const dispEnc = item.disponibilidade ? encodeURIComponent(item.disponibilidade) : '';
-                const motivacaoEnc = item.motivacao ? encodeURIComponent(item.motivacao) : '';
 
-                // Exibir pequeno preview na tela do gestor
-                let previewCursos = item.cursos ? `<strong>Cursos:</strong> ${item.cursos}` : '';
-                
                 const div = document.createElement('div');
                 div.className = 'gestor-item gestor-item-bvi';
                 div.innerHTML = `
@@ -816,13 +627,11 @@
                         <div>
                             <strong style="color:var(--red-sesmt); font-size: 1.1rem;">${item.nome}</strong> (${item.matricula})<br>
                             <span style="font-size: 0.85rem; color: var(--text-main);">
-                                <strong>Setor:</strong> ${item.setor} | <strong>Turno:</strong> ${item.turno}<br>
-                                <span style="color:#b45309;">${previewCursos}</span><br>
-                                <span style="color: var(--text-light); font-size: 0.8rem;">Inscrição: ${item.data}</span>
+                                <strong>Setor:</strong> ${item.setor} | <strong>Cursos:</strong> ${item.cursos ? 'Sim' : 'Não'}<br>
                             </span>
                         </div>
                         <div style="display:flex; flex-direction: column; gap:8px;">
-                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${item.nome}', '${notasEnc}', '${obsEnc}', '${expEnc}', '${fobiaEnc}', '${cursosEnc}', '${condFisicaEnc}', '${reacaoEnc}', '${dispEnc}', '${motivacaoEnc}')">${textoBtnAvalia}</button>
+                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${item.nome}', '${notasEnc}', '${obsEnc}', '${expEnc}', '${fobiaEnc}', '${cursosEnc}')">${textoBtnAvalia}</button>
                             <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button>
                         </div>
                     </div>`;
@@ -832,129 +641,114 @@
     }
 
     // ==========================================
-    // 6. QUIZ LOGÍSTICO (LÓGICA)
+    // 6. IMPRIMIR PDF ORDENADO PELO RANKING
     // ==========================================
-    const allQuestions = [
-        { dim: 'INI', q: "Faltam 5 minutos para o intervalo e a linha parou por falta de paletes. O que faz?", opts: [{t: "Vou buscar rapidamente.", p: 100}, {t: "Aviso o líder.", p: 50}, {t: "Saio para o intervalo.", p: 0}] },
-        { dim: 'ORG', q: "Plástico espalhado no chão após o descarregamento:", opts: [{t: "Recolho tudo.", p: 100}, {t: "Empurro para o canto.", p: 50}, {t: "Deixo no chão.", p: 0}] },
-        { dim: 'EQP', q: "Colega novato com dificuldades no processo:", opts: [{t: "Ensino e ajudo-o.", p: 100}, {t: "Faço por ele.", p: 50}, {t: "Deixo-o resolver.", p: 0}] },
-        { dim: 'RES', q: "Ocorre um erro de stock crítico em pleno pico de trabalho:", opts: [{t: "Mantenho o controlo.", p: 100}, {t: "Fico nervoso.", p: 50}, {t: "Reclamo alto.", p: 0}] },
-        { dim: 'SEG', q: "Pegar numa caixa na câmara fria (demora apenas 15s):", opts: [{t: "Visto o casaco térmico (regra).", p: 100}, {t: "Peço a alguém.", p: 50}, {t: "Entro sem EPI.", p: 0}] }
-    ];
+    function imprimirBVI() {
+        database.ref('inscricoes_bvi').once('value').then(snap => {
+            if(!snap.exists()) return alert("Não há inscritos para imprimir no momento!");
+            
+            // TRANSFORMAR EM ARRAY E ORDENAR PELA MÉDIA (MAIOR PRO MENOR)
+            let inscritos = [];
+            snap.forEach(child => {
+                let data = child.val();
+                let media = 0;
+                if(data.avaliacao_gestor) {
+                    const n = data.avaliacao_gestor;
+                    media = (n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa) / 5;
+                }
+                data.media = media; 
+                inscritos.push(data);
+            });
+            inscritos.sort((a, b) => b.media - a.media);
+            
+            let printWindow = window.open('', '_blank');
+            let dataEmissao = new Date().toLocaleString('pt-BR');
+            
+            let html = `
+                <html>
+                <head>
+                    <title>Relação de Inscritos - BVI 2026</title>
+                    <style>
+                        body { font-family: 'Arial', sans-serif; color: #1e293b; padding: 20px; }
+                        .header { text-align: left; margin-bottom: 25px; border-bottom: 3px solid #dc2626; padding-bottom: 12px; }
+                        .header h1 { color: #1e1b4b; margin: 0 0 5px 0; font-size: 22px; font-weight: 800; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; font-size: 11px; vertical-align: top;}
+                        th { background-color: #1e1b4b; color: #ffffff; text-transform: uppercase; font-size: 10px;}
+                        tr:nth-child(even) td { background-color: #f8fafc; }
+                        .nota-box { background: #1e1b4b; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom:5px;}
+                        .obs-texto { font-style: italic; color: #334155; margin-top: 5px;}
+                        .info-extra { margin-top: 8px; font-size: 9px; background: #e2e8f0; padding: 5px; border-radius: 4px; color: #334155;}
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <p style="text-transform: uppercase; font-weight:bold; color: #64748b; margin-bottom: 5px; font-size: 11px;">Drogaria Venâncio - SESMT</p>
+                        <h1>RELAÇÃO DE INSCRITOS - BVI (Ranking da Liderança)</h1>
+                        <p style="margin:0; font-size:13px; color:#64748b;">Emitido em: ${dataEmissao} | Ordenado por pontuação</p>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Candidato / Perfil Técnico</th>
+                                <th style="width: 15%;">Setor / Turno</th>
+                                <th style="width: 60%;">Avaliação do Gestor (Estrelas e Observação)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            inscritos.forEach(item => {
+                let mediaTexto = "-";
+                let avaliacaoDetalhada = "<em>O Gestor ainda não realizou a avaliação de perfil.</em>";
 
-    let quizQuestions = [], currentQ = 0, selectedScore = null, myChart = null;
-    let scores = { INI: 0, ORG: 0, EQP: 0, RES: 0, SEG: 0 }, maxScores = { INI: 0, ORG: 0, EQP: 0, RES: 0, SEG: 0 };
+                if(item.avaliacao_gestor) {
+                    const n = item.avaliacao_gestor;
+                    mediaTexto = `<span class="nota-box">⭐ Média Geral: ${item.media.toFixed(1)} / 5.0</span>`;
+                    
+                    let obsGestorHTML = '';
+                    if (item.observacao_gestor && item.observacao_gestor.trim() !== '') {
+                        obsGestorHTML = `<div class="obs-texto"><strong>Obs. Liderança:</strong> "${item.observacao_gestor}"</div>`;
+                    }
 
+                    avaliacaoDetalhada = `${mediaTexto}<br>
+                        <div style="font-size:10px; color:#475569;"><strong>Postura:</strong> ${n.postura} | <strong>Técnico:</strong> ${n.desenvolvimento} | <strong>Aptidão:</strong> ${n.aptidao} | <strong>Assiduidade:</strong> ${n.assiduidade} | <strong>Iniciativa:</strong> ${n.iniciativa}</div>
+                        ${obsGestorHTML}`;
+                }
+
+                html += `
+                    <tr>
+                        <td>
+                            <strong style="font-size: 12px; color:#dc2626;">${item.nome}</strong><br>
+                            <span style="color:#64748b;">Mat: ${item.matricula}</span>
+                            <div class="info-extra">
+                                <strong>Exp:</strong> ${item.exp || 'N/A'}<br>
+                                <strong>Fobia:</strong> ${item.fobia || 'N/A'}<br>
+                                <strong>Cursos:</strong> ${item.cursos || 'Nenhum'}
+                            </div>
+                        </td>
+                        <td>${item.setor}<br>${item.turno}<br>${item.telefone}</td>
+                        <td>${avaliacaoDetalhada}</td>
+                    </tr>`;
+            });
+            
+            html += `</tbody></table><script>window.onload=function(){window.print();window.close();}<\/script></body></html>`;
+            printWindow.document.write(html);
+            printWindow.document.close();
+        });
+    }
+
+    // ==========================================
+    // 7. QUIZ LOGÍSTICO BÁSICO (MANTIDO)
+    // ==========================================
     function startQuiz() {
         const nome = document.getElementById('user-name').value.trim();
         const mat = document.getElementById('user-id').value.trim();
-        
         if(nome.toLowerCase() === 'gestor' && mat === '144') {
-            document.getElementById('user-name').value = ''; 
-            document.getElementById('user-id').value = '';
             document.getElementById('login-wrapper').style.display = 'none';
             switchTab('gestor');
             loadAdminData();
-            return;
-        }
-
-        if(!nome || !mat) return alert('Por favor, preencha o Usuário e a Senha.');
-
-        database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value')
-        .then(snapshot => {
-            if(snapshot.exists()) {
-                alert("Você já realizou este mapeamento comportamental anteriormente!");
-            } else {
-                sessionStorage.setItem('tempName', nome);
-                sessionStorage.setItem('tempMat', mat);
-                quizQuestions = [...allQuestions]; 
-                scores = { INI: 0, ORG: 0, EQP: 0, RES: 0, SEG: 0 };
-                maxScores = { INI: 100, ORG: 100, EQP: 100, RES: 100, SEG: 100 };
-
-                currentQ = 0;
-                document.getElementById('login-wrapper').style.display = 'none';
-                document.getElementById('main-tabs').style.display = 'flex'; 
-                document.getElementById('quiz-section').style.display = 'block';
-                loadQuestion();
-            }
-        });
-    }
-
-    function loadQuestion() {
-        const q = quizQuestions[currentQ];
-        document.getElementById('q-counter').innerText = `Situação ${currentQ + 1} de ${quizQuestions.length}`;
-        document.getElementById('q-text').innerText = q.q;
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-        document.getElementById('next-btn').disabled = true;
-
-        q.opts.forEach(opt => {
-            const div = document.createElement('div');
-            div.className = 'option-card';
-            div.innerText = opt.t;
-            div.onclick = () => {
-                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-                div.classList.add('selected');
-                selectedScore = opt.p;
-                document.getElementById('next-btn').disabled = false;
-            };
-            container.appendChild(div);
-        });
-    }
-
-    function nextQuestion() {
-        scores[quizQuestions[currentQ].dim] += selectedScore;
-        currentQ++;
-        if(currentQ < quizQuestions.length) loadQuestion();
-        else generateDevolutiva();
-    }
-
-    function generateDevolutiva() {
-        const nome = sessionStorage.getItem('tempName');
-        const matricula = sessionStorage.getItem('tempMat');
-        const dataAvaliacao = new Date().toLocaleDateString('pt-BR');
-        
-        const pctScores = {
-            INI: Math.round((scores.INI / maxScores.INI) * 100), ORG: Math.round((scores.ORG / maxScores.ORG) * 100),
-            EQP: Math.round((scores.EQP / maxScores.EQP) * 100), RES: Math.round((scores.RES / maxScores.RES) * 100),
-            SEG: Math.round((scores.SEG / maxScores.SEG) * 100)
-        };
-
-        const resultData = { nome, matricula, date: dataAvaliacao, pctScores };
-        document.getElementById('quiz-section').style.display = 'none';
-        document.getElementById('loading-section').style.display = 'block';
-
-        database.ref('avaliacoes').push(resultData).then(() => {
-            document.getElementById('loading-section').style.display = 'none';
-            renderDevolutivaView(nome, dataAvaliacao, pctScores, true);
-        });
-    }
-
-    function renderDevolutivaView(nome, dataTexto, pctScores, isColaborador = false) {
-        document.getElementById('res-nome').innerText = nome;
-        
-        const ctx = document.getElementById('polarChart').getContext('2d');
-        if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: ['Iniciativa', 'Organização', 'Equipe', 'Resiliência', 'Segurança'],
-                datasets: [{
-                    data: [pctScores.INI, pctScores.ORG, pctScores.EQP, pctScores.RES, pctScores.SEG],
-                    backgroundColor: ['rgba(249,115,22,0.9)', 'rgba(56,189,248,0.9)', 'rgba(168,85,247,0.9)', 'rgba(236,72,153,0.9)', 'rgba(234,179,8,0.9)'],
-                    borderColor: '#ffffff', borderWidth: 2
-                }]
-            },
-            options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } }
-        });
-        
-        const areaBotao = document.getElementById('area-botao-gestor');
-        if(isColaborador) {
-            switchTab('devolutivas');
-            areaBotao.innerHTML = '<button class=\"btn btn-outline\" onclick=\"location.reload()\">Sair do Sistema</button>';
         } else {
-            switchTab('devolutivas');
-            areaBotao.innerHTML = '<button class=\"btn btn-outline\" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar à Lista</button>';
+            alert('Acesso apenas para área administrativa (Gestor). Use o link correto para o formulário.');
         }
     }
 </script>

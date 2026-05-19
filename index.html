@@ -176,7 +176,7 @@
                 <div id="bvi-step-1">
                     <div style="background: #fee2e2; border-left: 5px solid var(--red-sesmt); padding: 15px; margin-bottom: 25px; border-radius: 4px;">
                         <strong style="color: #991b1b; font-size: 1.1rem;">⚠️ AVISO DE SEGURANÇA:</strong>
-                        <p style="color: #7f1d1d; font-size: 0.95rem; margin-top: 5px; line-height: 1.4;">Este formulário é de preenchimento EXCLUSIVO para colaboradores da <strong>Equipe Noturna (20:12 às 05:00)</strong>. O seu acesso precisará ser autorizado pelo Gestor.</p>
+                        <p style="color: #7f1d1d; font-size: 0.95rem; margin-top: 5px; line-height: 1.4;">Este formulário é de preenchimento EXCLUSIVO para colaboradores da <strong>Equipe Noturna (20:12 às 05:00)</strong>. O seu acesso precisará ser autorizado pela Liderança.</p>
                     </div>
 
                     <div class="input-group">
@@ -201,7 +201,7 @@
 
                 <div id="bvi-step-2" style="display: none;">
                     <div style="background: #dcfce7; color: #166534; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 20px;">
-                        ✅ Acesso Liberado pelo Gestor
+                        ✅ Acesso Liberado pela Liderança
                     </div>
 
                     <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">Dados Pessoais</h3>
@@ -259,7 +259,7 @@
                         </label>
                     </div>
 
-                    <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar e Enviar ao SESMT</button>
+                    <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar Inscrição</button>
                 </div>
             </div>
         </div>
@@ -267,7 +267,7 @@
         <div id="view-sucesso-bvi" class="view" style="text-align: center;">
             <div class="card">
                 <h2 style="color: var(--red-sesmt);">✅ Inscrição Concluída!</h2>
-                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram enviados com sucesso para análise do SESMT.</p>
+                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram salvos para análise da Liderança.</p>
                 <button class="btn btn-outline" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
@@ -296,7 +296,7 @@
                             Link (BVI)
                         </button>
                         <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">
-                            🖨️ Imprimir PDF (Ranking)
+                            🖨️ Imprimir PDF (Ranking Final)
                         </button>
                     </div>
 
@@ -313,42 +313,42 @@
 
         <div id="view-avalia-estrelas" class="view">
             <div class="card">
-                <h2 style="color: var(--purple-dark); margin-bottom: 5px;">Avaliação da Liderança</h2>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">Forneça sua visão sobre o candidato para a seleção do SESMT.</p>
+                <h2 style="color: var(--purple-dark); margin-bottom: 5px;">Avaliação Final da Liderança</h2>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">Forneça a sua nota. A pontuação terá pesos diferentes para definir o ranking de aptidão.</p>
                 
                 <h3 id="estrela-nome-candidato" style="margin-bottom: 10px; color: var(--red-sesmt);">Candidato: -</h3>
                 
                 <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;"></div>
 
                 <div class="star-row">
-                    <span class="star-label">Postura e Comportamento</span>
-                    <div class="star-rating" id="stars-postura"><span class="star" onclick="setStar('postura', 1)">★</span><span class="star" onclick="setStar('postura', 2)">★</span><span class="star" onclick="setStar('postura', 3)">★</span><span class="star" onclick="setStar('postura', 4)">★</span><span class="star" onclick="setStar('postura', 5)">★</span></div>
-                </div>
-                <div class="star-row">
-                    <span class="star-label">Desenvolvimento Técnico</span>
+                    <span class="star-label">1. Desenvolvimento Técnico (Peso Máximo)</span>
                     <div class="star-rating" id="stars-desenvolvimento"><span class="star" onclick="setStar('desenvolvimento', 1)">★</span><span class="star" onclick="setStar('desenvolvimento', 2)">★</span><span class="star" onclick="setStar('desenvolvimento', 3)">★</span><span class="star" onclick="setStar('desenvolvimento', 4)">★</span><span class="star" onclick="setStar('desenvolvimento', 5)">★</span></div>
                 </div>
                 <div class="star-row">
-                    <span class="star-label">Aptidão Física / Disposição</span>
-                    <div class="star-rating" id="stars-aptidao"><span class="star" onclick="setStar('aptidao', 1)">★</span><span class="star" onclick="setStar('aptidao', 2)">★</span><span class="star" onclick="setStar('aptidao', 3)">★</span><span class="star" onclick="setStar('aptidao', 4)">★</span><span class="star" onclick="setStar('aptidao', 5)">★</span></div>
-                </div>
-                <div class="star-row">
-                    <span class="star-label">Assiduidade (Presença)</span>
+                    <span class="star-label">2. Assiduidade / Presença (Peso Alto)</span>
                     <div class="star-rating" id="stars-assiduidade"><span class="star" onclick="setStar('assiduidade', 1)">★</span><span class="star" onclick="setStar('assiduidade', 2)">★</span><span class="star" onclick="setStar('assiduidade', 3)">★</span><span class="star" onclick="setStar('assiduidade', 4)">★</span><span class="star" onclick="setStar('assiduidade', 5)">★</span></div>
                 </div>
-                <div class="star-row" style="border-bottom: none;">
-                    <span class="star-label">Iniciativa / Engajamento</span>
+                <div class="star-row">
+                    <span class="star-label">3. Postura e Comportamento (Peso Médio)</span>
+                    <div class="star-rating" id="stars-postura"><span class="star" onclick="setStar('postura', 1)">★</span><span class="star" onclick="setStar('postura', 2)">★</span><span class="star" onclick="setStar('postura', 3)">★</span><span class="star" onclick="setStar('postura', 4)">★</span><span class="star" onclick="setStar('postura', 5)">★</span></div>
+                </div>
+                <div class="star-row">
+                    <span class="star-label">4. Iniciativa / Engajamento (Peso Normal)</span>
                     <div class="star-rating" id="stars-iniciativa"><span class="star" onclick="setStar('iniciativa', 1)">★</span><span class="star" onclick="setStar('iniciativa', 2)">★</span><span class="star" onclick="setStar('iniciativa', 3)">★</span><span class="star" onclick="setStar('iniciativa', 4)">★</span><span class="star" onclick="setStar('iniciativa', 5)">★</span></div>
+                </div>
+                <div class="star-row" style="border-bottom: none;">
+                    <span class="star-label">5. Aptidão Física (Peso Normal)</span>
+                    <div class="star-rating" id="stars-aptidao"><span class="star" onclick="setStar('aptidao', 1)">★</span><span class="star" onclick="setStar('aptidao', 2)">★</span><span class="star" onclick="setStar('aptidao', 3)">★</span><span class="star" onclick="setStar('aptidao', 4)">★</span><span class="star" onclick="setStar('aptidao', 5)">★</span></div>
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px;" onclick="gerarParecerIA()">✨ Sugerir Observação com IA</button>
-                    <textarea id="avalia-obs" rows="3" placeholder="A IA preencherá aqui ou você pode digitar manualmente..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"></textarea>
+                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px; font-size:0.95rem; padding:12px;" onclick="gerarParecerIA()">✨ Sugerir Observação e Definir Parecer</button>
+                    <textarea id="avalia-obs" rows="5" placeholder="A IA preencherá aqui ou você pode digitar manualmente o Parecer..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button class="btn btn-outline" style="flex:1; margin-top:0;" onclick="cancelarAvaliacaoBVI()">Cancelar</button>
-                    <button class="btn" style="flex:1; margin-top:0;" onclick="salvarAvaliacaoBVI()">Salvar Avaliação</button>
+                    <button class="btn" style="flex:1; margin-top:0;" onclick="salvarAvaliacaoBVI()">Salvar Avaliação Final</button>
                 </div>
             </div>
         </div>
@@ -412,22 +412,19 @@
         
         if(!nome || !mat) return alert("Preencha o Nome e a Matrícula para solicitar acesso.");
 
-        // Verifica se já concluiu tudo antes
         database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(mat).once('value').then(snap => {
             if(snap.exists()) return alert("Sua matrícula já possui uma inscrição concluída!");
 
-            // Envia para a sala de espera
             const reqRef = database.ref('bvi_solicitacoes/' + mat);
             reqRef.set({ nome: nome, matricula: mat, status: 'pendente' });
 
             document.getElementById('bvi-step-1').style.display = 'none';
             document.getElementById('bvi-step-waiting').style.display = 'block';
 
-            // Fica escutando a resposta do Gestor em tempo real
             reqRef.on('value', snapshot => {
                 const data = snapshot.val();
                 if(data && data.status === 'autorizado') {
-                    reqRef.off(); // Para de escutar
+                    reqRef.off();
                     document.getElementById('bvi-step-waiting').style.display = 'none';
                     document.getElementById('bvi-step-2').style.display = 'block';
                     
@@ -435,7 +432,7 @@
                     document.getElementById('bvi-matricula').value = data.matricula;
                 } else if (data && data.status === 'negado') {
                     reqRef.off();
-                    alert("Seu acesso foi negado pela Liderança. Procure o gestor do turno.");
+                    alert("Seu acesso foi negado pela Liderança. O formulário é exclusivo para a equipe noturna.");
                     location.reload();
                 }
             });
@@ -463,7 +460,6 @@
             data: new Date().toLocaleDateString('pt-BR') 
         };
 
-        // Salva a inscrição final e deleta a solicitação da sala de espera
         database.ref('inscricoes_bvi').push(dadosBVI).then(() => {
             database.ref('bvi_solicitacoes/' + matricula).remove(); 
             switchTab('sucesso-bvi');
@@ -471,7 +467,7 @@
     }
 
     // ==========================================
-    // 4. SISTEMA DE AVALIAÇÃO EM ESTRELAS E IA
+    // 4. SISTEMA DE AVALIAÇÃO COM PESOS E IA
     // ==========================================
     let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
 
@@ -518,12 +514,21 @@
             return alert("Por favor, preencha as 5 estrelas antes de pedir para a IA gerar o texto.");
         }
 
-        const media = (n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa) / 5;
-        let parecer = "O colaborador apresenta ";
+        // CÁLCULO DA MÉDIA PONDERADA (PESOS DEFINIDOS PELO GESTOR)
+        // Desenvolvimento(3.5) + Assiduidade(2.5) + Postura(2.0) + Iniciativa(1.0) + Aptidão(1.0) = Total 10
+        const mediaPonderada = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
+        
+        let parecer = "Avaliando os critérios prioritários definidos pela Liderança: ";
 
-        if(media >= 4.5) parecer += "excelente perfil para a Brigada de Incêndio, demonstrando alta iniciativa, postura exemplar e assiduidade constante no turno. Totalmente recomendado para compor a equipe.";
-        else if(media >= 3.5) parecer += "bom perfil técnico e comportamento adequado no dia a dia. Possui potencial para atuar na Brigada e agregar ao time de segurança com acompanhamento padrão.";
-        else parecer += "perfil com pontos de atenção identificados pela Liderança. Recomendamos que o SESMT faça uma entrevista direcionada para validar o engajamento e a disponibilidade necessária para a função.";
+        if(mediaPonderada >= 4.0) {
+            parecer += "O colaborador possui um excelente nível de desenvolvimento técnico e assiduidade exemplar. Tem perfil maduro e altamente engajado para a função, liderando por exemplo e garantindo segurança operacional.\n\nParecer da Liderança: APTO.";
+        }
+        else if(mediaPonderada >= 3.0) {
+            parecer += "O colaborador atende bem aos requisitos operacionais, apresentando boa assiduidade e postura adequada no dia a dia. Possui potencial claro para somar à equipe da Brigada de forma efetiva.\n\nParecer da Liderança: APTO.";
+        }
+        else {
+            parecer += "O colaborador apresenta pontos de atenção nos pilares críticos de desenvolvimento técnico, assiduidade ou postura avaliados. Neste momento, consideramos que o perfil não está totalmente aderente à exigência da Brigada.\n\nParecer da Liderança: INAPTO.";
+        }
 
         document.getElementById('avalia-obs').value = parecer;
     }
@@ -539,7 +544,7 @@
             avaliacao_gestor: avaliacaoAtualBVI.notas,
             observacao_gestor: obsTexto
         }).then(() => {
-            alert("Avaliação salva com sucesso!");
+            alert("Avaliação final salva com sucesso!");
             cancelarAvaliacaoBVI();
         }).catch(err => alert("Erro ao salvar: " + err.message));
     }
@@ -562,7 +567,6 @@
     }
 
     function loadAdminData() {
-        // Carrega as Avaliações Logísticas Antigas
         database.ref('avaliacoes').on('value', snap => {
             const container = document.getElementById('lista-avaliacoes');
             container.innerHTML = '';
@@ -576,7 +580,6 @@
             });
         });
 
-        // ESCUTA A SALA DE ESPERA (PEDIDOS PENDENTES)
         database.ref('bvi_solicitacoes').on('value', snap => {
             const container = document.getElementById('lista-solicitacoes-bvi');
             container.innerHTML = '';
@@ -603,7 +606,6 @@
             if(!temPendente) container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma solicitação aguardando.</p>';
         });
 
-        // ESCUTA AS INSCRIÇÕES CONCLUÍDAS
         database.ref('inscricoes_bvi').on('value', snap => {
             const container = document.getElementById('lista-bvi');
             container.innerHTML = '';
@@ -611,7 +613,7 @@
             
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const jaAvaliou = !!item.avaliacao_gestor;
-                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Nota" : "Avaliar (IA)";
+                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Nota" : "Avaliar";
                 const corBtnAvalia = jaAvaliou ? "background: #f59e0b; color: white;" : "background: var(--purple-light); color: white;";
                 
                 const obsEnc = item.observacao_gestor ? encodeURIComponent(item.observacao_gestor) : '';
@@ -641,24 +643,26 @@
     }
 
     // ==========================================
-    // 6. IMPRIMIR PDF ORDENADO PELO RANKING
+    // 6. IMPRIMIR PDF ORDENADO PELA MÉDIA PONDERADA
     // ==========================================
     function imprimirBVI() {
         database.ref('inscricoes_bvi').once('value').then(snap => {
             if(!snap.exists()) return alert("Não há inscritos para imprimir no momento!");
             
-            // TRANSFORMAR EM ARRAY E ORDENAR PELA MÉDIA (MAIOR PRO MENOR)
             let inscritos = [];
             snap.forEach(child => {
                 let data = child.val();
                 let media = 0;
                 if(data.avaliacao_gestor) {
                     const n = data.avaliacao_gestor;
-                    media = (n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa) / 5;
+                    // Mesmo cálculo de peso que usamos na IA
+                    media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
                 }
                 data.media = media; 
                 inscritos.push(data);
             });
+            
+            // Ordena da maior para a menor nota
             inscritos.sort((a, b) => b.media - a.media);
             
             let printWindow = window.open('', '_blank');
@@ -677,41 +681,47 @@
                         th { background-color: #1e1b4b; color: #ffffff; text-transform: uppercase; font-size: 10px;}
                         tr:nth-child(even) td { background-color: #f8fafc; }
                         .nota-box { background: #1e1b4b; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom:5px;}
-                        .obs-texto { font-style: italic; color: #334155; margin-top: 5px;}
+                        .obs-texto { font-style: italic; color: #334155; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 5px;}
                         .info-extra { margin-top: 8px; font-size: 9px; background: #e2e8f0; padding: 5px; border-radius: 4px; color: #334155;}
                     </style>
                 </head>
                 <body>
                     <div class="header">
                         <p style="text-transform: uppercase; font-weight:bold; color: #64748b; margin-bottom: 5px; font-size: 11px;">Drogaria Venâncio - SESMT</p>
-                        <h1>RELAÇÃO DE INSCRITOS - BVI (Ranking da Liderança)</h1>
-                        <p style="margin:0; font-size:13px; color:#64748b;">Emitido em: ${dataEmissao} | Ordenado por pontuação</p>
+                        <h1>RELAÇÃO DE INSCRITOS - BVI (Ranking Final)</h1>
+                        <p style="margin:0; font-size:13px; color:#64748b;">Emitido em: ${dataEmissao} | Ordenado pela Média Ponderada da Liderança</p>
                     </div>
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 25%;">Candidato / Perfil Técnico</th>
                                 <th style="width: 15%;">Setor / Turno</th>
-                                <th style="width: 60%;">Avaliação do Gestor (Estrelas e Observação)</th>
+                                <th style="width: 60%;">Parecer Oficial da Liderança (Estrelas e Texto)</th>
                             </tr>
                         </thead>
                         <tbody>`;
             
             inscritos.forEach(item => {
                 let mediaTexto = "-";
-                let avaliacaoDetalhada = "<em>O Gestor ainda não realizou a avaliação de perfil.</em>";
+                let avaliacaoDetalhada = "<em>O Gestor ainda não realizou o Parecer de perfil.</em>";
 
                 if(item.avaliacao_gestor) {
                     const n = item.avaliacao_gestor;
-                    mediaTexto = `<span class="nota-box">⭐ Média Geral: ${item.media.toFixed(1)} / 5.0</span>`;
+                    mediaTexto = `<span class="nota-box">⭐ Média Ponderada: ${item.media.toFixed(1)} / 5.0</span>`;
                     
                     let obsGestorHTML = '';
                     if (item.observacao_gestor && item.observacao_gestor.trim() !== '') {
-                        obsGestorHTML = `<div class="obs-texto"><strong>Obs. Liderança:</strong> "${item.observacao_gestor}"</div>`;
+                        obsGestorHTML = `<div class="obs-texto">${item.observacao_gestor.replace(/\\n/g, '<br>')}</div>`;
                     }
 
                     avaliacaoDetalhada = `${mediaTexto}<br>
-                        <div style="font-size:10px; color:#475569;"><strong>Postura:</strong> ${n.postura} | <strong>Técnico:</strong> ${n.desenvolvimento} | <strong>Aptidão:</strong> ${n.aptidao} | <strong>Assiduidade:</strong> ${n.assiduidade} | <strong>Iniciativa:</strong> ${n.iniciativa}</div>
+                        <div style="font-size:10px; color:#475569;">
+                            <strong>Desenvolvimento:</strong> ${n.desenvolvimento} | 
+                            <strong>Assiduidade:</strong> ${n.assiduidade} | 
+                            <strong>Postura:</strong> ${n.postura} | 
+                            <strong>Iniciativa:</strong> ${n.iniciativa} | 
+                            <strong>Aptidão:</strong> ${n.aptidao}
+                        </div>
                         ${obsGestorHTML}`;
                 }
 
@@ -738,7 +748,7 @@
     }
 
     // ==========================================
-    // 7. QUIZ LOGÍSTICO BÁSICO (MANTIDO)
+    // 7. QUIZ LOGÍSTICO (LOGIN)
     // ==========================================
     function startQuiz() {
         const nome = document.getElementById('user-name').value.trim();
@@ -748,7 +758,7 @@
             switchTab('gestor');
             loadAdminData();
         } else {
-            alert('Acesso apenas para área administrativa (Gestor). Use o link correto para o formulário.');
+            alert('Acesso apenas para área administrativa (Gestor). Use o link correto para o formulário de BVI.');
         }
     }
 </script>

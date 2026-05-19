@@ -224,7 +224,48 @@
                 </div>
 
                 <div class="input-group">
-                    <label>3. Possui Cursos Técnicos ou Conhecimentos Relevantes? (Opcional)</label>
+                    <label>3. Possui condição física para realizar esforço moderado (correr, carregar equipamentos, usar EPI)?</label>
+                    <select id="bvi-condicao-fisica">
+                        <option value="">Selecione...</option>
+                        <option value="Sim, estou apto fisicamente">Sim, estou apto fisicamente</option>
+                        <option value="Tenho algumas limitações físicas">Tenho algumas limitações físicas</option>
+                        <option value="Não, possuo restrição médica">Não, possuo restrição médica</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>4. Como você age diante de uma situação de emergência ou pânico coletivo?</label>
+                    <select id="bvi-reacao-emergencia">
+                        <option value="">Selecione...</option>
+                        <option value="Mantenho a calma e ajudo a organizar as pessoas">Mantenho a calma e ajudo a organizar as pessoas</option>
+                        <option value="Fico nervoso mas sigo as instruções">Fico nervoso, mas sigo as instruções recebidas</option>
+                        <option value="Ainda não sei como reagiria">Ainda não sei como reagiria em uma situação assim</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>5. Você consegue participar dos treinos e simulações fora do seu horário normal de trabalho?</label>
+                    <select id="bvi-disponibilidade">
+                        <option value="">Selecione...</option>
+                        <option value="Sim, tenho total disponibilidade">Sim, tenho total disponibilidade</option>
+                        <option value="Tenho disponibilidade parcial">Tenho disponibilidade parcial (depende da data)</option>
+                        <option value="Tenho dificuldade de disponibilidade">Tenho dificuldade de disponibilidade extra</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>6. Qual é a sua principal motivação para entrar na Brigada Voluntária?</label>
+                    <select id="bvi-motivacao">
+                        <option value="">Selecione...</option>
+                        <option value="Contribuir com a segurança de todos no local de trabalho">Contribuir com a segurança de todos no trabalho</option>
+                        <option value="Interesse em aprender primeiros socorros e combate a incêndio">Aprender primeiros socorros e combate a incêndio</option>
+                        <option value="Reconhecimento e crescimento profissional">Reconhecimento e crescimento profissional</option>
+                        <option value="Indicação da liderança ou colegas">Indicação da liderança ou colegas</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>7. Possui Cursos Técnicos ou Conhecimentos Relevantes? (Opcional)</label>
                     <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Curso de Primeiros Socorros, Técnico em Enfermagem, Seg. do Trabalho, etc..."></textarea>
                     <small style="color: var(--text-light); font-size: 0.8rem;">Descreva acima cursos extras que possam contribuir com o SESMT e a Brigada.</small>
                 </div>
@@ -325,7 +366,13 @@
 
                 <div class="input-group" style="margin-top: 15px;">
                     <label style="color: var(--purple-dark);">Observações do Gestor (Opcional)</label>
-                    <textarea id="avalia-obs" rows="3" placeholder="Digite uma observação sobre o perfil do candidato... (Isso sairá no relatório do SESMT)" style="resize: vertical;"></textarea>
+                    <div style="position: relative;">
+                        <textarea id="avalia-obs" rows="3" placeholder="Digite uma observação sobre o perfil do candidato... (Isso sairá no relatório do SESMT)" style="resize: vertical; padding-right: 130px;"></textarea>
+                        <button onclick="gerarObsComIA()" id="btn-ia-obs" style="position: absolute; bottom: 10px; right: 10px; background: linear-gradient(135deg, #7e22ce, #dc2626); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            ✨ Sugerir com IA
+                        </button>
+                    </div>
+                    <small id="ia-status" style="color: var(--purple-light); font-size: 0.8rem; display:none;">⏳ A IA está analisando o perfil do candidato...</small>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -385,9 +432,76 @@
     // ==========================================
     // 3. SISTEMA DE AVALIAÇÃO EM ESTRELAS (BVI)
     // ==========================================
-    let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
+    let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '', candidatoInfo: {} };
 
-    function abrirTelaEstrelas(idCandidate, nome, notasSalvas, obsSalva, exp, fobia, cursos) {
+    function gerarObsComIA() {
+        const n = avaliacaoAtualBVI.notas;
+        const info = avaliacaoAtualBVI.candidatoInfo || {};
+        const btn = document.getElementById('btn-ia-obs');
+        const status = document.getElementById('ia-status');
+
+        const soma = (n.postura||0) + (n.desenvolvimento||0) + (n.aptidao||0) + (n.assiduidade||0) + (n.iniciativa||0);
+        const media = soma / 5;
+
+        btn.disabled = true;
+        btn.innerText = '⏳ Gerando...';
+        status.style.display = 'block';
+
+        // --- Bloco 1: perfil geral pela média ---
+        let parteMedia = '';
+        if (media >= 4.5) {
+            parteMedia = `${info.nome} apresenta perfil altamente destacado para a BVI, com desempenho superior em todos os critérios avaliados pela liderança.`;
+        } else if (media >= 3.5) {
+            parteMedia = `${info.nome} demonstra bom desempenho geral, sendo considerado um candidato sólido para integrar a Brigada Voluntária de Incêndio.`;
+        } else if (media >= 2.5) {
+            parteMedia = `${info.nome} apresenta desempenho razoável, com potencial de desenvolvimento identificado pela liderança para atuar na BVI.`;
+        } else if (soma > 0) {
+            parteMedia = `${info.nome} apresenta desempenho abaixo do esperado em alguns critérios, sendo recomendada atenção antes da efetivação na brigada.`;
+        } else {
+            parteMedia = `${info.nome} ainda não recebeu avaliação completa de todos os critérios pela liderança.`;
+        }
+
+        // --- Bloco 2: destaques positivos e pontos de atenção ---
+        const criteriosNomes = { postura: 'postura', desenvolvimento: 'desenvolvimento técnico', aptidao: 'aptidão física', assiduidade: 'assiduidade', iniciativa: 'iniciativa' };
+        const destaques = Object.keys(n).filter(k => (n[k]||0) >= 4).map(k => criteriosNomes[k]);
+        const atencao  = Object.keys(n).filter(k => (n[k]||0) > 0 && (n[k]||0) <= 2).map(k => criteriosNomes[k]);
+
+        let parteDetalhe = '';
+        if (destaques.length > 0 && atencao.length === 0) {
+            parteDetalhe = `Pontos de destaque: ${destaques.join(', ')}.`;
+        } else if (destaques.length > 0 && atencao.length > 0) {
+            parteDetalhe = `Destaque em ${destaques.join(' e ')}; requer atenção em ${atencao.join(' e ')}.`;
+        } else if (atencao.length > 0) {
+            parteDetalhe = `Necessita de desenvolvimento em ${atencao.join(' e ')} antes de ser integrado à brigada.`;
+        }
+
+        // --- Bloco 3: perfil técnico do candidato ---
+        const extras = [];
+        if (info.exp && info.exp.toLowerCase().includes('sim')) extras.push('possui experiência prévia como brigadista');
+        if (info.fobia && info.fobia.toLowerCase().includes('não')) extras.push('sem restrições ou fobias declaradas');
+        if (info.fobia && info.fobia.toLowerCase().includes('sim')) extras.push('possui restrições/fobias declaradas — verificar compatibilidade com as atividades');
+        if (info.condFisica && info.condFisica.toLowerCase().includes('apto')) extras.push('apto fisicamente para as atividades');
+        if (info.condFisica && info.condFisica.toLowerCase().includes('limitação')) extras.push('apresenta limitações físicas a serem avaliadas');
+        if (info.condFisica && info.condFisica.toLowerCase().includes('restrição')) extras.push('possui restrição médica — requer avaliação do SESMT');
+        if (info.disponib && info.disponib.toLowerCase().includes('total')) extras.push('disponibilidade total para treinos');
+        if (info.disponib && info.disponib.toLowerCase().includes('parcial')) extras.push('disponibilidade parcial para treinos');
+        if (info.cursos && info.cursos.trim() !== '' && info.cursos !== 'Nenhum curso extra informado') extras.push(`formação complementar: ${info.cursos}`);
+
+        let parteTecnica = extras.length > 0 ? `Perfil técnico: ${extras.join('; ')}.` : '';
+
+        // --- Montagem final ---
+        const partes = [parteMedia, parteDetalhe, parteTecnica].filter(p => p.trim() !== '');
+        const obs = partes.join(' ');
+
+        setTimeout(() => {
+            document.getElementById('avalia-obs').value = obs;
+            btn.disabled = false;
+            btn.innerText = '✨ Sugerir com IA';
+            status.style.display = 'none';
+        }, 600);
+    }
+
+    function abrirTelaEstrelas(idCandidate, nome, notasSalvas, obsSalva, exp, fobia, cursos, condFisica, reacao, disponib, motivacao) {
         let notas = { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 };
         let obs = '';
         
@@ -400,20 +514,34 @@
         
         avaliacaoAtualBVI.id = idCandidate;
         avaliacaoAtualBVI.notas = notas;
+        // Store candidate info for AI
+        avaliacaoAtualBVI.candidatoInfo = {
+            nome,
+            exp: decodeURIComponent(exp) || 'Não informado',
+            fobia: decodeURIComponent(fobia) || 'Não informado',
+            cursos: decodeURIComponent(cursos) || 'Nenhum curso extra informado',
+            condFisica: decodeURIComponent(condFisica) || 'Não informado',
+            reacao: decodeURIComponent(reacao) || 'Não informado',
+            disponib: decodeURIComponent(disponib) || 'Não informado',
+            motivacao: decodeURIComponent(motivacao) || 'Não informado'
+        };
 
         document.getElementById('estrela-nome-candidato').innerText = nome;
         document.getElementById('avalia-obs').value = obs; 
+        document.getElementById('ia-status').style.display = 'none';
         
         // Exibir o mini currículo na tela do gestor
-        const expTexto = decodeURIComponent(exp) || 'Não informado';
-        const fobiaTexto = decodeURIComponent(fobia) || 'Não informado';
-        const cursosTexto = decodeURIComponent(cursos) || 'Nenhum curso extra informado';
+        const info = avaliacaoAtualBVI.candidatoInfo;
 
         document.getElementById('mini-curriculo').innerHTML = `
             <strong>Respostas do Candidato:</strong><br>
-            <span style="color:#475569;">Experiência prévia:</span> ${expTexto}<br>
-            <span style="color:#475569;">Fobias/Restrições:</span> ${fobiaTexto}<br>
-            <span style="color:#475569;">Cursos/Técnicos:</span> ${cursosTexto}
+            <span style="color:#475569;">Experiência prévia:</span> ${info.exp}<br>
+            <span style="color:#475569;">Fobias/Restrições:</span> ${info.fobia}<br>
+            <span style="color:#475569;">Condição Física:</span> ${info.condFisica}<br>
+            <span style="color:#475569;">Reação a Emergências:</span> ${info.reacao}<br>
+            <span style="color:#475569;">Disponibilidade Extra:</span> ${info.disponib}<br>
+            <span style="color:#475569;">Motivação:</span> ${info.motivacao}<br>
+            <span style="color:#475569;">Cursos/Técnicos:</span> ${info.cursos}
         `;
 
         Object.keys(notas).forEach(crit => setStar(crit, notas[crit]));
@@ -466,10 +594,14 @@
         // Novos campos:
         const exp = document.getElementById('bvi-exp').value;
         const fobia = document.getElementById('bvi-fobia').value;
+        const condicaoFisica = document.getElementById('bvi-condicao-fisica').value;
+        const reacaoEmergencia = document.getElementById('bvi-reacao-emergencia').value;
+        const disponibilidade = document.getElementById('bvi-disponibilidade').value;
+        const motivacao = document.getElementById('bvi-motivacao').value;
         const cursos = document.getElementById('bvi-cursos').value.trim();
 
         if(!nome || !matricula || !setor || !turno || !telefone) return alert("Por favor, preencha todos os campos pessoais!");
-        if(!exp || !fobia) return alert("Por favor, responda as perguntas do Perfil Técnico.");
+        if(!exp || !fobia || !condicaoFisica || !reacaoEmergencia || !disponibilidade || !motivacao) return alert("Por favor, responda todas as perguntas do Perfil Técnico (1 a 6).");
         if(!termo) return alert("É necessário aceitar os termos da Brigada.");
 
         database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(matricula).once('value')
@@ -479,7 +611,7 @@
             } else {
                 const dadosBVI = { 
                     nome, matricula, setor, turno, telefone, 
-                    exp, fobia, cursos,
+                    exp, fobia, condicaoFisica, reacaoEmergencia, disponibilidade, motivacao, cursos,
                     data: new Date().toLocaleDateString('pt-BR') 
                 };
                 database.ref('inscricoes_bvi').push(dadosBVI).then(() => switchTab('sucesso-bvi'));
@@ -491,6 +623,18 @@
         database.ref('inscricoes_bvi').once('value').then(snap => {
             if(!snap.exists()) return alert("Não há inscritos para imprimir no momento!");
             
+            // Build sorted array: compute scores then sort highest to lowest
+            const allItems = Object.values(snap.val()).map(item => {
+                if(item.avaliacao_gestor) {
+                    const n = item.avaliacao_gestor;
+                    item._score = n.postura + n.desenvolvimento + n.aptidao + n.assiduidade + n.iniciativa;
+                } else {
+                    item._score = -1;
+                }
+                return item;
+            });
+            const sorted = allItems.sort((a, b) => b._score - a._score);
+
             let printWindow = window.open('', '_blank');
             let dataEmissao = new Date().toLocaleString('pt-BR');
             
@@ -530,7 +674,7 @@
                         </thead>
                         <tbody>`;
             
-            Object.values(snap.val()).forEach(item => {
+            sorted.forEach((item, index) => {
                 let mediaTexto = "-";
                 let avaliacaoDetalhada = "<em>O Gestor ainda não realizou a avaliação de perfil.</em>";
 
@@ -538,6 +682,11 @@
                 const expTexto = item.exp || 'Não informado';
                 const fobiaTexto = item.fobia || 'Não informado';
                 const cursosTexto = item.cursos || 'Nenhum curso informado';
+                const condFisicaTexto = item.condicaoFisica || 'Não informado';
+                const reacaoTexto = item.reacaoEmergencia || 'Não informado';
+                const dispTexto = item.disponibilidade || 'Não informado';
+                const motivacaoTexto = item.motivacao || 'Não informado';
+                const posicao = item._score >= 0 ? `<span style="display:inline-block;background:#1e1b4b;color:#fff;border-radius:50%;width:20px;height:20px;text-align:center;line-height:20px;font-size:10px;font-weight:bold;margin-right:4px;">${index+1}</span>` : '';
 
                 // Se o gestor avaliou
                 if(item.avaliacao_gestor) {
@@ -567,11 +716,15 @@
                 html += `
                     <tr>
                         <td>
-                            <strong style="font-size: 12px; color:#dc2626;">${item.nome}</strong><br>
+                            <strong style="font-size: 12px; color:#dc2626;">${posicao}${item.nome}</strong><br>
                             <span style="color:#64748b;">Mat: ${item.matricula}</span>
                             <div class="info-extra">
                                 <strong>Experiência:</strong> ${expTexto}<br>
                                 <strong>Fobia/Restrição:</strong> ${fobiaTexto}<br>
+                                <strong>Cond. Física:</strong> ${condFisicaTexto}<br>
+                                <strong>Reação Emergência:</strong> ${reacaoTexto}<br>
+                                <strong>Disponibilidade:</strong> ${dispTexto}<br>
+                                <strong>Motivação:</strong> ${motivacaoTexto}<br>
                                 <strong>Cursos:</strong> ${cursosTexto}
                             </div>
                         </td>
@@ -648,6 +801,10 @@
                 const expEnc = item.exp ? encodeURIComponent(item.exp) : '';
                 const fobiaEnc = item.fobia ? encodeURIComponent(item.fobia) : '';
                 const cursosEnc = item.cursos ? encodeURIComponent(item.cursos) : '';
+                const condFisicaEnc = item.condicaoFisica ? encodeURIComponent(item.condicaoFisica) : '';
+                const reacaoEnc = item.reacaoEmergencia ? encodeURIComponent(item.reacaoEmergencia) : '';
+                const dispEnc = item.disponibilidade ? encodeURIComponent(item.disponibilidade) : '';
+                const motivacaoEnc = item.motivacao ? encodeURIComponent(item.motivacao) : '';
 
                 // Exibir pequeno preview na tela do gestor
                 let previewCursos = item.cursos ? `<strong>Cursos:</strong> ${item.cursos}` : '';
@@ -665,7 +822,7 @@
                             </span>
                         </div>
                         <div style="display:flex; flex-direction: column; gap:8px;">
-                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${item.nome}', '${notasEnc}', '${obsEnc}', '${expEnc}', '${fobiaEnc}', '${cursosEnc}')">${textoBtnAvalia}</button>
+                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${item.nome}', '${notasEnc}', '${obsEnc}', '${expEnc}', '${fobiaEnc}', '${cursosEnc}', '${condFisicaEnc}', '${reacaoEnc}', '${dispEnc}', '${motivacaoEnc}')">${textoBtnAvalia}</button>
                             <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button>
                         </div>
                     </div>`;

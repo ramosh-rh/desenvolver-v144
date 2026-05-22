@@ -27,6 +27,10 @@
             --print-btn: #334155;
             --star-gold: #f59e0b;
             --star-gray: #cbd5e1;
+            --disc-d: #dc2626;
+            --disc-i: #f59e0b;
+            --disc-s: #10b981;
+            --disc-c: #3b82f6;
         }
 
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
@@ -40,7 +44,7 @@
         .tab-btn { flex: 1; padding: 16px 0; text-align: center; background: none; border: none; font-size: 1rem; font-weight: 600; color: var(--text-light); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; }
         .tab-btn.active { color: var(--purple-light); border-bottom-color: var(--purple-light); }
 
-        .container { max-width: 750px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 850px; margin: 0 auto; padding: 0 20px; }
         .card { background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
         
         .view { display: none; animation: fadeIn 0.4s ease; }
@@ -77,7 +81,7 @@
         .option-card { padding: 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; font-weight: 600; color: var(--text-light); }
         .option-card.selected { border-color: var(--purple-light); background: var(--purple-light); color: var(--white); }
 
-        .chart-container { position: relative; width: 100%; max-width: 500px; margin: 0 auto 30px; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin: 0 auto; }
         
         .gestor-item { padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; background: #fafafa; transition: all 0.2s; }
         .gestor-item:hover { border-color: var(--purple-light); background: #f3e8ff; }
@@ -97,6 +101,19 @@
         .star { font-size: 1.8rem; color: var(--star-gray); user-select: none; transition: 0.2s; }
         .star.active { color: var(--star-gold); }
 
+        /* Estilos do Dashboard HR */
+        .hr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 768px) { .hr-grid { grid-template-columns: 1fr; } }
+        .hr-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+        .hr-title { font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 15px; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); padding-bottom: 5px;}
+        .progress-container { margin-bottom: 12px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
+        .progress-bar { width: 100%; background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
+        .tag-perfil { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: white; margin-right: 5px; margin-bottom: 5px; }
+        .hr-text-block { margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5; color: #475569;}
+        .hr-text-block strong { color: var(--purple-dark); }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -104,12 +121,12 @@
 
     <div class="header">
         <h1>Vena144</h1>
-        <p>Portal Corporativo</p>
+        <p>Portal Corporativo & People Analytics</p>
     </div>
 
     <div class="tabs" id="main-tabs">
-        <button class="tab-btn active" id="tab-inicio" onclick="switchTab('inicio')">Avaliação DISC</button>
-        <button class="tab-btn" id="tab-devolutivas" onclick="switchTab('devolutivas')">Resultado</button>
+        <button class="tab-btn active" id="tab-inicio" onclick="switchTab('inicio')">Avaliação Comportamental</button>
+        <button class="tab-btn" id="tab-devolutivas" onclick="switchTab('devolutivas')">Dossiê de Perfil</button>
     </div>
 
     <div class="container" style="margin-top: 20px;">
@@ -121,7 +138,7 @@
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                     </div>
                     <h2 style="text-align: center; margin-bottom: 5px; color: var(--purple-dark);">Acesso ao Sistema</h2>
-                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 25px;">Mapeamento Comportamental</p>
+                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 25px;">Mapeamento Comportamental Profiler</p>
                     
                     <div class="input-group">
                         <label>Usuário (Nome Completo)</label>
@@ -132,36 +149,29 @@
                         <input type="password" id="user-id" placeholder="Ex: 12345">
                     </div>
                     
-                    <button class="btn" onclick="startQuiz()">Entrar</button>
+                    <button class="btn" onclick="startQuiz()">Iniciar Mapeamento</button>
                 </div>
             </div>
 
             <div class="card" id="quiz-section" style="display: none;">
+                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin-bottom: 20px; font-size: 0.9rem; color: #166534;">
+                    <strong>Instruções:</strong> Responda com sinceridade. Não há respostas certas ou erradas. O objetivo é entender o seu perfil natural de trabalho.
+                </div>
                 <div style="font-size: 0.85rem; font-weight: 700; color: var(--purple-light); text-transform: uppercase; margin-bottom: 10px;" id="q-counter"></div>
                 <div class="question-text" id="q-text"></div>
                 <div id="options-container"></div>
                 <button class="btn" id="next-btn" style="margin-top: 25px;" onclick="nextQuestion()" disabled>Confirmar Resposta</button>
             </div>
-            <div class="card" id="loading-section" style="display: none; text-align: center;"><h3 style="color: var(--purple-light);">Processando Algoritmo Comportamental...</h3></div>
+            <div class="card" id="loading-section" style="display: none; text-align: center;">
+                <div class="avatar-icon" style="margin: 0 auto 20px; animation: pulse 1.5s infinite;"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+                <h3 style="color: var(--purple-light);">Processando Algoritmo Comportamental Profiler...</h3>
+                <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 10px;">Cruzando dados e mapeando tendências.</p>
+            </div>
         </div>
 
         <div id="view-devolutivas" class="view">
             <div id="result-content" style="display: none;">
-                <div class="card">
-                    <h3 style="text-align: center; font-size: 0.9rem;">MAPA COMPORTAMENTAL (DISC)</h3>
-                    <h2 style="text-align: center; color: var(--purple-dark);" id="res-nome"></h2>
-                    <div class="chart-container"><canvas id="polarChart"></canvas></div>
                 </div>
-                <div class="card">
-                    <h2 id="perfil-titulo" style="color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 10px;"></h2>
-                    <p id="perfil-desc" style="margin-bottom: 20px; line-height: 1.6;"></p>
-                    <div style="background: #faf5ff; border-left: 5px solid var(--purple-light); padding: 20px; border-radius: 0 8px 8px 0; margin-bottom: 20px;">
-                        <h4 style="color: var(--purple-light); margin-bottom: 8px;">🎯 Atuação na Logística & SESMT</h4>
-                        <p id="perfil-beneficios"></p>
-                    </div>
-                    <div id="area-botao-gestor"></div>
-                </div>
-            </div>
         </div>
 
         <div id="view-form-bvi" class="view">
@@ -242,33 +252,35 @@
         </div>
 
         <div id="view-gestor" class="view">
-            <div class="card">
-                <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel da Liderança</h2>
+            <div class="card" style="max-width: 100%;">
+                <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel de Gestão & Analytics</h2>
                 
                 <div class="gestor-tabs">
-                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Avaliações DISC</div>
-                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI</div>
+                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Dossiês Comportamentais (DISC)</div>
+                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI (SESMT)</div>
                 </div>
 
                 <div id="gcontent-avalia">
-                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
-                        <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
-                        Partilhar Link (Mapeamento DISC)
-                    </button>
-                    <div id="lista-avaliacoes" style="margin-top: 15px;"></div>
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
+                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipa para realizarem o Mapeamento Profiler. O link possui trava de segurança para não abrir este painel.</p>
+                        <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
+                            <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
+                            Enviar Link do Mapeamento
+                        </button>
+                    </div>
+                    <div id="lista-avaliacoes"></div>
                 </div>
 
                 <div id="gcontent-bvi" style="display: none;">
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                         <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">
                             <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
-                            Link Inscrição (BVI)
+                            Enviar Link BVI
                         </button>
                         <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">
-                            🖨️ Imprimir Ranking (PDF)
+                            🖨️ Imprimir Ranking Analítico (PDF)
                         </button>
                     </div>
-                    <h3 style="margin: 25px 0 10px; color: var(--purple-dark); font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 5px;">✅ Inscrições BVI</h3>
                     <div id="lista-bvi"></div>
                 </div>
                 
@@ -343,17 +355,13 @@
         const formType = urlParams.get('form');
 
         if(formType === 'bvi') {
-            // Esconde abas de navegação
             document.getElementById('main-tabs').style.display = 'none'; 
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // Mostra APENAS a view da Inscrição BVI
             document.getElementById('view-form-bvi').classList.add('active');
         } 
         else if (formType === 'disc') {
-            // Esconde abas de navegação
             document.getElementById('main-tabs').style.display = 'none';
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // Mostra APENAS a tela de início do quiz
             document.getElementById('view-inicio').classList.add('active');
         }
     });
@@ -366,13 +374,13 @@
     }
 
     function excluirItem(caminho, id) {
-        if(confirm("Tem certeza que deseja EXCLUIR este registo?")) {
-            database.ref(caminho + '/' + id).remove().then(() => alert("Apagado!")).catch(e => alert(e));
+        if(confirm("Tem certeza que deseja EXCLUIR este registro da base de dados?")) {
+            database.ref(caminho + '/' + id).remove().then(() => alert("Apagado com sucesso!")).catch(e => alert(e));
         }
     }
 
     // ==========================================
-    // 2. FORMULÁRIO BVI (INSCRIÇÃO DO COLABORADOR)
+    // 2. FORMULÁRIO BVI (INSCRIÇÃO)
     // ==========================================
     function enviarInscricaoBVI() {
         const nome = document.getElementById('bvi-nome').value.trim();
@@ -380,7 +388,6 @@
         const turno = document.getElementById('bvi-turno').value;
         const setor = document.getElementById('bvi-setor').value.trim();
         const telefone = document.getElementById('bvi-telefone').value.trim();
-        
         const exp = document.getElementById('bvi-exp').value;
         const fobia = document.getElementById('bvi-fobia').value;
         const fardamento = document.getElementById('bvi-fardamento').value;
@@ -390,11 +397,11 @@
         const termo = document.getElementById('bvi-termo').checked;
 
         if(!nome || !matricula || !setor || !turno || !telefone) return alert("Preencha todos os dados pessoais.");
-        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda a todas as perguntas técnicas.");
+        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda a todas as perguntas técnicas do perfil.");
         if(!termo) return alert("É necessário confirmar a declaração de compromisso.");
 
         database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(matricula).once('value').then(snap => {
-            if(snap.exists()) return alert("Esta matrícula já possui uma inscrição registada!");
+            if(snap.exists()) return alert("Esta matrícula já possui uma inscrição ativa!");
             
             const dadosBVI = { nome, matricula, setor, turno, telefone, exp, fobia, fardamento, cnh, disp, cursos, data: new Date().toLocaleDateString('pt-BR') };
             database.ref('inscricoes_bvi').push(dadosBVI).then(() => {
@@ -405,48 +412,22 @@
     }
 
     // ==========================================
-    // 3. MAPEAMENTO COMPORTAMENTAL (DISC)
+    // 3. MAPEAMENTO COMPORTAMENTAL PROFILER ROBUSTO (10 Perguntas)
     // ==========================================
     const allQuestions = [
-        { 
-            q: "Em um dia de alto volume de separação e pouco tempo, como você age?", 
-            opts: [
-                {t: "Tomo a frente, acelero o processo e foco em bater a meta rápido.", dim: 'D'}, 
-                {t: "Animo a equipe, converso e peço a colaboração de todos para agilizarmos.", dim: 'I'}, 
-                {t: "Mantenho meu ritmo constante e tranquilo, para não me estressar nem errar.", dim: 'S'},
-                {t: "Verifico se todos os procedimentos estão corretos para evitar retrabalho logístico.", dim: 'C'}
-            ] 
-        },
-        { 
-            q: "Quando um novo procedimento (ou sistema) é implementado na operação:", 
-            opts: [
-                {t: "Gosto de ir direto para a prática e aprender fazendo.", dim: 'D'}, 
-                {t: "Gosto de trocar ideias com os colegas sobre a novidade.", dim: 'I'}, 
-                {t: "Prefiro ser treinado com calma e seguir o passo a passo seguro.", dim: 'S'},
-                {t: "Preciso ler o manual e entender a lógica das regras antes de aplicar.", dim: 'C'}
-            ] 
-        },
-        { 
-            q: "Ao lidar com um conflito ou erro na equipe:", 
-            opts: [
-                {t: "Enfrento o problema de imediato, aponto o erro e resolvo.", dim: 'D'}, 
-                {t: "Tento mediar a situação com conversa e bom humor para não ficar um clima pesado.", dim: 'I'}, 
-                {t: "Ouço ambos os lados pacientemente para manter a harmonia do grupo.", dim: 'S'},
-                {t: "Recorro às normas e POPs da empresa para ver quem tem razão tecnicamente.", dim: 'C'}
-            ] 
-        },
-        { 
-            q: "Em relação a normas do SESMT (como o uso de EPIs):", 
-            opts: [
-                {t: "Uso porque é prático e necessário para eu continuar focado na produção.", dim: 'D'}, 
-                {t: "Incentivo os colegas a usarem e sempre lembro a equipe do assunto.", dim: 'I'}, 
-                {t: "Uso sempre, pois a rotina segura e previsível me traz tranquilidade.", dim: 'S'},
-                {t: "Sigo rigorosamente à risca, pois a norma foi feita e precisa ser auditada.", dim: 'C'}
-            ] 
-        }
+        { q: "1. Num dia de alto volume de separação e pressão por metas, como você age?", opts: [{t: "Tomo a frente, acelero o processo e foco em bater a meta rápido.", dim: 'D'}, {t: "Animo a equipe e peço a colaboração de todos para agilizarmos o clima.", dim: 'I'}, {t: "Mantenho meu ritmo constante para não me estressar nem errar.", dim: 'S'}, {t: "Verifico se todos os procedimentos estão corretos para evitar retrabalho.", dim: 'C'}] },
+        { q: "2. Diante de um conflito inesperado entre colegas no armazém:", opts: [{t: "Enfrento a situação, aponto quem está errado e exijo foco na operação.", dim: 'D'}, {t: "Tento mediar com conversa e bom humor para não pesar o ambiente.", dim: 'I'}, {t: "Ouço os dois lados pacientemente buscando manter a paz no grupo.", dim: 'S'}, {t: "Recorro às normas da empresa e ao código de conduta para resolver.", dim: 'C'}] },
+        { q: "3. Quando um novo sistema operacional (WMS) é implantado:", opts: [{t: "Quero usar logo na prática, testando e aprendendo no erro e acerto.", dim: 'D'}, {t: "Gosto de perguntar aos outros e trocar ideias sobre como o sistema funciona.", dim: 'I'}, {t: "Prefiro que me ensinem com calma, passo a passo, antes de eu assumir.", dim: 'S'}, {t: "Preciso ler o manual e entender toda a lógica por trás dos botões.", dim: 'C'}] },
+        { q: "4. Ao lidar com as Normas de Segurança do SESMT (NRs / EPIs):", opts: [{t: "Uso de forma prática para não ter problemas e focar na minha produção.", dim: 'D'}, {t: "Incentivo os colegas a usar e costumo ser o porta-voz do assunto.", dim: 'I'}, {t: "Uso sempre, a rotina segura e previsível me dá tranquilidade para trabalhar.", dim: 'S'}, {t: "Sigo rigorosamente, pois a regra existe para ser cumprida e auditada.", dim: 'C'}] },
+        { q: "5. O que mais te motiva no seu dia a dia profissional?", opts: [{t: "Desafios difíceis, superar metas e ter autonomia.", dim: 'D'}, {t: "Reconhecimento público, fazer networking e ambiente descontraído.", dim: 'I'}, {t: "Estabilidade, saber exatamente o que esperam de mim e segurança.", dim: 'S'}, {t: "Fazer um trabalho perfeito, com alta qualidade e sem margem para erros.", dim: 'C'}] },
+        { q: "6. Como você prefere que o seu Gestor passe uma tarefa?", opts: [{t: "Que seja direto: 'O que precisa ser feito e para quando'. O resto eu resolvo.", dim: 'D'}, {t: "Que bata um papo rápido, explique o contexto e me dê liberdade para criar.", dim: 'I'}, {t: "Que explique com clareza como quer que seja feito e que me dê apoio.", dim: 'S'}, {t: "Que passe todos os detalhes, dados técnicos e métricas esperadas por escrito.", dim: 'C'}] },
+        { q: "7. Quando comete um erro operacional na logística:", opts: [{t: "Assumo rápido, conserto na hora e sigo em frente sem drama.", dim: 'D'}, {t: "Fico chateado, peço desculpas à equipe e tento compensar ajudando os outros.", dim: 'I'}, {t: "Sinto que quebrei a confiança, demoro um pouco para me recuperar do susto.", dim: 'S'}, {t: "Analiso onde o processo falhou para garantir que o mesmo erro não se repita.", dim: 'C'}] },
+        { q: "8. Em reuniões de alinhamento de turno:", opts: [{t: "Quero que seja rápida, direto ao ponto e que defina as metas do dia.", dim: 'D'}, {t: "Gosto de falar, dar minhas ideias e engajar a equipe para o turno.", dim: 'I'}, {t: "Prefiro ouvir, anotar o que mudou e concordar com o consenso da maioria.", dim: 'S'}, {t: "Gosto quando apresentam números, gráficos e relatórios detalhados.", dim: 'C'}] },
+        { q: "9. Seu estilo de organização do local de trabalho (5S):", opts: [{t: "Organizado o suficiente para eu achar o que preciso e ser rápido.", dim: 'D'}, {t: "Pode ser um pouco caótico, priorizo a interação, não a arrumação.", dim: 'I'}, {t: "Sempre arrumado da mesma forma, gosto das minhas coisas no mesmo lugar.", dim: 'S'}, {t: "Impecável. Tudo tem seu lugar, etiqueta e padrão visual exato.", dim: 'C'}] },
+        { q: "10. Tomada de Decisão em momento de emergência:", opts: [{t: "Decido na hora, assumo o risco. É melhor agir rápido do que não agir.", dim: 'D'}, {t: "Tento envolver as pessoas próximas rapidamente para decidirmos juntos.", dim: 'I'}, {t: "Procuro o líder ou o procedimento padrão antes de fazer qualquer movimento.", dim: 'S'}, {t: "Analiso todas as variáveis e consequências lógicas antes de dar o próximo passo.", dim: 'C'}] }
     ];
 
-    let quizQuestions = [], currentQ = 0, selectedDim = null, myChart = null;
+    let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, myChartBar = null;
     let scores = { D: 0, I: 0, S: 0, C: 0 };
 
     function startQuiz() {
@@ -460,10 +441,10 @@
             return;
         }
 
-        if(!nome || !mat) return alert('Por favor, preencha o Usuário e a Senha.');
+        if(!nome || !mat) return alert('Por favor, preencha o Usuário e a Senha (Matrícula).');
 
         database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value').then(snapshot => {
-            if(snapshot.exists()) return alert("Você já realizou este mapeamento comportamental!");
+            if(snapshot.exists()) return alert("O Mapeamento para esta matrícula já foi realizado e está sob análise do RH/Gestão.");
             
             sessionStorage.setItem('tempName', nome);
             sessionStorage.setItem('tempMat', mat);
@@ -480,7 +461,7 @@
 
     function loadQuestion() {
         const q = quizQuestions[currentQ];
-        document.getElementById('q-counter').innerText = `Situação ${currentQ + 1} de ${quizQuestions.length}`;
+        document.getElementById('q-counter').innerText = `Análise ${currentQ + 1} de ${quizQuestions.length}`;
         document.getElementById('q-text').innerText = q.q;
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -510,9 +491,8 @@
     function generateDevolutiva() {
         const nome = sessionStorage.getItem('tempName');
         const matricula = sessionStorage.getItem('tempMat');
-        const dataAvaliacao = new Date().toLocaleDateString('pt-BR');
         
-        const total = quizQuestions.length;
+        const total = quizQuestions.length; // 10
         const pctScores = {
             D: Math.round((scores.D / total) * 100),
             I: Math.round((scores.I / total) * 100),
@@ -520,7 +500,8 @@
             C: Math.round((scores.C / total) * 100)
         };
 
-        const resultData = { nome, matricula, date: dataAvaliacao, pctScores };
+        const resultData = { nome, matricula, date: new Date().toLocaleDateString('pt-BR'), pctScores };
+        
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('loading-section').style.display = 'block';
 
@@ -530,60 +511,157 @@
         });
     }
 
+    // ==========================================
+    // 3.1 MOTOR DO DASHBOARD OMNICHANNEL DE HR
+    // ==========================================
     function renderDevolutivaView(nome, pct, isColaborador = false) {
-        document.getElementById('res-nome').innerText = nome;
         
-        let perfilNome = "", perfilDesc = "", perfilBen = "";
-        let maxVal = Math.max(pct.D, pct.I, pct.S, pct.C);
-        
-        if (maxVal === pct.D) {
-            perfilNome = "EXECUTOR (Dominância)";
-            perfilDesc = "Focado em resultados, age com rapidez e lida bem com desafios e pressão logística. Tem perfil de liderança nata e não tem medo de tomar a frente das operações.";
-            perfilBen = "Excelente para situações de crise, batimento de metas e liderança de linha de frente em emergências (ótimo para liderar a Brigada).";
-        } else if (maxVal === pct.I) {
-            perfilNome = "COMUNICADOR (Influência)";
-            perfilDesc = "Carismático, persuasivo e adora trabalhar em equipa. Tem facilidade em integrar novatos e manter o clima do armazém leve.";
-            perfilBen = "Essencial para engajamento da equipa, aplicação de formações do SESMT e facilidade em comunicar riscos.";
-        } else if (maxVal === pct.S) {
-            perfilNome = "PLANEJADOR (Estabilidade)";
-            perfilDesc = "Calmo, confiável e gosta de rotinas estruturadas. Prefere um ritmo constante a picos de stress, e é um ótimo ouvinte.";
-            perfilBen = "Traz harmonia para a operação. Excelente para seguir procedimentos do SESMT sem desvios, sendo um ponto de apoio confiável.";
+        // 1. Identificação do Perfil Primário e Secundário
+        const order = [
+            { id: 'D', val: pct.D, name: "Executor (D)", color: "var(--disc-d)" },
+            { id: 'I', val: pct.I, name: "Comunicador (I)", color: "var(--disc-i)" },
+            { id: 'S', val: pct.S, name: "Planejador (S)", color: "var(--disc-s)" },
+            { id: 'C', val: pct.C, name: "Analista (C)", color: "var(--disc-c)" }
+        ].sort((a, b) => b.val - a.val);
+
+        const primario = order[0];
+        const secundario = order[1].val > 0 ? order[1] : { name: "Puro" };
+        const combinacao = `${primario.name.split(' ')[0]}-${secundario.name.split(' ')[0]}`;
+
+        // 2. Indicadores de Tendência Logística
+        const focoPessoas = pct.I + pct.S;
+        const focoTarefas = pct.D + pct.C;
+        const decisaoRapida = pct.D + pct.I;
+        const decisaoCautelosa = pct.S + pct.C;
+
+        let textoPerfil = "";
+        let pontosFortes = "";
+        let atencao = "";
+
+        if (primario.id === 'D') {
+            textoPerfil = "Perfil impulsionado por resultados, metas e desafios. Na logística, atua com extrema velocidade e toma a frente dos problemas. Gosta de autonomia e não foge da pressão.";
+            pontosFortes = "✅ Bater metas agressivas; ✅ Liderar em crises (excelente para a Brigada); ✅ Tomada de decisão sob pressão.";
+            atencao = "Pode atropelar processos (ignorar POPs) para ganhar tempo. Requer acompanhamento para não criar atrito com a equipe devido à comunicação excessivamente direta.";
+        } else if (primario.id === 'I') {
+            textoPerfil = "Perfil movido pela interação humana e influência. É o 'motor anímico' do turno. Possui grande facilidade para resolver conflitos de forma amistosa e engajar a equipe em novos projetos.";
+            pontosFortes = "✅ Facilidade com treinamentos e DDS; ✅ Engajamento da equipe; ✅ Resolução de conflitos leves.";
+            atencao = "Pode perder o foco na tarefa/meta devido à necessidade de socialização. Cuidado com desorganização (5S) e atenção a detalhes em processos fiscais/logísticos.";
+        } else if (primario.id === 'S') {
+            textoPerfil = "Perfil leal, constante e empático. É a base de sustentação da operação logística. Não gosta de mudanças bruscas, preferindo rotinas bem estruturadas e previsibilidade.";
+            pontosFortes = "✅ Cumprimento de processos do SESMT à risca; ✅ Confiabilidade extrema; ✅ Apaziguador nato em momentos de estresse.";
+            atencao = "Dificuldade de adaptação rápida a novos sistemas (ex: novo WMS). Pode travar se for forçado a tomar decisões de alto risco sem apoio da liderança.";
         } else {
-            perfilNome = "ANALISTA (Conformidade)";
-            perfilDesc = "Detalhista, focado em qualidade e regras. Preza por fazer o processo da forma correta e exata, evitando retrabalhos.";
-            perfilBen = "Fundamental para auditorias, conferência de estoque e rigor absoluto no cumprimento das Normas de Segurança (NRs).";
+            textoPerfil = "Perfil analítico, técnico e perfeccionista. O foco é a qualidade e a exatidão. Fundamental para evitar quebras de inventário e garantir auditorias perfeitas.";
+            pontosFortes = "✅ Qualidade e controle de processos; ✅ Foco total em regras (NRs); ✅ Zero retrabalho se o processo for bem definido.";
+            atencao = "Pode apresentar lentidão (baixa produtividade por hora) por excesso de detalhismo. Pode se estressar se a liderança mudar a regra no meio do processo.";
         }
 
-        document.getElementById('perfil-titulo').innerText = "O Seu Perfil: " + perfilNome;
-        document.getElementById('perfil-desc').innerText = perfilDesc;
-        document.getElementById('perfil-beneficios').innerText = perfilBen;
+        // 3. Montagem Dinâmica do HTML do Dashboard
+        const dashHTML = `
+            <div class="card" style="max-width: 100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 3px solid var(--purple-dark); padding-bottom:15px; margin-bottom:20px;">
+                    <div>
+                        <h2 style="color: var(--purple-dark); margin-bottom:5px;">${nome}</h2>
+                        <span class="tag-perfil" style="background:${primario.color};">👑 Primário: ${primario.name}</span>
+                        ${secundario.val > 0 ? `<span class="tag-perfil" style="background:#475569;">🧩 Secundário: ${secundario.name}</span>` : ''}
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="color:var(--text-light); font-size:0.9rem;">Dossiê Profiler</h3>
+                        <p style="font-weight:bold; font-size:1.1rem; color:var(--purple-dark);">${combinacao}</p>
+                    </div>
+                </div>
 
-        const ctx = document.getElementById('polarChart').getContext('2d');
-        if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: ['Dominância (Executor)', 'Influência (Comunicador)', 'Estabilidade (Planejador)', 'Conformidade (Analista)'],
-                datasets: [{
-                    data: [pct.D, pct.I, pct.S, pct.C],
-                    backgroundColor: ['rgba(220, 38, 38, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)'],
-                    borderColor: '#ffffff', borderWidth: 2
-                }]
-            },
-            options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } }
-        });
+                <div class="hr-grid">
+                    <div>
+                        <div class="hr-box" style="margin-bottom:20px;">
+                            <div class="hr-title">Intensidade do Perfil (Radar)</div>
+                            <div class="chart-container" style="max-width: 250px;"><canvas id="radarChart"></canvas></div>
+                        </div>
+
+                        <div class="hr-box">
+                            <div class="hr-title">Métricas de Competência Logística</div>
+                            
+                            <div class="progress-container">
+                                <div class="progress-label"><span>Foco em Metas/Tarefas</span> <span>${focoTarefas}%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: ${focoTarefas}%; background: var(--purple-dark);"></div></div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label"><span>Foco em Clima/Pessoas</span> <span>${focoPessoas}%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: ${focoPessoas}%; background: var(--purple-light);"></div></div>
+                            </div>
+                            <div class="progress-container" style="margin-top:20px;">
+                                <div class="progress-label"><span>Ação e Risco (Decisão Rápida)</span> <span>${decisaoRapida}%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: ${decisaoRapida}%; background: var(--disc-d);"></div></div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label"><span>Análise e Regras (Decisão Cautelosa)</span> <span>${decisaoCautelosa}%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: ${decisaoCautelosa}%; background: var(--disc-c);"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="hr-box" style="height:100%;">
+                            <div class="hr-title">Relatório de People Analytics</div>
+                            
+                            <div class="hr-text-block">
+                                <strong>🧠 Comportamento Base:</strong><br>
+                                ${textoPerfil}
+                            </div>
+
+                            <div class="hr-text-block">
+                                <strong>🚀 Pontos Fortes na Operação:</strong><br>
+                                ${pontosFortes}
+                            </div>
+
+                            <div class="hr-text-block" style="background:#fef2f2; border-left:4px solid var(--red-sesmt); padding:10px; border-radius:4px;">
+                                <strong>⚠️ Pontos de Atenção (Gatilhos de Estresse):</strong><br>
+                                ${atencao}
+                            </div>
+
+                            <div class="hr-text-block" style="background:#f0fdf4; border-left:4px solid var(--disc-s); padding:10px; border-radius:4px; margin-top:15px;">
+                                <strong>💡 Dica de Gestão:</strong><br>
+                                Para extrair o melhor deste perfil, ${primario.id === 'D' ? 'dê autonomia e metas claras de curto prazo.' : primario.id === 'I' ? 'reconheça-o em público e dê abertura para ele expressar ideias.' : primario.id === 'S' ? 'dê feedbacks gentis e aviso prévio sobre mudanças de rotina.' : 'forneça dados precisos, POPs detalhados e elogie a qualidade do trabalho.'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="area-botao-gestor" style="text-align:center; margin-top:20px;"></div>
+            </div>
+        `;
+
+        document.getElementById('result-content').innerHTML = dashHTML;
+
+        // Renderiza o Gráfico Radar
+        setTimeout(() => {
+            const ctxR = document.getElementById('radarChart').getContext('2d');
+            if(myChartRadar) myChartRadar.destroy();
+            myChartRadar = new Chart(ctxR, {
+                type: 'polarArea',
+                data: {
+                    labels: ['Dominância (D)', 'Influência (I)', 'Estabilidade (S)', 'Conformidade (C)'],
+                    datasets: [{
+                        data: [pct.D, pct.I, pct.S, pct.C],
+                        backgroundColor: ['rgba(220, 38, 38, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(59, 130, 246, 0.7)'],
+                        borderColor: '#ffffff', borderWidth: 2
+                    }]
+                },
+                options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } }
+            });
+        }, 100);
+        
+        switchTab('devolutivas');
+        document.getElementById('result-content').style.display = 'block';
         
         const areaBotao = document.getElementById('area-botao-gestor');
-        switchTab('devolutivas');
-        
-        // Se for colaborador, no final mostra um botão de recarregar a página (sair)
         areaBotao.innerHTML = isColaborador 
-            ? '<button class=\"btn btn-outline\" onclick=\"location.href=window.location.href.split(\\\'?\\\')[0]\">Finalizar (Sair)</button>' 
-            : '<button class=\"btn btn-outline\" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar ao Painel</button>';
+            ? '<button class=\"btn\" style="width:250px;" onclick=\"location.href=window.location.href.split(\\\'?\\\')[0]\">Finalizar e Sair</button>' 
+            : '<button class=\"btn btn-outline\" style="width:250px;" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar ao Painel</button>';
     }
 
     // ==========================================
-    // 4. AVALIAÇÃO DA LIDERANÇA BVI E IA (PONDERADA)
+    // 4. AVALIAÇÃO BVI E IA (LIDERANÇA)
     // ==========================================
     let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
 
@@ -594,11 +672,10 @@
         document.getElementById('estrela-nome-candidato').innerText = item.nome;
         
         document.getElementById('mini-curriculo').innerHTML = `
-            <strong>Respostas Estratégicas do Candidato:</strong><br>
-            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${item.cursos || 'Nenhum informado'}</strong><br>
-            <span style="color:#475569;">Experiência:</span> ${item.exp || 'N/A'} | <span style="color:#475569;">Disponibilidade:</span> ${item.disp || 'N/A'}<br>
-            <span style="color:#475569;">CNH:</span> ${item.cnh || 'N/A'} | <span style="color:#475569;">Fardamento:</span> ${item.fardamento || 'N/A'}<br>
-            <span style="color:#475569;">Fobia:</span> ${item.fobia || 'N/A'}
+            <strong>Respostas Técnicas (BVI):</strong><br>
+            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${item.cursos || 'Nenhum'}</strong><br>
+            <span style="color:#475569;">Exp:</span> ${item.exp || 'N/A'} | <span style="color:#475569;">Disp:</span> ${item.disp || 'N/A'}<br>
+            <span style="color:#475569;">CNH:</span> ${item.cnh || 'N/A'} | <span style="color:#475569;">Fobia:</span> ${item.fobia || 'N/A'}
         `;
 
         Object.keys(avaliacaoAtualBVI.notas).forEach(crit => setStar(crit, avaliacaoAtualBVI.notas[crit]));
@@ -613,18 +690,13 @@
 
     function gerarParecerIA() {
         const n = avaliacaoAtualBVI.notas;
-        if(Object.values(n).includes(0)) return alert("Por favor, preencha todas as 5 estrelas antes de gerar o Parecer.");
+        if(Object.values(n).includes(0)) return alert("Preencha todas as 5 estrelas antes da IA gerar o Parecer.");
         
-        // CÁLCULO DA MÉDIA PONDERADA
         const media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
+        let p = "Análise da Liderança Logística (Peso maior em Desenvolvimento e Assiduidade):\n\n";
         
-        let p = "Avaliando os critérios logísticos (com maior peso em Desenvolvimento Técnico e Assiduidade):\n\n";
-        
-        if(media >= 3.5) {
-            p += "O colaborador atende perfeitamente aos requisitos rigorosos da operação. Demonstra ótimo domínio técnico e assiduidade constante, além de postura profissional que agrega segurança à equipa.\n\nParecer Final da Liderança: APTO.";
-        } else {
-            p += "O colaborador apresenta pontos de melhoria nos pilares críticos (Técnico/Assiduidade). Neste momento, com base nos filtros da gestão e necessidades operacionais, o perfil não está aderente à exigência da Brigada.\n\nParecer Final da Liderança: INAPTO.";
-        }
+        if(media >= 3.5) p += "Perfil com alta aderência técnica e comportamental. Demonstra confiabilidade, postura de liderança e comprometimento com o turno.\n\nParecer: APTO (Altamente Recomendado).";
+        else p += "Perfil com pontos de atenção nos pilares críticos operacionais. Necessita de desenvolvimento na base antes de assumir papéis de risco.\n\nParecer: INAPTO (Neste momento).";
         
         document.getElementById('avalia-obs').value = p;
     }
@@ -636,51 +708,41 @@
         database.ref('inscricoes_bvi/' + avaliacaoAtualBVI.id).update({
             avaliacao_gestor: avaliacaoAtualBVI.notas, 
             observacao_gestor: document.getElementById('avalia-obs').value.trim()
-        }).then(() => { 
-            alert("Avaliação guardada com sucesso!"); 
-            cancelarAvaliacaoBVI(); 
-        });
+        }).then(() => { alert("Avaliação da Liderança salva!"); cancelarAvaliacaoBVI(); });
     }
 
     // ==========================================
-    // 5. CARREGAR DADOS DO GESTOR E PDF (RANKING PONDERADO)
+    // 5. CARREGAR DADOS DO GESTOR & RANKING PDF
     // ==========================================
     function loadAdminData() {
-        // Carrega Avaliações DISC
         database.ref('avaliacoes').on('value', snap => {
             const container = document.getElementById('lista-avaliacoes'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação DISC registada.</p>';
+            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma avaliação DISC registada.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div'); div.className = 'gestor-item';
-                div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.date}</small></div>
-                                 <div style="display:flex; gap:10px;">
-                                 <button class="btn-acao" onclick="renderDevolutivaView('${item.nome}', ${JSON.stringify(item.pctScores)}, false)">Ver Perfil</button>
+                div.innerHTML = `<div><strong style="color:var(--purple-dark); font-size:1.05rem;">${item.nome}</strong><br><small style="color:var(--text-light);">Matrícula: ${item.matricula} | ${item.date}</small></div>
+                                 <div style="display:flex; gap:8px;">
+                                 <button class="btn-acao" onclick="renderDevolutivaView('${item.nome}', ${JSON.stringify(item.pctScores)}, false)">📊 Abrir Dossiê</button>
                                  <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button></div>`;
                 container.appendChild(div);
             });
         });
 
-        // Carrega Inscrições BVI
         database.ref('inscricoes_bvi').on('value', snap => {
             const container = document.getElementById('lista-bvi'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma inscrição BVI registada.</p>';
+            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma inscrição BVI.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const jaAvaliou = !!item.avaliacao_gestor;
-                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Parecer" : "Avaliar Candidato";
+                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Parecer" : "Avaliar (IA)";
                 const corBtnAvalia = jaAvaliou ? "background: #f59e0b; color: white;" : "background: var(--purple-light); color: white;";
-                
-                let previewCursos = item.cursos ? `<strong>Cursos:</strong> ${item.cursos}` : 'Nenhum curso extra';
                 
                 const div = document.createElement('div'); div.className = 'gestor-item gestor-item-bvi';
                 div.innerHTML = `
                     <div style="width: 100%; display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <strong style="color:var(--red-sesmt); font-size: 1.1rem;">${item.nome}</strong> (${item.matricula})<br>
-                            <span style="font-size: 0.85rem; color: var(--text-main);">
-                                <strong>Setor:</strong> ${item.setor} | <strong>Turno:</strong> ${item.turno}<br>
-                                <span style="color:#b45309;">${previewCursos}</span><br>
-                                <span style="color: var(--text-light); font-size: 0.8rem;">Data Inscrição: ${item.data}</span>
-                            </span>
+                            <span style="font-size: 0.85rem; color: var(--text-main);"><strong>Setor:</strong> ${item.setor} | <strong>Turno:</strong> ${item.turno}<br>
+                            <span style="color:#b45309;"><strong>Cursos:</strong> ${item.cursos || 'Nenhum'}</span></span>
                         </div>
                         <div style="display:flex; flex-direction: column; gap:8px;">
                             <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">${textoBtnAvalia}</button>
@@ -701,16 +763,14 @@
     }
 
     function enviarWhatsAppLink(tipo) { 
-        // A geração do link pelo Gestor aplica automaticamente a trava de URL correspondente
         const urlBase = window.location.href.split('?')[0]; 
-        
         let linkFinal = urlBase;
         if(tipo === 'bvi') linkFinal = urlBase + '?form=bvi';
         else if(tipo === 'disc') linkFinal = urlBase + '?form=disc';
         
         const msg = tipo === 'bvi' 
-            ? `Olá equipa!\n\nEstão abertas as inscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcedam ao formulário aqui:\n${linkFinal}` 
-            : `Olá equipa!\n\nAcedam ao Mapeamento Comportamental DISC:\n${linkFinal}`;
+            ? `Olá equipa!\n\nInscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcedam ao formulário aqui:\n${linkFinal}` 
+            : `Olá equipa!\n\nPor favor, realizem o Mapeamento Comportamental Profiler neste link:\n${linkFinal}`;
             
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
@@ -721,12 +781,10 @@
             let inscritos = [];
             snap.forEach(c => {
                 let d = c.val(); 
-                // Calcula a Média Ponderada para ordenar o PDF
                 d.media = d.avaliacao_gestor ? ((d.avaliacao_gestor.desenvolvimento * 3.5) + (d.avaliacao_gestor.assiduidade * 2.5) + (d.avaliacao_gestor.postura * 2.0) + (d.avaliacao_gestor.iniciativa * 1.0) + (d.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
                 inscritos.push(d);
             });
             
-            // Ordena os inscritos da maior pontuação para a menor
             inscritos.sort((a,b) => b.media - a.media);
             
             let html = `<html><head><title>BVI Ranking Oficial</title><style>body{font-family:Arial; font-size:12px; color:#1e293b; padding: 20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #e2e8f0; padding:10px; text-align:left; vertical-align: top;} th{background:#1e1b4b; color:white; font-size:10px; text-transform:uppercase;} .nota-box{background:#1e1b4b; color:white; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;} .obs-texto{font-style:italic; color:#334155; margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:5px;}</style></head><body>

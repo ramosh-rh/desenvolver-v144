@@ -55,6 +55,7 @@
         .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); font-size: 0.9rem;}
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; transition: border 0.2s; background: #f8fafc; font-family: inherit;}
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: var(--purple-light); background: var(--white); }
+        .input-group input[readonly] { background: #e2e8f0; color: #64748b; cursor: not-allowed; }
 
         .btn { background: var(--purple-grad); color: var(--white); border: none; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: opacity 0.2s; text-transform: uppercase; letter-spacing: 1px;}
         .btn:hover { opacity: 0.9; }
@@ -107,7 +108,7 @@
     </div>
 
     <div class="tabs" id="main-tabs">
-        <button class="tab-btn active" id="tab-inicio" onclick="switchTab('inicio')">Avaliação</button>
+        <button class="tab-btn active" id="tab-inicio" onclick="switchTab('inicio')">Avaliação DISC</button>
         <button class="tab-btn" id="tab-devolutivas" onclick="switchTab('devolutivas')">Resultado</button>
     </div>
 
@@ -119,7 +120,8 @@
                     <div class="avatar-icon">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                     </div>
-                    <h2 style="text-align: center; margin-bottom: 25px; color: var(--purple-dark);">Acesso ao Sistema</h2>
+                    <h2 style="text-align: center; margin-bottom: 5px; color: var(--purple-dark);">Acesso ao Sistema</h2>
+                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 25px;">Mapeamento Comportamental</p>
                     
                     <div class="input-group">
                         <label>Usuário (Nome Completo)</label>
@@ -138,15 +140,15 @@
                 <div style="font-size: 0.85rem; font-weight: 700; color: var(--purple-light); text-transform: uppercase; margin-bottom: 10px;" id="q-counter"></div>
                 <div class="question-text" id="q-text"></div>
                 <div id="options-container"></div>
-                <button class="btn" id="next-btn" style="margin-top: 25px;" onclick="nextQuestion()" disabled>Confirmar</button>
+                <button class="btn" id="next-btn" style="margin-top: 25px;" onclick="nextQuestion()" disabled>Confirmar Resposta</button>
             </div>
-            <div class="card" id="loading-section" style="display: none; text-align: center;"><h3 style="color: var(--purple-light);">Processando dados na nuvem...</h3></div>
+            <div class="card" id="loading-section" style="display: none; text-align: center;"><h3 style="color: var(--purple-light);">Processando Algoritmo Comportamental...</h3></div>
         </div>
 
         <div id="view-devolutivas" class="view">
             <div id="result-content" style="display: none;">
                 <div class="card">
-                    <h3 style="text-align: center; font-size: 0.9rem;">MAPA ANALÍTICO</h3>
+                    <h3 style="text-align: center; font-size: 0.9rem;">MAPA COMPORTAMENTAL (DISC / PROFILER)</h3>
                     <h2 style="text-align: center; color: var(--purple-dark);" id="res-nome"></h2>
                     <div class="chart-container"><canvas id="polarChart"></canvas></div>
                 </div>
@@ -154,7 +156,7 @@
                     <h2 id="perfil-titulo" style="color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 10px;"></h2>
                     <p id="perfil-desc" style="margin-bottom: 20px; line-height: 1.6;"></p>
                     <div style="background: #faf5ff; border-left: 5px solid var(--purple-light); padding: 20px; border-radius: 0 8px 8px 0; margin-bottom: 20px;">
-                        <h4 style="color: var(--purple-light); margin-bottom: 8px;">🎯 Benefícios Organizacionais</h4>
+                        <h4 style="color: var(--purple-light); margin-bottom: 8px;">🎯 Atuação na Logística & SESMT</h4>
                         <p id="perfil-beneficios"></p>
                     </div>
                     <div id="area-botao-gestor"></div>
@@ -164,11 +166,9 @@
 
         <div id="view-form-bvi" class="view">
             <div class="card" style="border-top: 5px solid var(--red-sesmt);">
-                
                 <div style="text-align: center; margin-bottom: 20px;">
                     <h2 style="color: var(--red-sesmt);">INSCRIÇÃO BVI</h2>
                     <p style="font-weight: 600;">Brigada Voluntária de Incêndio - 2026</p>
-                    <p style="font-size: 0.85rem; color: var(--text-light);">Período: 18/05/2026 a 29/05/2026</p>
                 </div>
 
                 <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">Dados Pessoais</h3>
@@ -177,10 +177,7 @@
                     <input type="text" id="bvi-nome" placeholder="Digite seu nome completo">
                 </div>
                 <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>Matrícula</label>
-                        <input type="text" id="bvi-matricula" placeholder="Ex: 4589">
-                    </div>
+                    <div style="flex: 1;"><label>Matrícula</label><input type="text" id="bvi-matricula" placeholder="Ex: 4589"></div>
                     <div style="flex: 1;">
                         <label>Turno</label>
                         <select id="bvi-turno">
@@ -193,81 +190,38 @@
                     </div>
                 </div>
                 <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>Setor / Função</label>
-                        <input type="text" id="bvi-setor" placeholder="Ex: Separação">
-                    </div>
-                    <div style="flex: 1;">
-                        <label>WhatsApp</label>
-                        <input type="text" id="bvi-telefone" placeholder="(21) 99999-9999">
-                    </div>
+                    <div style="flex: 1;"><label>Setor / Função</label><input type="text" id="bvi-setor" placeholder="Ex: Separação"></div>
+                    <div style="flex: 1;"><label>WhatsApp</label><input type="text" id="bvi-telefone" placeholder="(21) 99999-9999"></div>
                 </div>
 
                 <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin: 25px 0 15px;">Perfil Técnico para a Brigada</h3>
-                
                 <div class="input-group">
                     <label>1. Já atuou como Brigadista de Incêndio anteriormente?</label>
-                    <select id="bvi-exp">
-                        <option value="">Selecione...</option>
-                        <option value="Sim, já tenho experiência">Sim, já tenho experiência</option>
-                        <option value="Não, é minha primeira vez">Não, será minha primeira vez</option>
-                    </select>
+                    <select id="bvi-exp"><option value="">Selecione...</option><option value="Sim">Sim, já tenho experiência</option><option value="Não">Não, será minha primeira vez</option></select>
                 </div>
                 <div class="input-group">
                     <label>2. Possui alguma fobia ou restrição (Ex: altura, local fechado, sangue)?</label>
-                    <select id="bvi-fobia">
-                        <option value="">Selecione...</option>
-                        <option value="Não possuo nenhuma restrição">Não possuo restrições</option>
-                        <option value="Sim, possuo restrições/fobias">Sim, possuo restrições/fobias</option>
-                    </select>
+                    <select id="bvi-fobia"><option value="">Selecione...</option><option value="Não possuo">Não possuo restrições</option><option value="Possuo restrições">Sim, possuo restrições/fobias</option></select>
                 </div>
-                
                 <div class="input-group" style="display: flex; gap: 10px;">
                     <div style="flex: 1;">
-                        <label>3. Tamanho do Fardamento</label>
-                        <select id="bvi-fardamento">
-                            <option value="">Selecione...</option>
-                            <option value="P">P</option>
-                            <option value="M">M</option>
-                            <option value="G">G</option>
-                            <option value="GG">GG</option>
-                            <option value="EXG">EXG</option>
-                        </select>
+                        <label>3. Tamanho da Camisa</label>
+                        <select id="bvi-fardamento"><option value="">Selecione...</option><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option></select>
                     </div>
                     <div style="flex: 1;">
                         <label>4. Possui CNH?</label>
-                        <select id="bvi-cnh">
-                            <option value="">Selecione...</option>
-                            <option value="Não">Não possuo</option>
-                            <option value="Cat. A">Categoria A</option>
-                            <option value="Cat. B">Categoria B</option>
-                            <option value="Cat. AB">Categoria AB</option>
-                            <option value="Cat. D/E">Categoria D ou E</option>
-                        </select>
+                        <select id="bvi-cnh"><option value="">Selecione...</option><option value="Não">Não possuo</option><option value="Cat. B">Categoria B</option><option value="Cat. D/E">Cat. D/E</option></select>
                     </div>
                 </div>
-
                 <div class="input-group">
-                    <label>5. Possui disponibilidade para treinamentos práticos (simulados) em dias específicos?</label>
-                    <select id="bvi-disp">
-                        <option value="">Selecione...</option>
-                        <option value="Sim">Sim, possuo total disponibilidade</option>
-                        <option value="Não">Não possuo disponibilidade extra</option>
-                    </select>
+                    <label>5. Disponibilidade para treinos práticos em dias específicos?</label>
+                    <select id="bvi-disp"><option value="">Selecione...</option><option value="Sim">Sim, tenho disponibilidade</option><option value="Não">Não possuo disponibilidade</option></select>
                 </div>
-
                 <div class="input-group">
-                    <label>6. Possui Cursos Técnicos ou Conhecimentos Relevantes? (Opcional)</label>
-                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Primeiros Socorros, Técnico em Enfermagem, etc..."></textarea>
+                    <label>6. Cursos Técnicos ou Conhecimentos (Opcional)</label>
+                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Primeiros Socorros..."></textarea>
                 </div>
                 
-                <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #991b1b; margin-top: 25px;">
-                    <label style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer;">
-                        <input type="checkbox" id="bvi-termo" style="width: auto; margin-top: 3px;">
-                        <span>Confirmo meu interesse em participar da Brigada e declaro que as informações acima são verdadeiras.</span>
-                    </label>
-                </div>
-
                 <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar e Enviar</button>
             </div>
         </div>
@@ -275,7 +229,6 @@
         <div id="view-sucesso-bvi" class="view" style="text-align: center;">
             <div class="card">
                 <h2 style="color: var(--red-sesmt);">✅ Inscrição Concluída!</h2>
-                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram salvos com sucesso e aguardam a validação da Liderança.</p>
                 <button class="btn btn-outline" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
@@ -285,29 +238,20 @@
                 <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel da Liderança</h2>
                 
                 <div class="gestor-tabs">
-                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Avaliações Logísticas</div>
+                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Avaliações Comportamentais (DISC)</div>
                     <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI</div>
                 </div>
 
                 <div id="gcontent-avalia">
-                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('padrao')">
-                        <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
-                        Partilhar Link (Mapeamento Logístico)
-                    </button>
+                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('padrao')">Partilhar Link (Mapeamento Comportamental)</button>
                     <div id="lista-avaliacoes" style="margin-top: 15px;"></div>
                 </div>
 
                 <div id="gcontent-bvi" style="display: none;">
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">
-                            <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
-                            Link (BVI)
-                        </button>
-                        <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">
-                            🖨️ Imprimir Relatório Oficial
-                        </button>
+                        <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">Link (BVI)</button>
+                        <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">🖨️ Imprimir Relatório Oficial</button>
                     </div>
-
                     <h3 style="margin: 25px 0 10px; color: var(--purple-dark); font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 5px;">✅ Inscrições BVI</h3>
                     <div id="lista-bvi"></div>
                 </div>
@@ -319,14 +263,11 @@
         <div id="view-avalia-estrelas" class="view">
             <div class="card">
                 <h2 style="color: var(--purple-dark); margin-bottom: 5px;">Avaliação Final da Liderança</h2>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">Atribua as notas. A Inteligência do sistema calculará o peso e o parecer de aptidão.</p>
-                
                 <h3 id="estrela-nome-candidato" style="margin-bottom: 10px; color: var(--red-sesmt);">Candidato: -</h3>
-                
-                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;"></div>
+                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;"></div>
 
                 <div class="star-row">
-                    <span class="star-label">1. Desenvolvimento Técnico (Peso Máx: 35%)</span>
+                    <span class="star-label">1. Desenvolvimento Técnico (Peso: 35%)</span>
                     <div class="star-rating" id="stars-desenvolvimento"><span class="star" onclick="setStar('desenvolvimento', 1)">★</span><span class="star" onclick="setStar('desenvolvimento', 2)">★</span><span class="star" onclick="setStar('desenvolvimento', 3)">★</span><span class="star" onclick="setStar('desenvolvimento', 4)">★</span><span class="star" onclick="setStar('desenvolvimento', 5)">★</span></div>
                 </div>
                 <div class="star-row">
@@ -347,8 +288,8 @@
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px; font-size:0.95rem; padding:12px;" onclick="gerarParecerIA()">✨ Gerar Parecer Final (APTO/INAPTO)</button>
-                    <textarea id="avalia-obs" rows="5" placeholder="A IA preencherá o parecer de aptidão aqui..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"></textarea>
+                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px;" onclick="gerarParecerIA()">✨ Gerar Parecer Final (APTO/INAPTO)</button>
+                    <textarea id="avalia-obs" rows="5" placeholder="A IA preencherá o parecer aqui..." style="width: 100%; padding: 10px; border-radius: 6px;"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -395,14 +336,12 @@
 
     function excluirItem(caminho, id) {
         if(confirm("Tem certeza que deseja EXCLUIR este registro?")) {
-            database.ref(caminho + '/' + id).remove()
-            .then(() => alert("Registro apagado com sucesso!"))
-            .catch(err => alert("Erro ao excluir: " + err.message));
+            database.ref(caminho + '/' + id).remove().then(() => alert("Apagado!")).catch(e => alert(e));
         }
     }
 
     // ==========================================
-    // 2. FORMULÁRIO DO COLABORADOR (BVI LIVRE)
+    // 2. FORMULÁRIO BVI (INSCRIÇÃO)
     // ==========================================
     function enviarInscricaoBVI() {
         const nome = document.getElementById('bvi-nome').value.trim();
@@ -417,289 +356,307 @@
         const cnh = document.getElementById('bvi-cnh').value;
         const disp = document.getElementById('bvi-disp').value;
         const cursos = document.getElementById('bvi-cursos').value.trim();
-        const termo = document.getElementById('bvi-termo').checked;
 
         if(!nome || !matricula || !setor || !turno || !telefone) return alert("Preencha todos os dados pessoais.");
-        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda todas as perguntas do Perfil Técnico.");
-        if(!termo) return alert("É necessário aceitar os termos da Brigada.");
+        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda todas as perguntas técnicas.");
 
         database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(matricula).once('value').then(snap => {
-            if(snap.exists()) return alert("Sua matrícula já possui uma inscrição ativa!");
-
-            const dadosBVI = { 
-                nome, matricula, setor, turno, telefone, 
-                exp, fobia, fardamento, cnh, disp, cursos,
-                data: new Date().toLocaleDateString('pt-BR') 
-            };
-
+            if(snap.exists()) return alert("Matrícula já cadastrada!");
+            const dadosBVI = { nome, matricula, setor, turno, telefone, exp, fobia, fardamento, cnh, disp, cursos, data: new Date().toLocaleDateString('pt-BR') };
             database.ref('inscricoes_bvi').push(dadosBVI).then(() => switchTab('sucesso-bvi'));
         });
     }
 
     // ==========================================
-    // 3. AVALIAÇÃO DA LIDERANÇA COM PESOS
+    // 3. NOVO MAPEAMENTO COMPORTAMENTAL (DISC)
+    // ==========================================
+    // D = Dominância (Executor), I = Influência (Comunicador), S = Estabilidade (Planejador), C = Conformidade (Analista)
+    const allQuestions = [
+        { 
+            q: "Em um dia de alto volume de separação e pouco tempo, como você age?", 
+            opts: [
+                {t: "Tomo a frente, acelero o processo e foco em bater a meta rápido.", dim: 'D'}, 
+                {t: "Animo a equipe, converso e peço a colaboração de todos para agilizarmos.", dim: 'I'}, 
+                {t: "Mantenho meu ritmo constante e tranquilo, para não me estressar nem errar.", dim: 'S'},
+                {t: "Verifico se todos os procedimentos estão corretos para evitar retrabalho logístico.", dim: 'C'}
+            ] 
+        },
+        { 
+            q: "Quando um novo procedimento (ou sistema) é implementado na operação:", 
+            opts: [
+                {t: "Gosto de ir direto para a prática e aprender fazendo.", dim: 'D'}, 
+                {t: "Gosto de trocar ideias com os colegas sobre a novidade.", dim: 'I'}, 
+                {t: "Prefiro ser treinado com calma e seguir o passo a passo seguro.", dim: 'S'},
+                {t: "Preciso ler o manual e entender a lógica das regras antes de aplicar.", dim: 'C'}
+            ] 
+        },
+        { 
+            q: "Ao lidar com um conflito ou erro na equipe:", 
+            opts: [
+                {t: "Enfrento o problema de imediato, aponto o erro e resolvo.", dim: 'D'}, 
+                {t: "Tento mediar a situação com conversa e bom humor para não ficar um clima pesado.", dim: 'I'}, 
+                {t: "Ouço ambos os lados pacientemente para manter a harmonia do grupo.", dim: 'S'},
+                {t: "Recorro às normas e POPs da empresa para ver quem tem razão tecnicamente.", dim: 'C'}
+            ] 
+        },
+        { 
+            q: "Em relação a normas do SESMT (como o uso de EPIs):", 
+            opts: [
+                {t: "Uso porque é prático e necessário para eu continuar focado na produção.", dim: 'D'}, 
+                {t: "Incentivo os colegas a usarem e sempre lembro a equipe do assunto.", dim: 'I'}, 
+                {t: "Uso sempre, pois a rotina segura e previsível me traz tranquilidade.", dim: 'S'},
+                {t: "Sigo rigorosamente à risca, pois a norma foi feita e precisa ser auditada.", dim: 'C'}
+            ] 
+        }
+    ];
+
+    let quizQuestions = [], currentQ = 0, selectedDim = null, myChart = null;
+    let scores = { D: 0, I: 0, S: 0, C: 0 };
+
+    function startQuiz() {
+        const nome = document.getElementById('user-name').value.trim();
+        const mat = document.getElementById('user-id').value.trim();
+        
+        if(nome.toLowerCase() === 'gestor' && mat === '144') {
+            document.getElementById('login-wrapper').style.display = 'none';
+            switchTab('gestor');
+            loadAdminData();
+            return;
+        }
+
+        if(!nome || !mat) return alert('Por favor, preencha o Usuário e a Senha.');
+
+        database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value').then(snapshot => {
+            if(snapshot.exists()) return alert("Você já realizou este mapeamento comportamental!");
+            
+            sessionStorage.setItem('tempName', nome);
+            sessionStorage.setItem('tempMat', mat);
+            quizQuestions = [...allQuestions]; 
+            scores = { D: 0, I: 0, S: 0, C: 0 };
+            currentQ = 0;
+            
+            document.getElementById('login-wrapper').style.display = 'none';
+            document.getElementById('main-tabs').style.display = 'flex'; 
+            document.getElementById('quiz-section').style.display = 'block';
+            loadQuestion();
+        });
+    }
+
+    function loadQuestion() {
+        const q = quizQuestions[currentQ];
+        document.getElementById('q-counter').innerText = `Situação ${currentQ + 1} de ${quizQuestions.length}`;
+        document.getElementById('q-text').innerText = q.q;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        document.getElementById('next-btn').disabled = true;
+
+        q.opts.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'option-card';
+            div.innerText = opt.t;
+            div.onclick = () => {
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                div.classList.add('selected');
+                selectedDim = opt.dim;
+                document.getElementById('next-btn').disabled = false;
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function nextQuestion() {
+        scores[selectedDim] += 1;
+        currentQ++;
+        if(currentQ < quizQuestions.length) loadQuestion();
+        else generateDevolutiva();
+    }
+
+    function generateDevolutiva() {
+        const nome = sessionStorage.getItem('tempName');
+        const matricula = sessionStorage.getItem('tempMat');
+        const dataAvaliacao = new Date().toLocaleDateString('pt-BR');
+        
+        // Converte para Porcentagem
+        const total = quizQuestions.length;
+        const pctScores = {
+            D: Math.round((scores.D / total) * 100),
+            I: Math.round((scores.I / total) * 100),
+            S: Math.round((scores.S / total) * 100),
+            C: Math.round((scores.C / total) * 100)
+        };
+
+        const resultData = { nome, matricula, date: dataAvaliacao, pctScores };
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('loading-section').style.display = 'block';
+
+        database.ref('avaliacoes').push(resultData).then(() => {
+            document.getElementById('loading-section').style.display = 'none';
+            renderDevolutivaView(nome, pctScores, true);
+        });
+    }
+
+    function renderDevolutivaView(nome, pct, isColaborador = false) {
+        document.getElementById('res-nome').innerText = nome;
+        
+        // Identifica o Perfil Maior (Algoritmo Profiler básico)
+        let perfilNome = "";
+        let perfilDesc = "";
+        let perfilBen = "";
+        
+        let maxVal = Math.max(pct.D, pct.I, pct.S, pct.C);
+        
+        if (maxVal === pct.D) {
+            perfilNome = "EXECUTOR (Dominância)";
+            perfilDesc = "Você é focado em resultados, age com rapidez e lida bem com desafios e pressão logística. Tem perfil de liderança nata, gosta de resolver problemas na hora e não tem medo de tomar a frente das operações.";
+            perfilBen = "Excelente para situações de crise, batimento de metas logísticas e liderança de linha de frente em emergências (ótimo para liderar a Brigada).";
+        } else if (maxVal === pct.I) {
+            perfilNome = "COMUNICADOR (Influência)";
+            perfilDesc = "Você é carismático, persuasivo e adora trabalhar em equipe. Tem facilidade em integrar novatos e manter o clima do armazém leve e motivado.";
+            perfilBen = "Essencial para engajamento de equipe, aplicação de treinamentos do SESMT e facilidade em comunicar riscos para os colegas de forma amigável.";
+        } else if (maxVal === pct.S) {
+            perfilNome = "PLANEJADOR (Estabilidade)";
+            perfilDesc = "Você é calmo, confiável e gosta de rotinas estruturadas. Prefere um ritmo constante a picos de estresse, e é um ótimo ouvinte, ajudando a equilibrar a energia da equipe.";
+            perfilBen = "Traz harmonia para a operação. Excelente para seguir procedimentos do SESMT sem desvios, sendo um ponto de apoio confiável em evacuações e socorros prolongados.";
+        } else {
+            perfilNome = "ANALISTA (Conformidade)";
+            perfilDesc = "Você é detalhista, focado em qualidade e regras. Preza por fazer o processo da forma correta e exata, evitando retrabalhos e quebras de segurança.";
+            perfilBen = "Fundamental para auditorias, conferência de estoque e rigor absoluto no cumprimento das Normas de Segurança (NRs) e protocolos de prevenção de incêndio.";
+        }
+
+        document.getElementById('perfil-titulo').innerText = "Seu Perfil: " + perfilNome;
+        document.getElementById('perfil-desc').innerText = perfilDesc;
+        document.getElementById('perfil-beneficios').innerText = perfilBen;
+
+        // Gráfico Radar DISC
+        const ctx = document.getElementById('polarChart').getContext('2d');
+        if(myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'polarArea',
+            data: {
+                labels: ['Dominância (Executor)', 'Influência (Comunicador)', 'Estabilidade (Planejador)', 'Conformidade (Analista)'],
+                datasets: [{
+                    data: [pct.D, pct.I, pct.S, pct.C],
+                    backgroundColor: ['rgba(220, 38, 38, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)'],
+                    borderColor: '#ffffff', borderWidth: 2
+                }]
+            },
+            options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } }
+        });
+        
+        const areaBotao = document.getElementById('area-botao-gestor');
+        switchTab('devolutivas');
+        areaBotao.innerHTML = isColaborador 
+            ? '<button class=\"btn btn-outline\" onclick=\"location.reload()\">Sair do Sistema</button>' 
+            : '<button class=\"btn btn-outline\" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar ao Painel</button>';
+    }
+
+    // ==========================================
+    // 4. AVALIAÇÃO DA LIDERANÇA BVI E IA
     // ==========================================
     let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
 
     function abrirTelaEstrelas(idCandidate, itemEncoded) {
         const item = JSON.parse(decodeURIComponent(itemEncoded));
-        
         avaliacaoAtualBVI.id = idCandidate;
         avaliacaoAtualBVI.notas = item.avaliacao_gestor || { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 };
-        avaliacaoAtualBVI.obs = item.observacao_gestor || '';
-
         document.getElementById('estrela-nome-candidato').innerText = item.nome;
-        document.getElementById('avalia-obs').value = avaliacaoAtualBVI.obs; 
         
-        const expT = item.exp || 'Não inf.';
-        const fobiaT = item.fobia || 'Não inf.';
-        const cnhT = item.cnh || 'Não inf.';
-        const dispT = item.disp || 'Não inf.';
-        const cursosT = item.cursos || 'Nenhum curso informado';
-
         document.getElementById('mini-curriculo').innerHTML = `
-            <strong>Respostas Estratégicas do Candidato:</strong><br>
-            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${cursosT}</strong><br>
-            <span style="color:#475569;">Experiência prévia:</span> ${expT}<br>
-            <span style="color:#475569;">CNH:</span> ${cnhT} | <span style="color:#475569;">Disponibilidade:</span> ${dispT}<br>
-            <span style="color:#475569;">Fobias:</span> ${fobiaT}
+            <strong>Respostas Estratégicas:</strong><br>
+            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${item.cursos || 'Nenhum'}</strong><br>
+            <span style="color:#475569;">Exp:</span> ${item.exp || 'N/A'} | <span style="color:#475569;">Disp:</span> ${item.disp || 'N/A'}
         `;
 
         Object.keys(avaliacaoAtualBVI.notas).forEach(crit => setStar(crit, avaliacaoAtualBVI.notas[crit]));
         switchTab('avalia-estrelas');
     }
 
-    function setStar(criterio, notaSelecionada) {
-        avaliacaoAtualBVI.notas[criterio] = notaSelecionada;
+    function setStar(criterio, nota) {
+        avaliacaoAtualBVI.notas[criterio] = nota;
         const spans = document.getElementById(`stars-${criterio}`).getElementsByTagName('span');
-        for(let i = 0; i < 5; i++) {
-            if(i < notaSelecionada) spans[i].classList.add('active');
-            else spans[i].classList.remove('active');
-        }
+        for(let i=0; i<5; i++) spans[i].classList[i<nota?'add':'remove']('active');
     }
 
     function gerarParecerIA() {
         const n = avaliacaoAtualBVI.notas;
-        if(n.postura===0 || n.desenvolvimento===0 || n.aptidao===0 || n.assiduidade===0 || n.iniciativa===0){
-            return alert("Por favor, preencha as 5 estrelas antes de gerar o Parecer.");
-        }
-
-        // CÁLCULO DA MÉDIA PONDERADA
-        // Desenvolvimento(3.5) + Assiduidade(2.5) + Postura(2.0) + Iniciativa(1.0) + Aptidão(1.0) = Total 10
-        const mediaPonderada = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
+        if(Object.values(n).includes(0)) return alert("Preencha todas as estrelas primeiro.");
+        const media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
         
-        let parecer = "Avaliando os critérios prioritários definidos pela Liderança (Forte peso em Desenvolvimento Técnico e Assiduidade):\\n\\n";
-
-        if(mediaPonderada >= 3.5) {
-            parecer += "O colaborador atende perfeitamente aos requisitos rigorosos da operação. Demonstra ótimo domínio técnico e assiduidade constante, além de postura profissional que agrega segurança à equipe.\\n\\nParecer Final da Liderança: APTO.";
-        } else {
-            parecer += "O colaborador apresenta pontos de melhoria nos pilares críticos (Técnico/Assiduidade). Neste momento, com base nos filtros da gestão e necessidades operacionais, o perfil não está aderente à exigência da Brigada.\\n\\nParecer Final da Liderança: INAPTO.";
-        }
-
-        // Troca \n por quebras de linha reais no textarea
-        document.getElementById('avalia-obs').value = parecer.replace(/\\n/g, '\n');
+        let p = "Avaliando os critérios logísticos e comportamentais:\n\n";
+        p += media >= 3.5 ? "Colaborador com excelente domínio técnico e assiduidade. Postura altamente aderente aos requisitos.\n\nParecer: APTO." 
+                          : "Colaborador apresenta pontos de melhoria técnica ou comportamental para os requisitos exigidos.\n\nParecer: INAPTO.";
+        document.getElementById('avalia-obs').value = p;
     }
 
     function cancelarAvaliacaoBVI() { switchTab('gestor'); switchGestorTab('bvi'); }
-
     function salvarAvaliacaoBVI() {
-        const n = avaliacaoAtualBVI.notas;
-        if(n.postura===0 || n.desenvolvimento===0 || n.aptidao===0 || n.assiduidade===0 || n.iniciativa===0) return alert("Preencha todas as estrelas.");
-        const obsTexto = document.getElementById('avalia-obs').value.trim();
-
+        if(Object.values(avaliacaoAtualBVI.notas).includes(0)) return alert("Preencha todas as estrelas.");
         database.ref('inscricoes_bvi/' + avaliacaoAtualBVI.id).update({
-            avaliacao_gestor: avaliacaoAtualBVI.notas,
-            observacao_gestor: obsTexto
-        }).then(() => {
-            alert("Avaliação final salva com sucesso!");
-            cancelarAvaliacaoBVI();
-        });
+            avaliacao_gestor: avaliacaoAtualBVI.notas, observacao_gestor: document.getElementById('avalia-obs').value.trim()
+        }).then(() => { alert("Salvo!"); cancelarAvaliacaoBVI(); });
     }
 
     // ==========================================
-    // 4. PAINEL DO GESTOR
+    // 5. CARREGAR DADOS DO GESTOR E PDF
     // ==========================================
-    function switchGestorTab(tab) {
-        document.querySelectorAll('.g-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('gtab-'+tab).classList.add('active');
-        document.getElementById('gcontent-avalia').style.display = 'none';
-        document.getElementById('gcontent-bvi').style.display = 'none';
-        document.getElementById('gcontent-'+tab).style.display = 'block';
-    }
-
-    function enviarWhatsAppLink(tipo) {
-        const urlFinal = window.location.href.split('?')[0] + (tipo === 'bvi' ? '?form=bvi' : '');
-        const msg = tipo === 'bvi' ? `Olá equipe!\n\nInscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nLink:\n${urlFinal}` : `Acessem o Mapeamento:\n${urlFinal}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
     function loadAdminData() {
         database.ref('avaliacoes').on('value', snap => {
-            const container = document.getElementById('lista-avaliacoes');
-            container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light);">Nenhuma avaliação.</p>';
+            const container = document.getElementById('lista-avaliacoes'); container.innerHTML = '';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação DISC.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div'); div.className = 'gestor-item';
-                div.innerHTML = `<div><strong style="color:var(--purple-dark);font-size:1.1rem;">${item.nome}</strong><br><small style="color:var(--text-light);">${item.date}</small></div>
-                                 <div><button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button></div>`;
+                div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.date}</small></div>
+                                 <div style="display:flex; gap:10px;">
+                                 <button class="btn-acao" onclick="renderDevolutivaView('${item.nome}', ${JSON.stringify(item.pctScores)}, false)">Ver Perfil</button>
+                                 <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button></div>`;
                 container.appendChild(div);
             });
         });
 
         database.ref('inscricoes_bvi').on('value', snap => {
-            const container = document.getElementById('lista-bvi');
-            container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light);">Nenhum inscrito ainda.</p>';
-            
+            const container = document.getElementById('lista-bvi'); container.innerHTML = '';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhum inscrito BVI.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
-                const jaAvaliou = !!item.avaliacao_gestor;
-                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Parecer" : "Avaliar";
-                const corBtnAvalia = jaAvaliou ? "background: #f59e0b; color: white;" : "background: var(--purple-light); color: white;";
-                
-                let previewCursos = item.cursos ? `<strong>Cursos:</strong> ${item.cursos}` : '';
-                
-                const div = document.createElement('div');
-                div.className = 'gestor-item gestor-item-bvi';
-                div.innerHTML = `
-                    <div style="width: 100%; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <strong style="color:var(--red-sesmt); font-size: 1.1rem;">${item.nome}</strong> (${item.matricula})<br>
-                            <span style="font-size: 0.85rem; color: var(--text-main);">
-                                <strong>Setor:</strong> ${item.setor} | <strong>Turno:</strong> ${item.turno}<br>
-                                <span style="color:#b45309;">${previewCursos}</span><br>
-                                <span style="color: var(--text-light); font-size: 0.8rem;">Data: ${item.data}</span>
-                            </span>
-                        </div>
-                        <div style="display:flex; flex-direction: column; gap:8px;">
-                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">${textoBtnAvalia}</button>
-                            <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button>
-                        </div>
-                    </div>`;
+                const div = document.createElement('div'); div.className = 'gestor-item gestor-item-bvi';
+                div.innerHTML = `<div><strong style="color:red;">${item.nome}</strong> (${item.matricula})</div>
+                                 <div style="display:flex; gap:8px;">
+                                 <button class="btn-acao" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">Avaliar BVI</button>
+                                 <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button></div>`;
                 container.appendChild(div);
             });
         });
     }
 
-    // ==========================================
-    // 5. IMPRIMIR PDF COM MÉDIA PONDERADA
-    // ==========================================
+    function switchGestorTab(t) {
+        document.querySelectorAll('.g-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById('gtab-'+t).classList.add('active');
+        document.getElementById('gcontent-avalia').style.display = 'none';
+        document.getElementById('gcontent-bvi').style.display = 'none';
+        document.getElementById('gcontent-'+t).style.display = 'block';
+    }
+
+    function enviarWhatsAppLink(t) { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(window.location.href.split('?')[0] + (t==='bvi'?'?form=bvi':''))}`); }
+
     function imprimirBVI() {
         database.ref('inscricoes_bvi').once('value').then(snap => {
-            if(!snap.exists()) return alert("Não há inscritos para imprimir!");
-            
+            if(!snap.exists()) return alert("Sem inscritos!");
             let inscritos = [];
-            snap.forEach(child => {
-                let data = child.val();
-                let media = 0;
-                if(data.avaliacao_gestor) {
-                    const n = data.avaliacao_gestor;
-                    media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
-                }
-                data.media = media; 
-                inscritos.push(data);
+            snap.forEach(c => {
+                let d = c.val(); d.media = d.avaliacao_gestor ? ((d.avaliacao_gestor.desenvolvimento * 3.5) + (d.avaliacao_gestor.assiduidade * 2.5) + (d.avaliacao_gestor.postura * 2.0) + (d.avaliacao_gestor.iniciativa * 1.0) + (d.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
+                inscritos.push(d);
             });
+            inscritos.sort((a,b) => b.media - a.media);
             
-            // Ordenar por nota
-            inscritos.sort((a, b) => b.media - a.media);
+            let html = `<html><head><title>BVI Ranking</title><style>body{font-family:Arial; font-size:12px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ccc; padding:8px; text-align:left;} th{background:#1e1b4b; color:white;}</style></head><body>
+            <h2>RELAÇÃO DE INSCRITOS - BVI (Filtro da Liderança)</h2><table><tr><th>Candidato</th><th>Setor/CNH</th><th>Parecer Oficial (Liderança)</th></tr>`;
             
-            let printWindow = window.open('', '_blank');
-            let dataEmissao = new Date().toLocaleString('pt-BR');
-            
-            let html = `
-                <html>
-                <head>
-                    <title>Relação de Inscritos - BVI</title>
-                    <style>
-                        body { font-family: 'Arial', sans-serif; color: #1e293b; padding: 20px; }
-                        .header { text-align: left; margin-bottom: 25px; border-bottom: 3px solid #dc2626; padding-bottom: 12px; }
-                        .header h1 { color: #1e1b4b; margin: 0 0 5px 0; font-size: 22px; font-weight: 800; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #e2e8f0; padding: 10px 8px; text-align: left; font-size: 11px; vertical-align: top;}
-                        th { background-color: #1e1b4b; color: #ffffff; text-transform: uppercase; font-size: 10px;}
-                        tr:nth-child(even) td { background-color: #f8fafc; }
-                        .nota-box { background: #1e1b4b; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; display: inline-block; margin-bottom:5px;}
-                        .obs-texto { font-style: italic; color: #334155; margin-top: 8px; border-top: 1px dashed #cbd5e1; padding-top: 5px;}
-                        .info-extra { margin-top: 8px; font-size: 9px; background: #e2e8f0; padding: 5px; border-radius: 4px; color: #334155;}
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <p style="text-transform: uppercase; font-weight:bold; color: #64748b; margin-bottom: 5px; font-size: 11px;">Drogaria Venâncio - SESMT</p>
-                        <h1>RELAÇÃO DE INSCRITOS - BVI (Filtro da Liderança)</h1>
-                        <p style="margin:0; font-size:13px; color:#64748b;">Emitido em: ${dataEmissao} | Ordenado pelo Parecer Final</p>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 25%;">Candidato / Perfil</th>
-                                <th style="width: 15%;">Setor / CNH / Uniforme</th>
-                                <th style="width: 60%;">Parecer Oficial da Liderança (Estrelas e Decisão)</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-            
-            inscritos.forEach(item => {
-                let mediaTexto = "-";
-                let avaliacaoDetalhada = "<em>O Gestor ainda não emitiu o Parecer Oficial.</em>";
-
-                if(item.avaliacao_gestor) {
-                    const n = item.avaliacao_gestor;
-                    mediaTexto = `<span class="nota-box">⭐ Média Final: ${item.media.toFixed(1)} / 5.0</span>`;
-                    
-                    let obsGestorHTML = '';
-                    if (item.observacao_gestor && item.observacao_gestor.trim() !== '') {
-                        obsGestorHTML = `<div class="obs-texto">${item.observacao_gestor.replace(/\\n/g, '<br>').replace(/\n/g, '<br>')}</div>`;
-                    }
-
-                    avaliacaoDetalhada = `${mediaTexto}<br>
-                        <div style="font-size:10px; color:#475569;">
-                            <strong>Desenvolvimento Técnico:</strong> ${n.desenvolvimento} | 
-                            <strong>Assiduidade:</strong> ${n.assiduidade} | 
-                            <strong>Postura:</strong> ${n.postura} <br>
-                            <strong>Iniciativa:</strong> ${n.iniciativa} | 
-                            <strong>Aptidão:</strong> ${n.aptidao}
-                        </div>
-                        ${obsGestorHTML}`;
-                }
-
-                html += `
-                    <tr>
-                        <td>
-                            <strong style="font-size: 12px; color:#dc2626;">${item.nome}</strong><br>
-                            <span style="color:#64748b;">Mat: ${item.matricula}</span>
-                            <div class="info-extra">
-                                <strong>Exp:</strong> ${item.exp || 'N/A'}<br>
-                                <strong>Disp. Extra:</strong> ${item.disp || 'N/A'}<br>
-                                <strong>Cursos:</strong> ${item.cursos || 'Nenhum'}
-                            </div>
-                        </td>
-                        <td>
-                            ${item.setor}<br>${item.turno}<br><br>
-                            <strong>CNH:</strong> ${item.cnh || 'N/A'}<br>
-                            <strong>Camisa:</strong> ${item.fardamento || 'N/A'}
-                        </td>
-                        <td>${avaliacaoDetalhada}</td>
-                    </tr>`;
+            inscritos.forEach(i => {
+                html += `<tr><td><strong>${i.nome}</strong><br>Mat: ${i.matricula}<br>Cursos: ${i.cursos||'N/A'}</td><td>${i.setor} / ${i.turno}<br>CNH: ${i.cnh}</td>
+                <td>${i.avaliacao_gestor ? `<strong>Média: ${i.media.toFixed(1)}</strong><br><em>${i.observacao_gestor.replace(/\\n/g, '<br>')}</em>` : 'Pendente'}</td></tr>`;
             });
-            
-            html += `</tbody></table><script>window.onload=function(){window.print();window.close();}<\/script></body></html>`;
-            printWindow.document.write(html);
-            printWindow.document.close();
+            let win = window.open('','_blank'); win.document.write(html + "</table><script>window.onload=function(){window.print();window.close();}<\/script></body></html>"); win.document.close();
         });
     }
-
-    function startQuiz() {
-        const nome = document.getElementById('user-name').value.trim();
-        const mat = document.getElementById('user-id').value.trim();
-        if(nome.toLowerCase() === 'gestor' && mat === '144') {
-            document.getElementById('login-wrapper').style.display = 'none';
-            switchTab('gestor');
-            loadAdminData();
-        } else {
-            alert('Acesso apenas para a Gestão. Use o link correto para inscrições.');
-        }
-    }
 </script>
-
 </body>
 </html>

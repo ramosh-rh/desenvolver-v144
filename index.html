@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Vena144 - Logística e SESMT</title>
+    <title>Portal Vena144 - Mapeamento e SESMT</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -148,7 +148,7 @@
         <div id="view-devolutivas" class="view">
             <div id="result-content" style="display: none;">
                 <div class="card">
-                    <h3 style="text-align: center; font-size: 0.9rem;">MAPA COMPORTAMENTAL (DISC / PROFILER)</h3>
+                    <h3 style="text-align: center; font-size: 0.9rem;">MAPA COMPORTAMENTAL (DISC)</h3>
                     <h2 style="text-align: center; color: var(--purple-dark);" id="res-nome"></h2>
                     <div class="chart-container"><canvas id="polarChart"></canvas></div>
                 </div>
@@ -205,21 +205,28 @@
                 </div>
                 <div class="input-group" style="display: flex; gap: 10px;">
                     <div style="flex: 1;">
-                        <label>3. Tamanho da Camisa</label>
-                        <select id="bvi-fardamento"><option value="">Selecione...</option><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option></select>
+                        <label>3. Tamanho da Camisa / Fardamento</label>
+                        <select id="bvi-fardamento"><option value="">Selecione...</option><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option></select>
                     </div>
                     <div style="flex: 1;">
                         <label>4. Possui CNH?</label>
-                        <select id="bvi-cnh"><option value="">Selecione...</option><option value="Não">Não possuo</option><option value="Cat. B">Categoria B</option><option value="Cat. D/E">Cat. D/E</option></select>
+                        <select id="bvi-cnh"><option value="">Selecione...</option><option value="Não">Não possuo</option><option value="Cat. A">Categoria A</option><option value="Cat. B">Categoria B</option><option value="Cat. AB">Categoria AB</option><option value="Cat. D/E">Categoria D/E</option></select>
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>5. Disponibilidade para treinos práticos em dias específicos?</label>
-                    <select id="bvi-disp"><option value="">Selecione...</option><option value="Sim">Sim, tenho disponibilidade</option><option value="Não">Não possuo disponibilidade</option></select>
+                    <label>5. Disponibilidade para treinos práticos (simulados) em dias específicos?</label>
+                    <select id="bvi-disp"><option value="">Selecione...</option><option value="Sim">Sim, tenho disponibilidade</option><option value="Não">Não possuo disponibilidade extra</option></select>
                 </div>
                 <div class="input-group">
-                    <label>6. Cursos Técnicos ou Conhecimentos (Opcional)</label>
-                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Primeiros Socorros..."></textarea>
+                    <label>6. Cursos Técnicos ou Conhecimentos Relevantes (Opcional)</label>
+                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Primeiros Socorros, Técnico em Enfermagem, etc..."></textarea>
+                </div>
+
+                <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #991b1b; margin-top: 25px;">
+                    <label style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" id="bvi-termo" style="width: auto; margin-top: 3px;">
+                        <span>Confirmo meu interesse em participar da Brigada e declaro que as informações acima são verdadeiras.</span>
+                    </label>
                 </div>
                 
                 <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar e Enviar</button>
@@ -229,6 +236,7 @@
         <div id="view-sucesso-bvi" class="view" style="text-align: center;">
             <div class="card">
                 <h2 style="color: var(--red-sesmt);">✅ Inscrição Concluída!</h2>
+                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram salvos com sucesso e aguardam a validação da Liderança.</p>
                 <button class="btn btn-outline" onclick="location.reload()">Sair do Sistema</button>
             </div>
         </div>
@@ -238,19 +246,27 @@
                 <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel da Liderança</h2>
                 
                 <div class="gestor-tabs">
-                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Avaliações Comportamentais (DISC)</div>
+                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Avaliações DISC</div>
                     <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI</div>
                 </div>
 
                 <div id="gcontent-avalia">
-                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('padrao')">Partilhar Link (Mapeamento Comportamental)</button>
+                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('padrao')">
+                        <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
+                        Partilhar Link (Mapeamento DISC)
+                    </button>
                     <div id="lista-avaliacoes" style="margin-top: 15px;"></div>
                 </div>
 
                 <div id="gcontent-bvi" style="display: none;">
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">Link (BVI)</button>
-                        <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">🖨️ Imprimir Relatório Oficial</button>
+                        <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">
+                            <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
+                            Link Inscrição (BVI)
+                        </button>
+                        <button class="btn-print" style="flex:1;" onclick="imprimirBVI()">
+                            🖨️ Imprimir Ranking (PDF)
+                        </button>
                     </div>
                     <h3 style="margin: 25px 0 10px; color: var(--purple-dark); font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 5px;">✅ Inscrições BVI</h3>
                     <div id="lista-bvi"></div>
@@ -263,8 +279,10 @@
         <div id="view-avalia-estrelas" class="view">
             <div class="card">
                 <h2 style="color: var(--purple-dark); margin-bottom: 5px;">Avaliação Final da Liderança</h2>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">Atribua as notas. A Inteligência do sistema calculará a média ponderada e o parecer.</p>
+                
                 <h3 id="estrela-nome-candidato" style="margin-bottom: 10px; color: var(--red-sesmt);">Candidato: -</h3>
-                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; margin-bottom: 20px; font-size: 0.85rem;"></div>
+                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; border-radius: 8px;"></div>
 
                 <div class="star-row">
                     <span class="star-label">1. Desenvolvimento Técnico (Peso: 35%)</span>
@@ -288,13 +306,13 @@
                 </div>
 
                 <div style="margin-top: 15px;">
-                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px;" onclick="gerarParecerIA()">✨ Gerar Parecer Final (APTO/INAPTO)</button>
-                    <textarea id="avalia-obs" rows="5" placeholder="A IA preencherá o parecer aqui..." style="width: 100%; padding: 10px; border-radius: 6px;"></textarea>
+                    <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 10px; padding: 12px; font-size: 0.95rem;" onclick="gerarParecerIA()">✨ Gerar Parecer Final (APTO/INAPTO)</button>
+                    <textarea id="avalia-obs" rows="6" placeholder="A IA preencherá o parecer aqui..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); font-family: inherit; resize: vertical;"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button class="btn btn-outline" style="flex:1; margin-top:0;" onclick="cancelarAvaliacaoBVI()">Cancelar</button>
-                    <button class="btn" style="flex:1; margin-top:0;" onclick="salvarAvaliacaoBVI()">Salvar Avaliação Final</button>
+                    <button class="btn" style="flex:1; margin-top:0;" onclick="salvarAvaliacaoBVI()">Salvar Avaliação</button>
                 </div>
             </div>
         </div>
@@ -303,7 +321,7 @@
 
 <script>
     // ==========================================
-    // 1. CONFIGURAÇÃO FIREBASE E ROTEAMENTO
+    // 1. CONFIGURAÇÃO FIREBASE E TRAVA DE URL
     // ==========================================
     Chart.register(ChartDataLabels);
 
@@ -319,11 +337,16 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    // TRAVA DE SEGURANÇA: Deteta o parâmetro ?form=bvi
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.get('form') === 'bvi') {
+            // Esconde TUDO da gestão e exibe apenas o formulário BVI
             document.getElementById('login-wrapper').style.display = 'none'; 
-            switchTab('form-bvi');
+            document.getElementById('main-tabs').style.display = 'none'; 
+            
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-form-bvi').classList.add('active');
         }
     });
 
@@ -335,13 +358,13 @@
     }
 
     function excluirItem(caminho, id) {
-        if(confirm("Tem certeza que deseja EXCLUIR este registro?")) {
+        if(confirm("Tem certeza que deseja EXCLUIR este registo?")) {
             database.ref(caminho + '/' + id).remove().then(() => alert("Apagado!")).catch(e => alert(e));
         }
     }
 
     // ==========================================
-    // 2. FORMULÁRIO BVI (INSCRIÇÃO)
+    // 2. FORMULÁRIO BVI (INSCRIÇÃO DO COLABORADOR)
     // ==========================================
     function enviarInscricaoBVI() {
         const nome = document.getElementById('bvi-nome').value.trim();
@@ -356,21 +379,26 @@
         const cnh = document.getElementById('bvi-cnh').value;
         const disp = document.getElementById('bvi-disp').value;
         const cursos = document.getElementById('bvi-cursos').value.trim();
+        const termo = document.getElementById('bvi-termo').checked;
 
         if(!nome || !matricula || !setor || !turno || !telefone) return alert("Preencha todos os dados pessoais.");
-        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda todas as perguntas técnicas.");
+        if(!exp || !fobia || !fardamento || !cnh || !disp) return alert("Responda a todas as perguntas técnicas.");
+        if(!termo) return alert("É necessário confirmar a declaração de compromisso.");
 
         database.ref('inscricoes_bvi').orderByChild('matricula').equalTo(matricula).once('value').then(snap => {
-            if(snap.exists()) return alert("Matrícula já cadastrada!");
+            if(snap.exists()) return alert("Esta matrícula já possui uma inscrição registada!");
+            
             const dadosBVI = { nome, matricula, setor, turno, telefone, exp, fobia, fardamento, cnh, disp, cursos, data: new Date().toLocaleDateString('pt-BR') };
-            database.ref('inscricoes_bvi').push(dadosBVI).then(() => switchTab('sucesso-bvi'));
+            database.ref('inscricoes_bvi').push(dadosBVI).then(() => {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-sucesso-bvi').classList.add('active');
+            });
         });
     }
 
     // ==========================================
-    // 3. NOVO MAPEAMENTO COMPORTAMENTAL (DISC)
+    // 3. MAPEAMENTO COMPORTAMENTAL (DISC)
     // ==========================================
-    // D = Dominância (Executor), I = Influência (Comunicador), S = Estabilidade (Planejador), C = Conformidade (Analista)
     const allQuestions = [
         { 
             q: "Em um dia de alto volume de separação e pouco tempo, como você age?", 
@@ -476,7 +504,6 @@
         const matricula = sessionStorage.getItem('tempMat');
         const dataAvaliacao = new Date().toLocaleDateString('pt-BR');
         
-        // Converte para Porcentagem
         const total = quizQuestions.length;
         const pctScores = {
             D: Math.round((scores.D / total) * 100),
@@ -498,36 +525,31 @@
     function renderDevolutivaView(nome, pct, isColaborador = false) {
         document.getElementById('res-nome').innerText = nome;
         
-        // Identifica o Perfil Maior (Algoritmo Profiler básico)
-        let perfilNome = "";
-        let perfilDesc = "";
-        let perfilBen = "";
-        
+        let perfilNome = "", perfilDesc = "", perfilBen = "";
         let maxVal = Math.max(pct.D, pct.I, pct.S, pct.C);
         
         if (maxVal === pct.D) {
             perfilNome = "EXECUTOR (Dominância)";
-            perfilDesc = "Você é focado em resultados, age com rapidez e lida bem com desafios e pressão logística. Tem perfil de liderança nata, gosta de resolver problemas na hora e não tem medo de tomar a frente das operações.";
-            perfilBen = "Excelente para situações de crise, batimento de metas logísticas e liderança de linha de frente em emergências (ótimo para liderar a Brigada).";
+            perfilDesc = "Focado em resultados, age com rapidez e lida bem com desafios e pressão logística. Tem perfil de liderança nata e não tem medo de tomar a frente das operações.";
+            perfilBen = "Excelente para situações de crise, batimento de metas e liderança de linha de frente em emergências (ótimo para liderar a Brigada).";
         } else if (maxVal === pct.I) {
             perfilNome = "COMUNICADOR (Influência)";
-            perfilDesc = "Você é carismático, persuasivo e adora trabalhar em equipe. Tem facilidade em integrar novatos e manter o clima do armazém leve e motivado.";
-            perfilBen = "Essencial para engajamento de equipe, aplicação de treinamentos do SESMT e facilidade em comunicar riscos para os colegas de forma amigável.";
+            perfilDesc = "Carismático, persuasivo e adora trabalhar em equipa. Tem facilidade em integrar novatos e manter o clima do armazém leve.";
+            perfilBen = "Essencial para engajamento da equipa, aplicação de formações do SESMT e facilidade em comunicar riscos.";
         } else if (maxVal === pct.S) {
             perfilNome = "PLANEJADOR (Estabilidade)";
-            perfilDesc = "Você é calmo, confiável e gosta de rotinas estruturadas. Prefere um ritmo constante a picos de estresse, e é um ótimo ouvinte, ajudando a equilibrar a energia da equipe.";
-            perfilBen = "Traz harmonia para a operação. Excelente para seguir procedimentos do SESMT sem desvios, sendo um ponto de apoio confiável em evacuações e socorros prolongados.";
+            perfilDesc = "Calmo, confiável e gosta de rotinas estruturadas. Prefere um ritmo constante a picos de stress, e é um ótimo ouvinte.";
+            perfilBen = "Traz harmonia para a operação. Excelente para seguir procedimentos do SESMT sem desvios, sendo um ponto de apoio confiável.";
         } else {
             perfilNome = "ANALISTA (Conformidade)";
-            perfilDesc = "Você é detalhista, focado em qualidade e regras. Preza por fazer o processo da forma correta e exata, evitando retrabalhos e quebras de segurança.";
-            perfilBen = "Fundamental para auditorias, conferência de estoque e rigor absoluto no cumprimento das Normas de Segurança (NRs) e protocolos de prevenção de incêndio.";
+            perfilDesc = "Detalhista, focado em qualidade e regras. Preza por fazer o processo da forma correta e exata, evitando retrabalhos.";
+            perfilBen = "Fundamental para auditorias, conferência de estoque e rigor absoluto no cumprimento das Normas de Segurança (NRs).";
         }
 
-        document.getElementById('perfil-titulo').innerText = "Seu Perfil: " + perfilNome;
+        document.getElementById('perfil-titulo').innerText = "O Seu Perfil: " + perfilNome;
         document.getElementById('perfil-desc').innerText = perfilDesc;
         document.getElementById('perfil-beneficios').innerText = perfilBen;
 
-        // Gráfico Radar DISC
         const ctx = document.getElementById('polarChart').getContext('2d');
         if(myChart) myChart.destroy();
         myChart = new Chart(ctx, {
@@ -551,7 +573,7 @@
     }
 
     // ==========================================
-    // 4. AVALIAÇÃO DA LIDERANÇA BVI E IA
+    // 4. AVALIAÇÃO DA LIDERANÇA BVI E IA (PONDERADA)
     // ==========================================
     let avaliacaoAtualBVI = { id: '', notas: { postura: 0, desenvolvimento: 0, aptidao: 0, assiduidade: 0, iniciativa: 0 }, obs: '' };
 
@@ -562,9 +584,11 @@
         document.getElementById('estrela-nome-candidato').innerText = item.nome;
         
         document.getElementById('mini-curriculo').innerHTML = `
-            <strong>Respostas Estratégicas:</strong><br>
-            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${item.cursos || 'Nenhum'}</strong><br>
-            <span style="color:#475569;">Exp:</span> ${item.exp || 'N/A'} | <span style="color:#475569;">Disp:</span> ${item.disp || 'N/A'}
+            <strong>Respostas Estratégicas do Candidato:</strong><br>
+            <span style="color:#475569;">Cursos/Técnicos:</span> <strong style="color:#b45309;">${item.cursos || 'Nenhum informado'}</strong><br>
+            <span style="color:#475569;">Experiência:</span> ${item.exp || 'N/A'} | <span style="color:#475569;">Disponibilidade:</span> ${item.disp || 'N/A'}<br>
+            <span style="color:#475569;">CNH:</span> ${item.cnh || 'N/A'} | <span style="color:#475569;">Fardamento:</span> ${item.fardamento || 'N/A'}<br>
+            <span style="color:#475569;">Fobia:</span> ${item.fobia || 'N/A'}
         `;
 
         Object.keys(avaliacaoAtualBVI.notas).forEach(crit => setStar(crit, avaliacaoAtualBVI.notas[crit]));
@@ -579,30 +603,43 @@
 
     function gerarParecerIA() {
         const n = avaliacaoAtualBVI.notas;
-        if(Object.values(n).includes(0)) return alert("Preencha todas as estrelas primeiro.");
+        if(Object.values(n).includes(0)) return alert("Por favor, preencha todas as 5 estrelas antes de gerar o Parecer.");
+        
+        // CÁLCULO DA MÉDIA PONDERADA
         const media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
         
-        let p = "Avaliando os critérios logísticos e comportamentais:\n\n";
-        p += media >= 3.5 ? "Colaborador com excelente domínio técnico e assiduidade. Postura altamente aderente aos requisitos.\n\nParecer: APTO." 
-                          : "Colaborador apresenta pontos de melhoria técnica ou comportamental para os requisitos exigidos.\n\nParecer: INAPTO.";
+        let p = "Avaliando os critérios logísticos (com maior peso em Desenvolvimento Técnico e Assiduidade):\n\n";
+        
+        if(media >= 3.5) {
+            p += "O colaborador atende perfeitamente aos requisitos rigorosos da operação. Demonstra ótimo domínio técnico e assiduidade constante, além de postura profissional que agrega segurança à equipa.\n\nParecer Final da Liderança: APTO.";
+        } else {
+            p += "O colaborador apresenta pontos de melhoria nos pilares críticos (Técnico/Assiduidade). Neste momento, com base nos filtros da gestão e necessidades operacionais, o perfil não está aderente à exigência da Brigada.\n\nParecer Final da Liderança: INAPTO.";
+        }
+        
         document.getElementById('avalia-obs').value = p;
     }
 
     function cancelarAvaliacaoBVI() { switchTab('gestor'); switchGestorTab('bvi'); }
+    
     function salvarAvaliacaoBVI() {
         if(Object.values(avaliacaoAtualBVI.notas).includes(0)) return alert("Preencha todas as estrelas.");
         database.ref('inscricoes_bvi/' + avaliacaoAtualBVI.id).update({
-            avaliacao_gestor: avaliacaoAtualBVI.notas, observacao_gestor: document.getElementById('avalia-obs').value.trim()
-        }).then(() => { alert("Salvo!"); cancelarAvaliacaoBVI(); });
+            avaliacao_gestor: avaliacaoAtualBVI.notas, 
+            observacao_gestor: document.getElementById('avalia-obs').value.trim()
+        }).then(() => { 
+            alert("Avaliação guardada com sucesso!"); 
+            cancelarAvaliacaoBVI(); 
+        });
     }
 
     // ==========================================
-    // 5. CARREGAR DADOS DO GESTOR E PDF
+    // 5. CARREGAR DADOS DO GESTOR E PDF (RANKING PONDERADO)
     // ==========================================
     function loadAdminData() {
+        // Carrega Avaliações DISC
         database.ref('avaliacoes').on('value', snap => {
             const container = document.getElementById('lista-avaliacoes'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação DISC.</p>';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação DISC registada.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div'); div.className = 'gestor-item';
                 div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.date}</small></div>
@@ -613,15 +650,33 @@
             });
         });
 
+        // Carrega Inscrições BVI
         database.ref('inscricoes_bvi').on('value', snap => {
             const container = document.getElementById('lista-bvi'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhum inscrito BVI.</p>';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma inscrição BVI registada.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
+                const jaAvaliou = !!item.avaliacao_gestor;
+                const textoBtnAvalia = jaAvaliou ? "⭐ Editar Parecer" : "Avaliar Candidato";
+                const corBtnAvalia = jaAvaliou ? "background: #f59e0b; color: white;" : "background: var(--purple-light); color: white;";
+                
+                let previewCursos = item.cursos ? `<strong>Cursos:</strong> ${item.cursos}` : 'Nenhum curso extra';
+                
                 const div = document.createElement('div'); div.className = 'gestor-item gestor-item-bvi';
-                div.innerHTML = `<div><strong style="color:red;">${item.nome}</strong> (${item.matricula})</div>
-                                 <div style="display:flex; gap:8px;">
-                                 <button class="btn-acao" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">Avaliar BVI</button>
-                                 <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button></div>`;
+                div.innerHTML = `
+                    <div style="width: 100%; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="color:var(--red-sesmt); font-size: 1.1rem;">${item.nome}</strong> (${item.matricula})<br>
+                            <span style="font-size: 0.85rem; color: var(--text-main);">
+                                <strong>Setor:</strong> ${item.setor} | <strong>Turno:</strong> ${item.turno}<br>
+                                <span style="color:#b45309;">${previewCursos}</span><br>
+                                <span style="color: var(--text-light); font-size: 0.8rem;">Data Inscrição: ${item.data}</span>
+                            </span>
+                        </div>
+                        <div style="display:flex; flex-direction: column; gap:8px;">
+                            <button class="btn-acao" style="${corBtnAvalia}" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">${textoBtnAvalia}</button>
+                            <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">Excluir</button>
+                        </div>
+                    </div>`;
                 container.appendChild(div);
             });
         });
@@ -635,24 +690,53 @@
         document.getElementById('gcontent-'+t).style.display = 'block';
     }
 
-    function enviarWhatsAppLink(t) { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(window.location.href.split('?')[0] + (t==='bvi'?'?form=bvi':''))}`); }
+    function enviarWhatsAppLink(tipo) { 
+        // O link gerado para o WhatsApp já inclui a trava de URL para a BVI
+        const urlBase = window.location.href.split('?')[0]; 
+        const linkFinal = tipo === 'bvi' ? urlBase + '?form=bvi' : urlBase;
+        
+        const msg = tipo === 'bvi' 
+            ? `Olá equipa!\n\nEstão abertas as inscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcedam ao formulário aqui:\n${linkFinal}` 
+            : `Olá equipa!\n\nAcedam ao Mapeamento Comportamental DISC:\n${linkFinal}`;
+            
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 
     function imprimirBVI() {
         database.ref('inscricoes_bvi').once('value').then(snap => {
-            if(!snap.exists()) return alert("Sem inscritos!");
+            if(!snap.exists()) return alert("Não há inscritos para imprimir!");
             let inscritos = [];
             snap.forEach(c => {
-                let d = c.val(); d.media = d.avaliacao_gestor ? ((d.avaliacao_gestor.desenvolvimento * 3.5) + (d.avaliacao_gestor.assiduidade * 2.5) + (d.avaliacao_gestor.postura * 2.0) + (d.avaliacao_gestor.iniciativa * 1.0) + (d.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
+                let d = c.val(); 
+                // Calcula a Média Ponderada para ordenar o PDF
+                d.media = d.avaliacao_gestor ? ((d.avaliacao_gestor.desenvolvimento * 3.5) + (d.avaliacao_gestor.assiduidade * 2.5) + (d.avaliacao_gestor.postura * 2.0) + (d.avaliacao_gestor.iniciativa * 1.0) + (d.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
                 inscritos.push(d);
             });
+            
+            // Ordena os inscritos da maior pontuação para a menor
             inscritos.sort((a,b) => b.media - a.media);
             
-            let html = `<html><head><title>BVI Ranking</title><style>body{font-family:Arial; font-size:12px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ccc; padding:8px; text-align:left;} th{background:#1e1b4b; color:white;}</style></head><body>
-            <h2>RELAÇÃO DE INSCRITOS - BVI (Filtro da Liderança)</h2><table><tr><th>Candidato</th><th>Setor/CNH</th><th>Parecer Oficial (Liderança)</th></tr>`;
+            let html = `<html><head><title>BVI Ranking Oficial</title><style>body{font-family:Arial; font-size:12px; color:#1e293b; padding: 20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #e2e8f0; padding:10px; text-align:left; vertical-align: top;} th{background:#1e1b4b; color:white; font-size:10px; text-transform:uppercase;} .nota-box{background:#1e1b4b; color:white; padding:3px 6px; border-radius:4px; font-weight:bold; font-size:11px;} .obs-texto{font-style:italic; color:#334155; margin-top:8px; border-top:1px dashed #cbd5e1; padding-top:5px;}</style></head><body>
+            <div style="border-bottom: 3px solid #dc2626; padding-bottom: 12px; margin-bottom: 25px;">
+                <p style="text-transform: uppercase; font-weight:bold; color: #64748b; margin-bottom: 5px; font-size: 11px;">Drogaria Venâncio - SESMT</p>
+                <h1 style="color: #1e1b4b; margin: 0 0 5px 0; font-size: 22px;">RELAÇÃO DE INSCRITOS - BVI</h1>
+                <p style="margin:0; font-size:13px; color:#64748b;">Emitido em: ${new Date().toLocaleString('pt-BR')} | Ordenado por Parecer Final Ponderado</p>
+            </div>
+            <table><tr><th style="width: 25%;">Candidato / Perfil</th><th style="width: 15%;">Setor / CNH / Uniforme</th><th style="width: 60%;">Parecer Oficial da Liderança (Estrelas e Decisão)</th></tr>`;
             
             inscritos.forEach(i => {
-                html += `<tr><td><strong>${i.nome}</strong><br>Mat: ${i.matricula}<br>Cursos: ${i.cursos||'N/A'}</td><td>${i.setor} / ${i.turno}<br>CNH: ${i.cnh}</td>
-                <td>${i.avaliacao_gestor ? `<strong>Média: ${i.media.toFixed(1)}</strong><br><em>${i.observacao_gestor.replace(/\\n/g, '<br>')}</em>` : 'Pendente'}</td></tr>`;
+                let avaliacaoDetalhada = "<em>O Gestor ainda não emitiu o Parecer.</em>";
+                if(i.avaliacao_gestor) {
+                    const n = i.avaliacao_gestor;
+                    let mediaTexto = `<span class="nota-box">⭐ Média Ponderada: ${i.media.toFixed(1)} / 5.0</span>`;
+                    let obsGestorHTML = i.observacao_gestor ? `<div class="obs-texto">${i.observacao_gestor.replace(/\\n/g, '<br>').replace(/\n/g, '<br>')}</div>` : '';
+                    avaliacaoDetalhada = `${mediaTexto}<br><div style="font-size:10px; color:#475569; margin-top:5px;"><strong>Desenv. Técnico:</strong> ${n.desenvolvimento} | <strong>Assiduidade:</strong> ${n.assiduidade} | <strong>Postura:</strong> ${n.postura} <br><strong>Iniciativa:</strong> ${n.iniciativa} | <strong>Aptidão:</strong> ${n.aptidao}</div>${obsGestorHTML}`;
+                }
+
+                html += `<tr>
+                <td><strong style="color:#dc2626; font-size:12px;">${i.nome}</strong><br><span style="color:#64748b;">Mat: ${i.matricula}</span><div style="margin-top:8px; font-size:9px; background:#e2e8f0; padding:5px; border-radius:4px;"><strong>Exp:</strong> ${i.exp || 'N/A'}<br><strong>Disp:</strong> ${i.disp || 'N/A'}<br><strong>Cursos:</strong> ${i.cursos||'Nenhum'}</div></td>
+                <td>${i.setor}<br>${i.turno}<br><br><strong>CNH:</strong> ${i.cnh || 'N/A'}<br><strong>Camisa:</strong> ${i.fardamento || 'N/A'}</td>
+                <td>${avaliacaoDetalhada}</td></tr>`;
             });
             let win = window.open('','_blank'); win.document.write(html + "</table><script>window.onload=function(){window.print();window.close();}<\/script></body></html>"); win.document.close();
         });

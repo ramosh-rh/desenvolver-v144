@@ -251,7 +251,7 @@
                 </div>
 
                 <div id="gcontent-avalia">
-                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('padrao')">
+                    <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
                         <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
                         Partilhar Link (Mapeamento DISC)
                     </button>
@@ -321,7 +321,7 @@
 
 <script>
     // ==========================================
-    // 1. CONFIGURAÇÃO FIREBASE E TRAVA DE URL
+    // 1. CONFIGURAÇÃO FIREBASE E TRAVA DE URL DUPLA
     // ==========================================
     Chart.register(ChartDataLabels);
 
@@ -337,16 +337,24 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // TRAVA DE SEGURANÇA: Deteta o parâmetro ?form=bvi
+    // TRAVA DE SEGURANÇA: Deteta o parâmetro da URL (BVI ou DISC)
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('form') === 'bvi') {
-            // Esconde TUDO da gestão e exibe apenas o formulário BVI
-            document.getElementById('login-wrapper').style.display = 'none'; 
+        const formType = urlParams.get('form');
+
+        if(formType === 'bvi') {
+            // Esconde abas de navegação
             document.getElementById('main-tabs').style.display = 'none'; 
-            
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            // Mostra APENAS a view da Inscrição BVI
             document.getElementById('view-form-bvi').classList.add('active');
+        } 
+        else if (formType === 'disc') {
+            // Esconde abas de navegação
+            document.getElementById('main-tabs').style.display = 'none';
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            // Mostra APENAS a tela de início do quiz
+            document.getElementById('view-inicio').classList.add('active');
         }
     });
 
@@ -567,8 +575,10 @@
         
         const areaBotao = document.getElementById('area-botao-gestor');
         switchTab('devolutivas');
+        
+        // Se for colaborador, no final mostra um botão de recarregar a página (sair)
         areaBotao.innerHTML = isColaborador 
-            ? '<button class=\"btn btn-outline\" onclick=\"location.reload()\">Sair do Sistema</button>' 
+            ? '<button class=\"btn btn-outline\" onclick=\"location.href=window.location.href.split(\\\'?\\\')[0]\">Finalizar (Sair)</button>' 
             : '<button class=\"btn btn-outline\" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar ao Painel</button>';
     }
 
@@ -691,9 +701,12 @@
     }
 
     function enviarWhatsAppLink(tipo) { 
-        // O link gerado para o WhatsApp já inclui a trava de URL para a BVI
+        // A geração do link pelo Gestor aplica automaticamente a trava de URL correspondente
         const urlBase = window.location.href.split('?')[0]; 
-        const linkFinal = tipo === 'bvi' ? urlBase + '?form=bvi' : urlBase;
+        
+        let linkFinal = urlBase;
+        if(tipo === 'bvi') linkFinal = urlBase + '?form=bvi';
+        else if(tipo === 'disc') linkFinal = urlBase + '?form=disc';
         
         const msg = tipo === 'bvi' 
             ? `Olá equipa!\n\nEstão abertas as inscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcedam ao formulário aqui:\n${linkFinal}` 

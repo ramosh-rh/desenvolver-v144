@@ -115,6 +115,19 @@
         .hr-text-block strong { color: var(--purple-dark); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* REGRAS DE IMPRESSÃO (PDF LIMPO) */
+        @media print {
+            body { background: white; color: black; margin: 0; padding: 0; }
+            .header, .tabs, .btn, .btn-outline, .btn-print, .btn-whatsapp, .btn-acao, .btn-excluir, .login-wrapper { display: none !important; }
+            .container { padding: 0; width: 100%; max-width: 100%; margin: 0; }
+            .card { box-shadow: none; border: 1px solid #cbd5e1; padding: 15px; margin: 0; }
+            .hr-grid { grid-template-columns: 1fr; gap: 10px; }
+            .hr-box { border: 1px solid #cbd5e1; break-inside: avoid; page-break-inside: avoid; margin-bottom: 15px; }
+            canvas { max-width: 300px !important; margin: 0 auto; display: block; }
+            .tag-perfil { border: 1px solid #000; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .progress-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
@@ -262,7 +275,7 @@
 
                 <div id="gcontent-avalia">
                     <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
-                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipa para realizarem o Mapeamento Profiler. O link possui trava de segurança para não abrir este painel.</p>
+                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipe para realizarem o Mapeamento Profiler. O link possui trava de segurança para não abrir este painel.</p>
                         <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
                             <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
                             Enviar Link do Mapeamento
@@ -511,12 +524,17 @@
         });
     }
 
+    // Função de Suporte para decodificar e abrir dossiê via Painel do Gestor
+    window.abrirDossieAdmin = function(nome, pctEncoded) {
+        const pct = JSON.parse(decodeURIComponent(pctEncoded));
+        renderDevolutivaView(nome, pct, false);
+    }
+
     // ==========================================
     // 3.1 MOTOR DO DASHBOARD OMNICHANNEL DE HR
     // ==========================================
     function renderDevolutivaView(nome, pct, isColaborador = false) {
         
-        // 1. Identificação do Perfil Primário e Secundário
         const order = [
             { id: 'D', val: pct.D, name: "Executor (D)", color: "var(--disc-d)" },
             { id: 'I', val: pct.I, name: "Comunicador (I)", color: "var(--disc-i)" },
@@ -528,15 +546,12 @@
         const secundario = order[1].val > 0 ? order[1] : { name: "Puro" };
         const combinacao = `${primario.name.split(' ')[0]}-${secundario.name.split(' ')[0]}`;
 
-        // 2. Indicadores de Tendência Logística
         const focoPessoas = pct.I + pct.S;
         const focoTarefas = pct.D + pct.C;
         const decisaoRapida = pct.D + pct.I;
         const decisaoCautelosa = pct.S + pct.C;
 
-        let textoPerfil = "";
-        let pontosFortes = "";
-        let atencao = "";
+        let textoPerfil = "", pontosFortes = "", atencao = "";
 
         if (primario.id === 'D') {
             textoPerfil = "Perfil impulsionado por resultados, metas e desafios. Na logística, atua com extrema velocidade e toma a frente dos problemas. Gosta de autonomia e não foge da pressão.";
@@ -556,7 +571,6 @@
             atencao = "Pode apresentar lentidão (baixa produtividade por hora) por excesso de detalhismo. Pode se estressar se a liderança mudar a regra no meio do processo.";
         }
 
-        // 3. Montagem Dinâmica do HTML do Dashboard
         const dashHTML = `
             <div class="card" style="max-width: 100%;">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 3px solid var(--purple-dark); padding-bottom:15px; margin-bottom:20px;">
@@ -627,13 +641,12 @@
                     </div>
                 </div>
 
-                <div id="area-botao-gestor" style="text-align:center; margin-top:20px;"></div>
+                <div id="area-botao-gestor" style="display:flex; gap:10px; margin-top:20px;"></div>
             </div>
         `;
 
         document.getElementById('result-content').innerHTML = dashHTML;
 
-        // Renderiza o Gráfico Radar
         setTimeout(() => {
             const ctxR = document.getElementById('radarChart').getContext('2d');
             if(myChartRadar) myChartRadar.destroy();
@@ -655,9 +668,19 @@
         document.getElementById('result-content').style.display = 'block';
         
         const areaBotao = document.getElementById('area-botao-gestor');
-        areaBotao.innerHTML = isColaborador 
-            ? '<button class=\"btn\" style="width:250px;" onclick=\"location.href=window.location.href.split(\\\'?\\\')[0]\">Finalizar e Sair</button>' 
-            : '<button class=\"btn btn-outline\" style="width:250px;" onclick=\"switchTab(\\\'gestor\\\')\">← Voltar ao Painel</button>';
+        
+        // Novos botões com opção de impressão para ambos os casos
+        if (isColaborador) {
+            areaBotao.innerHTML = `
+                <button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Salvar Meu Perfil em PDF</button>
+                <button class="btn" style="flex:1;" onclick="location.href=window.location.href.split('?')[0]">Finalizar e Sair</button>
+            `;
+        } else {
+            areaBotao.innerHTML = `
+                <button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Imprimir Dossiê</button>
+                <button class="btn btn-outline" style="flex:1;" onclick="switchTab('gestor')">← Voltar ao Painel</button>
+            `;
+        }
     }
 
     // ==========================================
@@ -720,9 +743,13 @@
             if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma avaliação DISC registada.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div'); div.className = 'gestor-item';
+                
+                // Correção do Bug do JSON: Transformando em URI segura para colocar no HTML
+                const pctSeguro = encodeURIComponent(JSON.stringify(item.pctScores));
+
                 div.innerHTML = `<div><strong style="color:var(--purple-dark); font-size:1.05rem;">${item.nome}</strong><br><small style="color:var(--text-light);">Matrícula: ${item.matricula} | ${item.date}</small></div>
                                  <div style="display:flex; gap:8px;">
-                                 <button class="btn-acao" onclick="renderDevolutivaView('${item.nome}', ${JSON.stringify(item.pctScores)}, false)">📊 Abrir Dossiê</button>
+                                 <button class="btn-acao" onclick="abrirDossieAdmin('${item.nome}', '${pctSeguro}')">📊 Abrir Dossiê</button>
                                  <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">Excluir</button></div>`;
                 container.appendChild(div);
             });

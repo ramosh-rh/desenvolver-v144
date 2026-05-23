@@ -87,8 +87,8 @@
         .gestor-item:hover { border-color: var(--purple-light); background: #f3e8ff; }
         .gestor-item-bvi:hover { border-color: var(--red-sesmt); background: #fef2f2; }
 
-        .gestor-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .g-tab { flex: 1; padding: 10px; text-align: center; background: var(--bg-body); border-radius: 6px; cursor: pointer; font-weight: 600; border: 1px solid var(--border); }
+        .gestor-tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
+        .g-tab { flex: 1; padding: 12px 5px; text-align: center; background: var(--bg-body); border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--border); min-width: 150px;}
         .g-tab.active { background: var(--purple-light); color: white; border-color: var(--purple-light); }
 
         .btn-excluir { background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
@@ -119,7 +119,7 @@
         /* REGRAS DE IMPRESSÃO (PDF LIMPO) */
         @media print {
             body { background: white; color: black; margin: 0; padding: 0; }
-            .header, .tabs, .btn, .btn-outline, .btn-print, .btn-whatsapp, .btn-acao, .btn-excluir, .login-wrapper { display: none !important; }
+            .header, .tabs, .btn, .btn-outline, .btn-print, .btn-whatsapp, .btn-acao, .btn-excluir, .login-wrapper, .gestor-tabs { display: none !important; }
             .container { padding: 0; width: 100%; max-width: 100%; margin: 0; }
             .card { box-shadow: none; border: 1px solid #cbd5e1; padding: 15px; margin: 0; }
             .hr-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -269,19 +269,42 @@
                 <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel de Gestão & Analytics</h2>
                 
                 <div class="gestor-tabs">
-                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Dossiês Comportamentais (DISC)</div>
-                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI (SESMT)</div>
+                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Dossiês (DISC)</div>
+                    <div class="g-tab" id="gtab-simulador" onclick="switchGestorTab('simulador')">🤖 Simulador IA (Ranking)</div>
+                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Inscrições BVI</div>
                 </div>
 
                 <div id="gcontent-avalia">
                     <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
-                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipe para realizarem o Mapeamento Profiler. O link possui trava de segurança para não abrir este painel.</p>
+                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipe para realizarem o Mapeamento Profiler.</p>
                         <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
                             <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
                             Enviar Link do Mapeamento
                         </button>
                     </div>
                     <div id="lista-avaliacoes"></div>
+                </div>
+
+                <div id="gcontent-simulador" style="display: none;">
+                    <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
+                        <h3 style="color: #166534; margin-bottom: 10px;">🤖 Robô de Análise Preditiva</h3>
+                        <p style="font-size: 0.9rem; color: #14532d; margin-bottom: 15px;">Selecione um cenário logístico. A Inteligência Artificial vai cruzar os perfis DISC de toda a base e gerar um Ranking de Afinidade apontando os mais bem colocados.</p>
+                        
+                        <div class="input-group">
+                            <label>Selecione o Cenário Desejado:</label>
+                            <select id="simulador-cenario">
+                                <option value="desenvoltura">Cenário 1: Desenvoltura, Liderança e Agilidade (Foco em D e I)</option>
+                                <option value="qualidade">Cenário 2: Qualidade, Auditoria e Regras SESMT (Foco em C e S)</option>
+                                <option value="rotina">Cenário 3: Resiliência em Alta Demanda e Harmonia (Foco em S e I)</option>
+                            </select>
+                        </div>
+                        <button class="btn" style="background: #0ea5e9;" onclick="rodarSimulacaoIA()">Rodar Simulação & Gerar Ranking ✨</button>
+                    </div>
+                    
+                    <div id="area-ranking-ia" style="display: none;">
+                        <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">🏆 Ranking de Afinidade (Match)</h3>
+                        <div id="lista-ranking-ia"></div>
+                    </div>
                 </div>
 
                 <div id="gcontent-bvi" style="display: none;">
@@ -362,7 +385,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // TRAVA DE SEGURANÇA: Deteta o parâmetro da URL (BVI ou DISC)
     document.addEventListener("DOMContentLoaded", () => {
         const urlParams = new URLSearchParams(window.location.search);
         const formType = urlParams.get('form');
@@ -425,7 +447,7 @@
     }
 
     // ==========================================
-    // 3. MAPEAMENTO COMPORTAMENTAL PROFILER ROBUSTO (10 Perguntas)
+    // 3. MAPEAMENTO COMPORTAMENTAL PROFILER
     // ==========================================
     const allQuestions = [
         { q: "1. Num dia de alto volume de separação e pressão por metas, como você age?", opts: [{t: "Tomo a frente, acelero o processo e foco em bater a meta rápido.", dim: 'D'}, {t: "Animo a equipe e peço a colaboração de todos para agilizarmos o clima.", dim: 'I'}, {t: "Mantenho meu ritmo constante para não me estressar nem errar.", dim: 'S'}, {t: "Verifico se todos os procedimentos estão corretos para evitar retrabalho.", dim: 'C'}] },
@@ -440,7 +462,7 @@
         { q: "10. Tomada de Decisão em momento de emergência:", opts: [{t: "Decido na hora, assumo o risco. É melhor agir rápido do que não agir.", dim: 'D'}, {t: "Tento envolver as pessoas próximas rapidamente para decidirmos juntos.", dim: 'I'}, {t: "Procuro o líder ou o procedimento padrão antes de fazer qualquer movimento.", dim: 'S'}, {t: "Analiso todas as variáveis e consequências lógicas antes de dar o próximo passo.", dim: 'C'}] }
     ];
 
-    let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, myChartBar = null;
+    let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null;
     let scores = { D: 0, I: 0, S: 0, C: 0 };
 
     function startQuiz() {
@@ -457,7 +479,7 @@
         if(!nome || !mat) return alert('Por favor, preencha o Usuário e a Senha (Matrícula).');
 
         database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value').then(snapshot => {
-            if(snapshot.exists()) return alert("O Mapeamento para esta matrícula já foi realizado e está sob análise do RH/Gestão.");
+            if(snapshot.exists()) return alert("O Mapeamento para esta matrícula já foi realizado.");
             
             sessionStorage.setItem('tempName', nome);
             sessionStorage.setItem('tempMat', mat);
@@ -504,8 +526,8 @@
     function generateDevolutiva() {
         const nome = sessionStorage.getItem('tempName');
         const matricula = sessionStorage.getItem('tempMat');
+        const total = quizQuestions.length;
         
-        const total = quizQuestions.length; // 10
         const pctScores = {
             D: Math.round((scores.D / total) * 100),
             I: Math.round((scores.I / total) * 100),
@@ -524,7 +546,6 @@
         });
     }
 
-    // Função de Suporte para decodificar e abrir dossiê via Painel do Gestor
     window.abrirDossieAdmin = function(nome, pctEncoded) {
         const pct = JSON.parse(decodeURIComponent(pctEncoded));
         renderDevolutivaView(nome, pct, false);
@@ -534,7 +555,6 @@
     // 3.1 MOTOR DO DASHBOARD OMNICHANNEL DE HR
     // ==========================================
     function renderDevolutivaView(nome, pct, isColaborador = false) {
-        
         const order = [
             { id: 'D', val: pct.D, name: "Executor (D)", color: "var(--disc-d)" },
             { id: 'I', val: pct.I, name: "Comunicador (I)", color: "var(--disc-i)" },
@@ -669,7 +689,6 @@
         
         const areaBotao = document.getElementById('area-botao-gestor');
         
-        // Novos botões com opção de impressão para ambos os casos
         if (isColaborador) {
             areaBotao.innerHTML = `
                 <button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Salvar Meu Perfil em PDF</button>
@@ -681,6 +700,78 @@
                 <button class="btn btn-outline" style="flex:1;" onclick="switchTab('gestor')">← Voltar ao Painel</button>
             `;
         }
+    }
+
+    // ==========================================
+    // 3.2 SIMULADOR DE IA (NOVO MÓDULO DE RANKING)
+    // ==========================================
+    window.rodarSimulacaoIA = function() {
+        const cenario = document.getElementById('simulador-cenario').value;
+        document.getElementById('area-ranking-ia').style.display = 'block';
+        document.getElementById('lista-ranking-ia').innerHTML = '<p style="text-align:center; padding:20px; color:var(--purple-light); font-weight:bold;">Processando Algoritmo...</p>';
+
+        database.ref('avaliacoes').once('value').then(snap => {
+            if(!snap.exists()) {
+                document.getElementById('lista-ranking-ia').innerHTML = '<p>Não há perfis mapeados ainda.</p>';
+                return;
+            }
+
+            let candidatos = [];
+            snap.forEach(child => {
+                let d = child.val();
+                let pct = d.pctScores;
+                let score = 0;
+                let insight = "";
+
+                // Lógica de Peso da IA por Cenário
+                if (cenario === 'desenvoltura') {
+                    score = (pct.D * 0.6) + (pct.I * 0.4);
+                    insight = "Perfil altamente aderente à Liderança ativa. Possui 'desenvoltura', foco em metas e não se abala com a pressão diária.";
+                } else if (cenario === 'qualidade') {
+                    score = (pct.C * 0.6) + (pct.S * 0.4);
+                    insight = "Perfil meticuloso e organizado. Excepcional para funções de auditoria, contagem cíclica e verificação de normas do SESMT.";
+                } else if (cenario === 'rotina') {
+                    score = (pct.S * 0.6) + (pct.I * 0.4);
+                    insight = "Perfil resiliente e empático. Mantém o ritmo constante em picos de produção e ajuda a equilibrar o clima do time.";
+                }
+
+                d.matchScore = score;
+                d.insight = insight;
+                candidatos.push(d);
+            });
+
+            // Ordenar ranking
+            candidatos.sort((a, b) => b.matchScore - a.matchScore);
+
+            let html = '';
+            candidatos.forEach((cand, index) => {
+                let medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
+                
+                const order = [
+                    { val: cand.pctScores.D, name: "Executor", color: "var(--disc-d)" },
+                    { val: cand.pctScores.I, name: "Comunicador", color: "var(--disc-i)" },
+                    { val: cand.pctScores.S, name: "Planejador", color: "var(--disc-s)" },
+                    { val: cand.pctScores.C, name: "Analista", color: "var(--disc-c)" }
+                ].sort((a, b) => b.val - a.val);
+
+                html += `
+                    <div class="gestor-item" style="display:flex; flex-direction:column; align-items:flex-start; border-left: 5px solid ${order[0].color}; background: #fff;">
+                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <strong style="font-size:1.1rem; color:var(--purple-dark);">${medalha} ${cand.nome}</strong>
+                            <span style="background:var(--purple-dark); color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size: 0.9rem;">Match: ${cand.matchScore.toFixed(1)}%</span>
+                        </div>
+                        <div style="font-size:0.85rem; color:var(--text-main); margin-bottom: 8px;">
+                            <strong>Perfil Predominante:</strong> <span style="color:${order[0].color}; font-weight:bold;">${order[0].name}</span> | <strong>Matrícula:</strong> ${cand.matricula}
+                        </div>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:6px; font-size:0.85rem; color:#334155; width:100%; border-left: 3px solid #0ea5e9;">
+                            <strong>🤖 Insight da IA:</strong> ${cand.insight}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('lista-ranking-ia').innerHTML = html;
+        });
     }
 
     // ==========================================
@@ -743,8 +834,6 @@
             if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light); font-size:0.9rem;">Nenhuma avaliação DISC registada.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const div = document.createElement('div'); div.className = 'gestor-item';
-                
-                // Correção do Bug do JSON: Transformando em URI segura para colocar no HTML
                 const pctSeguro = encodeURIComponent(JSON.stringify(item.pctScores));
 
                 div.innerHTML = `<div><strong style="color:var(--purple-dark); font-size:1.05rem;">${item.nome}</strong><br><small style="color:var(--text-light);">Matrícula: ${item.matricula} | ${item.date}</small></div>
@@ -784,8 +873,11 @@
     function switchGestorTab(t) {
         document.querySelectorAll('.g-tab').forEach(el => el.classList.remove('active'));
         document.getElementById('gtab-'+t).classList.add('active');
+        
         document.getElementById('gcontent-avalia').style.display = 'none';
+        document.getElementById('gcontent-simulador').style.display = 'none';
         document.getElementById('gcontent-bvi').style.display = 'none';
+        
         document.getElementById('gcontent-'+t).style.display = 'block';
     }
 

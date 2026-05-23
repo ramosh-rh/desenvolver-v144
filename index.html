@@ -704,7 +704,7 @@
     }
 
     // ==========================================
-    // 3.2 SIMULADOR DE IA (NOVO MÓDULO DE RANKING)
+    // 3.2 SIMULADOR DE IA DINÂMICO (NOVO MOTOR)
     // ==========================================
     window.rodarSimulacaoIA = function() {
         const cenario = document.getElementById('simulador-cenario').value;
@@ -721,27 +721,46 @@
             snap.forEach(child => {
                 let d = child.val();
                 let pct = d.pctScores;
-                let score = 0;
-                let insight = "";
-
-                // Cálculos base para os cenários
+                
                 let scoreDesenvoltura = (pct.D * 0.6) + (pct.I * 0.4);
                 let scoreQualidade = (pct.C * 0.6) + (pct.S * 0.4);
                 let scoreRotina = (pct.S * 0.6) + (pct.I * 0.4);
 
+                const order = [
+                    { val: pct.D, name: "Executor" },
+                    { val: pct.I, name: "Comunicador" },
+                    { val: pct.S, name: "Planejador" },
+                    { val: pct.C, name: "Analista" }
+                ].sort((a, b) => b.val - a.val);
+
+                let primario = order[0].name;
+                let score = 0;
+                let insight = "";
+
+                // Geração Dinâmica de Texto (Baseado na Nota e no Perfil Real da Pessoa)
                 if (cenario === 'desenvoltura') {
                     score = scoreDesenvoltura;
-                    insight = "Perfil altamente aderente à Liderança ativa. Possui 'desenvoltura', foco em metas e não se abala com a pressão diária.";
-                } else if (cenario === 'qualidade') {
+                    if (score >= 75) insight = `Excelente para linha de frente! Como seu perfil forte é ${primario}, assume o controle com naturalidade e não trava sob pressão de metas.`;
+                    else if (score >= 50) insight = `Aderência mediana. Tem potencial para atuar em crises, mas sua tendência natural de ${primario} pode exigir apoio tático do coordenador.`;
+                    else insight = `Baixa aderência para operações de ataque agressivo. O perfil ${primario} prefere atuar nos bastidores com rotinas e processos controlados.`;
+                } 
+                else if (cenario === 'qualidade') {
                     score = scoreQualidade;
-                    insight = "Perfil meticuloso e organizado. Excepcional para funções de auditoria, contagem cíclica e verificação de normas do SESMT.";
-                } else if (cenario === 'rotina') {
+                    if (score >= 75) insight = `Auditor nato. Sendo ${primario}, tem olhar clínico para desvios e garantirá que nenhuma NR ou procedimento seja ignorado.`;
+                    else if (score >= 50) insight = `Nível aceitável. Consegue conferir processos, mas o lado ${primario} pode fazê-lo acelerar demais em dias cheios e perder detalhes.`;
+                    else insight = `Risco de desvios operacionais. O perfil predominante em ${primario} acha rotinas minuciosas entediantes e pode negligenciar POPs.`;
+                } 
+                else if (cenario === 'rotina') {
                     score = scoreRotina;
-                    insight = "Perfil resiliente e empático. Mantém o ritmo constante em picos de produção e ajuda a equilibrar o clima do time.";
-                } else if (cenario === 'geral') {
-                    // CAMPEÃO GERAL: Média das 3 frentes logísticas
+                    if (score >= 75) insight = `Pilar do turno. Com forte carga de ${primario}, é altamente resiliente, aguenta o volume da noite sem reclamar e estabiliza o time.`;
+                    else if (score >= 50) insight = `Suporta bem a carga, mas as nuances do perfil ${primario} indicam que ele pode se desmotivar se a rotina for monótona por muitos meses seguidos.`;
+                    else insight = `Baixa tolerância à rotina. A energia de ${primario} busca novidade, autonomia e ação. Pode ficar ocioso ou impaciente na repetição.`;
+                } 
+                else if (cenario === 'geral') {
                     score = (scoreDesenvoltura + scoreQualidade + scoreRotina) / 3;
-                    insight = "🏆 Campeão de Versatilidade! É o perfil mais curinga e adaptável da equipe. Transita muito bem entre a liderança, o foco em qualidade e a resiliência operacional.";
+                    if (score >= 60) insight = `🏆 Nível Curinga! Transita de forma muito equilibrada entre a liderança tática e o foco nos processos. É um talento adaptável.`;
+                    else if (score >= 40) insight = `Versatilidade restrita. Atende muito bem demandas específicas, mas sua base central focada em ${primario} limita atuações em cenários opostos.`;
+                    else insight = `Perfil de Especialista. A carga profunda em ${primario} significa que ele brilhará muito na sua área de conforto, mas sofrerá se for trocado de função.`;
                 }
 
                 d.matchScore = score;
@@ -749,7 +768,6 @@
                 candidatos.push(d);
             });
 
-            // Ordenar ranking do maior para o menor
             candidatos.sort((a, b) => b.matchScore - a.matchScore);
 
             let html = '';
@@ -763,7 +781,6 @@
                     { val: cand.pctScores.C, name: "Analista", color: "var(--disc-c)" }
                 ].sort((a, b) => b.val - a.val);
 
-                // Destaque visual especial se for o Top 1 do cenário Geral
                 let borderStyle = (cenario === 'geral' && index === 0) ? `border: 2px solid #f59e0b; background: #fffbeb; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);` : `border-left: 5px solid ${order[0].color}; background: #fff;`;
 
                 html += `

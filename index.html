@@ -704,7 +704,7 @@
     }
 
     // ==========================================
-    // 3.2 SIMULADOR DE IA DINÂMICO (NOVO MOTOR)
+    // 3.2 SIMULADOR DE IA DINÂMICO (NOVO MOTOR MATEMÁTICO)
     // ==========================================
     window.rodarSimulacaoIA = function() {
         const cenario = document.getElementById('simulador-cenario').value;
@@ -722,9 +722,16 @@
                 let d = child.val();
                 let pct = d.pctScores;
                 
-                let scoreDesenvoltura = (pct.D * 0.6) + (pct.I * 0.4);
-                let scoreQualidade = (pct.C * 0.6) + (pct.S * 0.4);
-                let scoreRotina = (pct.S * 0.6) + (pct.I * 0.4);
+                // CORREÇÃO MATEMÁTICA: Os traços já somam 100%.
+                // A soma de dois traços dominantes gera um score real de 0 a 100.
+                let scoreDesenvoltura = pct.D + pct.I;
+                let scoreQualidade = pct.C + pct.S;
+                let scoreRotina = pct.S + pct.I;
+                
+                // Versatilidade: quanto menor a diferença entre o maior e o menor traço, mais equilibrado é o colaborador.
+                let maxPct = Math.max(pct.D, pct.I, pct.S, pct.C);
+                let minPct = Math.min(pct.D, pct.I, pct.S, pct.C);
+                let scoreGeral = 100 - (maxPct - minPct); 
 
                 const order = [
                     { val: pct.D, name: "Executor" },
@@ -733,34 +740,36 @@
                     { val: pct.C, name: "Analista" }
                 ].sort((a, b) => b.val - a.val);
 
-                let primario = order[0].name;
+                let p1 = order[0].name; // Perfil principal
+                let p2 = order[1].name; // Perfil secundário
+                
                 let score = 0;
                 let insight = "";
 
-                // Geração Dinâmica de Texto (Baseado na Nota e no Perfil Real da Pessoa)
+                // TEXTOS 100% DINÂMICOS BASEADOS NA NOTA E NO PERFIL ESPECÍFICO DO COLABORADOR
                 if (cenario === 'desenvoltura') {
                     score = scoreDesenvoltura;
-                    if (score >= 75) insight = `Excelente para linha de frente! Como seu perfil forte é ${primario}, assume o controle com naturalidade e não trava sob pressão de metas.`;
-                    else if (score >= 50) insight = `Aderência mediana. Tem potencial para atuar em crises, mas sua tendência natural de ${primario} pode exigir apoio tático do coordenador.`;
-                    else insight = `Baixa aderência para operações de ataque agressivo. O perfil ${primario} prefere atuar nos bastidores com rotinas e processos controlados.`;
+                    if (score >= 65) insight = `🔥 Excelente para linha de frente! Sendo essencialmente ${p1} (com traços de ${p2}), assume o controle com naturalidade e não trava sob pressão de metas.`;
+                    else if (score >= 40) insight = `⚖️ Aderência mediana. A presença de ${p1} ajuda, mas pode exigir apoio tático da liderança para engajar a equipe em picos de estresse.`;
+                    else insight = `⚠️ Baixa aderência para operações agressivas. Sendo focado em ${p1}, prefere atuar com segurança e regras, podendo se frustrar com a imprevisibilidade.`;
                 } 
                 else if (cenario === 'qualidade') {
                     score = scoreQualidade;
-                    if (score >= 75) insight = `Auditor nato. Sendo ${primario}, tem olhar clínico para desvios e garantirá que nenhuma NR ou procedimento seja ignorado.`;
-                    else if (score >= 50) insight = `Nível aceitável. Consegue conferir processos, mas o lado ${primario} pode fazê-lo acelerar demais em dias cheios e perder detalhes.`;
-                    else insight = `Risco de desvios operacionais. O perfil predominante em ${primario} acha rotinas minuciosas entediantes e pode negligenciar POPs.`;
+                    if (score >= 65) insight = `🎯 Auditor nato. O perfil focado em ${p1} tem olhar clínico para desvios. Garantirá que nenhuma norma ou POP seja ignorada.`;
+                    else if (score >= 40) insight = `⚖️ Nível aceitável. Consegue conferir processos, mas o lado ${p1} pode fazê-lo acelerar demais em dias cheios e perder alguns detalhes.`;
+                    else insight = `⚠️ Risco de desvios operacionais. O perfil predominante em ${p1} acha rotinas minuciosas entediantes e pode negligenciar a qualidade em favor da rapidez.`;
                 } 
                 else if (cenario === 'rotina') {
                     score = scoreRotina;
-                    if (score >= 75) insight = `Pilar do turno. Com forte carga de ${primario}, é altamente resiliente, aguenta o volume da noite sem reclamar e estabiliza o time.`;
-                    else if (score >= 50) insight = `Suporta bem a carga, mas as nuances do perfil ${primario} indicam que ele pode se desmotivar se a rotina for monótona por muitos meses seguidos.`;
-                    else insight = `Baixa tolerância à rotina. A energia de ${primario} busca novidade, autonomia e ação. Pode ficar ocioso ou impaciente na repetição.`;
+                    if (score >= 65) insight = `🔋 Pilar do turno. Com forte carga de ${p1}, é altamente resiliente. Aguenta o alto volume logístico contínuo e estabiliza o time.`;
+                    else if (score >= 40) insight = `⚖️ Suporta bem a carga, mas as nuances de ${p1} indicam que pode se desmotivar se a rotina for monótona por muitos meses seguidos sem variação.`;
+                    else insight = `⚠️ Baixa tolerância à repetição contínua. A energia de ${p1} busca novidade e ação, podendo gerar ociosidade ou impaciência.`;
                 } 
                 else if (cenario === 'geral') {
-                    score = (scoreDesenvoltura + scoreQualidade + scoreRotina) / 3;
-                    if (score >= 60) insight = `🏆 Nível Curinga! Transita de forma muito equilibrada entre a liderança tática e o foco nos processos. É um talento adaptável.`;
-                    else if (score >= 40) insight = `Versatilidade restrita. Atende muito bem demandas específicas, mas sua base central focada em ${primario} limita atuações em cenários opostos.`;
-                    else insight = `Perfil de Especialista. A carga profunda em ${primario} significa que ele brilhará muito na sua área de conforto, mas sofrerá se for trocado de função.`;
+                    score = scoreGeral;
+                    if (score >= 70) insight = `🏆 Verdadeiro Curinga! Transita de forma extremamente equilibrada. Consegue adaptar seu lado ${p1} para liderar, focar ou pacificar conforme a necessidade da madrugada.`;
+                    else if (score >= 40) insight = `⚖️ Versatilidade moderada. Atende bem a maioria das demandas, mas sua base central focada em ${p1} dita a forma como resolve os problemas no fim das contas.`;
+                    else insight = `⚠️ Especialista. A carga muito profunda em ${p1} significa que brilhará na sua área de conforto, mas sofrerá resistência se exigido num cenário oposto.`;
                 }
 
                 d.matchScore = score;
@@ -768,6 +777,7 @@
                 candidatos.push(d);
             });
 
+            // Ordenar do maior para o menor
             candidatos.sort((a, b) => b.matchScore - a.matchScore);
 
             let html = '';

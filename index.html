@@ -296,6 +296,7 @@
                                 <option value="desenvoltura">Cenário 1: Desenvoltura, Liderança e Agilidade (Foco em D e I)</option>
                                 <option value="qualidade">Cenário 2: Qualidade, Auditoria e Regras SESMT (Foco em C e S)</option>
                                 <option value="rotina">Cenário 3: Resiliência em Alta Demanda e Harmonia (Foco em S e I)</option>
+                                <option value="geral" style="font-weight: bold; background: #e0f2fe;">🏆 Cenário 4: CAMPEÃO GERAL (Média de todos os cenários)</option>
                             </select>
                         </div>
                         <button class="btn" style="background: #0ea5e9;" onclick="rodarSimulacaoIA()">Rodar Simulação & Gerar Ranking ✨</button>
@@ -723,16 +724,24 @@
                 let score = 0;
                 let insight = "";
 
-                // Lógica de Peso da IA por Cenário
+                // Cálculos base para os cenários
+                let scoreDesenvoltura = (pct.D * 0.6) + (pct.I * 0.4);
+                let scoreQualidade = (pct.C * 0.6) + (pct.S * 0.4);
+                let scoreRotina = (pct.S * 0.6) + (pct.I * 0.4);
+
                 if (cenario === 'desenvoltura') {
-                    score = (pct.D * 0.6) + (pct.I * 0.4);
+                    score = scoreDesenvoltura;
                     insight = "Perfil altamente aderente à Liderança ativa. Possui 'desenvoltura', foco em metas e não se abala com a pressão diária.";
                 } else if (cenario === 'qualidade') {
-                    score = (pct.C * 0.6) + (pct.S * 0.4);
+                    score = scoreQualidade;
                     insight = "Perfil meticuloso e organizado. Excepcional para funções de auditoria, contagem cíclica e verificação de normas do SESMT.";
                 } else if (cenario === 'rotina') {
-                    score = (pct.S * 0.6) + (pct.I * 0.4);
+                    score = scoreRotina;
                     insight = "Perfil resiliente e empático. Mantém o ritmo constante em picos de produção e ajuda a equilibrar o clima do time.";
+                } else if (cenario === 'geral') {
+                    // CAMPEÃO GERAL: Média das 3 frentes logísticas
+                    score = (scoreDesenvoltura + scoreQualidade + scoreRotina) / 3;
+                    insight = "🏆 Campeão de Versatilidade! É o perfil mais curinga e adaptável da equipe. Transita muito bem entre a liderança, o foco em qualidade e a resiliência operacional.";
                 }
 
                 d.matchScore = score;
@@ -740,7 +749,7 @@
                 candidatos.push(d);
             });
 
-            // Ordenar ranking
+            // Ordenar ranking do maior para o menor
             candidatos.sort((a, b) => b.matchScore - a.matchScore);
 
             let html = '';
@@ -754,8 +763,11 @@
                     { val: cand.pctScores.C, name: "Analista", color: "var(--disc-c)" }
                 ].sort((a, b) => b.val - a.val);
 
+                // Destaque visual especial se for o Top 1 do cenário Geral
+                let borderStyle = (cenario === 'geral' && index === 0) ? `border: 2px solid #f59e0b; background: #fffbeb; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);` : `border-left: 5px solid ${order[0].color}; background: #fff;`;
+
                 html += `
-                    <div class="gestor-item" style="display:flex; flex-direction:column; align-items:flex-start; border-left: 5px solid ${order[0].color}; background: #fff;">
+                    <div class="gestor-item" style="display:flex; flex-direction:column; align-items:flex-start; ${borderStyle}">
                         <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                             <strong style="font-size:1.1rem; color:var(--purple-dark);">${medalha} ${cand.nome}</strong>
                             <span style="background:var(--purple-dark); color:white; padding:4px 8px; border-radius:4px; font-weight:bold; font-size: 0.9rem;">Match: ${cand.matchScore.toFixed(1)}%</span>
@@ -888,8 +900,8 @@
         else if(tipo === 'disc') linkFinal = urlBase + '?form=disc';
         
         const msg = tipo === 'bvi' 
-            ? `Olá equipa!\n\nInscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcedam ao formulário aqui:\n${linkFinal}` 
-            : `Olá equipa!\n\nPor favor, realizem o Mapeamento Comportamental Profiler neste link:\n${linkFinal}`;
+            ? `Olá equipe!\n\nInscrições para a *Brigada Voluntária de Incêndio - BVI* 🔥🧯\n\nAcessem o formulário aqui:\n${linkFinal}` 
+            : `Olá equipe!\n\nPor favor, realizem o Mapeamento Comportamental Profiler neste link:\n${linkFinal}`;
             
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }

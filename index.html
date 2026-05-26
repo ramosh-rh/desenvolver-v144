@@ -116,17 +116,33 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* REGRAS DE IMPRESSÃO (PDF LIMPO) */
+        /* ====================================================
+           REGRAS DE IMPRESSÃO - ATUALIZADAS PARA NÃO CORTAR 
+           ==================================================== */
         @media print {
-            body { background: white; color: black; margin: 0; padding: 0; }
-            .header, .tabs, .btn, .btn-outline, .btn-print, .btn-whatsapp, .btn-acao, .btn-excluir, .login-wrapper, .gestor-tabs { display: none !important; }
+            /* Força a renderização das cores de fundo para que os alertas apareçam no papel */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            body { background: white; color: black; margin: 0; padding: 0; font-size: 12px; }
+            .header, .tabs, .btn, .btn-outline, .btn-print, .btn-whatsapp, .btn-acao, .btn-excluir, .login-wrapper, .gestor-tabs, #area-botao-gestor { display: none !important; }
             .container { padding: 0; width: 100%; max-width: 100%; margin: 0; }
-            .card { box-shadow: none; border: 1px solid #cbd5e1; padding: 15px; margin: 0; }
-            .hr-grid { grid-template-columns: 1fr; gap: 10px; }
-            .hr-box { border: 1px solid #cbd5e1; break-inside: avoid; page-break-inside: avoid; margin-bottom: 15px; }
-            canvas { max-width: 300px !important; margin: 0 auto; display: block; }
-            .tag-perfil { border: 1px solid #000; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .progress-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .card { box-shadow: none; border: 1px solid #cbd5e1; padding: 15px; margin: 0; border-radius: 0; }
+            
+            /* DESLIGA O GRID NA IMPRESSÃO: Isso faz com que os blocos desçam um abaixo do outro, evitando cortes de página */
+            .hr-grid { display: block !important; }
+            
+            /* Permite que a caixa cresça naturalmente */
+            .hr-box { 
+                border: 1px solid #cbd5e1; 
+                margin-bottom: 15px; 
+                height: auto !important; /* Remove o travamento de altura */
+            }
+            
+            /* Evita que blocos de texto individuais sejam cortados ao meio na virada da página */
+            .hr-text-block { page-break-inside: avoid; }
+            
+            canvas { max-width: 250px !important; margin: 0 auto 20px; display: block; }
+            .tag-perfil { border: 1px solid #000; color: black !important; }
         }
     </style>
 </head>
@@ -636,7 +652,7 @@
                     </div>
 
                     <div>
-                        <div class="hr-box" style="height:100%;">
+                        <div class="hr-box">
                             <div class="hr-title">Relatório de People Analytics</div>
                             
                             <div class="hr-text-block">
@@ -722,13 +738,10 @@
                 let d = child.val();
                 let pct = d.pctScores;
                 
-                // CORREÇÃO MATEMÁTICA: Os traços já somam 100%.
-                // A soma de dois traços dominantes gera um score real de 0 a 100.
                 let scoreDesenvoltura = pct.D + pct.I;
                 let scoreQualidade = pct.C + pct.S;
                 let scoreRotina = pct.S + pct.I;
                 
-                // Versatilidade: quanto menor a diferença entre o maior e o menor traço, mais equilibrado é o colaborador.
                 let maxPct = Math.max(pct.D, pct.I, pct.S, pct.C);
                 let minPct = Math.min(pct.D, pct.I, pct.S, pct.C);
                 let scoreGeral = 100 - (maxPct - minPct); 
@@ -740,13 +753,12 @@
                     { val: pct.C, name: "Analista" }
                 ].sort((a, b) => b.val - a.val);
 
-                let p1 = order[0].name; // Perfil principal
-                let p2 = order[1].name; // Perfil secundário
+                let p1 = order[0].name; 
+                let p2 = order[1].name; 
                 
                 let score = 0;
                 let insight = "";
 
-                // TEXTOS 100% DINÂMICOS BASEADOS NA NOTA E NO PERFIL ESPECÍFICO DO COLABORADOR
                 if (cenario === 'desenvoltura') {
                     score = scoreDesenvoltura;
                     if (score >= 65) insight = `🔥 Excelente para linha de frente! Sendo essencialmente ${p1} (com traços de ${p2}), assume o controle com naturalidade e não trava sob pressão de metas.`;
@@ -777,7 +789,6 @@
                 candidatos.push(d);
             });
 
-            // Ordenar do maior para o menor
             candidatos.sort((a, b) => b.matchScore - a.matchScore);
 
             let html = '';

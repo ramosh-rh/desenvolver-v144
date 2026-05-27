@@ -102,7 +102,6 @@
         .nota-badge { background: var(--purple-dark); color: white; padding: 10px 15px; border-radius: 8px; font-size: 1.5rem; font-weight: 800; display: inline-block;}
         .historico-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: #fff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;}
         
-        /* Estilo da Galeria de Evidências */
         .fotos-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .foto-thumb-wrapper { position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); }
         .foto-thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; }
@@ -354,7 +353,7 @@
     }
 
     // ==========================================
-    // 1. MÚLTIPLAS FOTOS E EVIDÊNCIAS
+    // 1. MÚLTIPLAS FOTOS
     // ==========================================
     let fotosEvidencia = [];
 
@@ -418,7 +417,7 @@
 
 
     // ==========================================
-    // 2. AUDITORIA E LÓGICA DE FEEDBACK
+    // 2. AUDITORIA E NOVO CRITÉRIO "CAFÉ"
     // ==========================================
     const criteriosAuditoria = [
         { id: 'c1', nome: 'Organização e Padronização (5S)' },
@@ -427,7 +426,8 @@
         { id: 'c4', nome: 'Nível de Abastecimento' },
         { id: 'c5', nome: 'Organização Operacional (Carrinhos)' },
         { id: 'c6', nome: 'Organização de Paletes' },
-        { id: 'c7', nome: 'Controle de Gaiolas' }
+        { id: 'c7', nome: 'Controle de Gaiolas' },
+        { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' } // NOVO ITEM AQUI
     ];
 
     let notasAuditoria = {};
@@ -534,7 +534,8 @@
 
         if(Object.values(notasAuditoria).includes(0)) return;
 
-        let notaFinal = (soma / 35) * 10;
+        // AGORA SÃO 40 PONTOS POSSÍVEIS (8 itens * 5 estrelas)
+        let notaFinal = (soma / 40) * 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
         
         let feedback = "";
@@ -649,10 +650,10 @@
 
 
     // ==========================================
-    // 3. RESUMO DO DIA: UNIFICADO (WhatsApp e PDF)
+    // 3. RESUMO DO DIA E WHATSAPP / PDF
     // ==========================================
     let resumoDiarioGlobal = [];
-    let rankingEquipesGlobal = []; // Array agrupado unificado
+    let rankingEquipesGlobal = []; 
 
     function gerarResumoDiario() {
         let diaFiltro = document.getElementById('filtro-dia-resumo').value;
@@ -678,12 +679,11 @@
                 let nomeEquipe = rec.setor;
                 let areaOrigem = rec.setor;
 
-                // Lógica de Unificação (Juntar Medicamentos e Perfumaria da mesma estação)
                 if (rec.setor.includes("Estação")) {
                     let parts = rec.setor.split(" - ");
                     if(parts.length === 2) {
                         areaOrigem = parts[0]; 
-                        nomeEquipe = "Equipe " + parts[1]; // Ex: Equipe 1ª Estação
+                        nomeEquipe = "Equipe " + parts[1]; 
                     }
                 }
 
@@ -701,7 +701,6 @@
                 equipes[nomeEquipe].qtd += 1;
                 equipes[nomeEquipe].avaliacoesOriginais.push(rec);
 
-                // Levantar os pontos de atenção especificando a área de origem
                 let critRuins = [];
                 for (let critId in rec.notas) {
                     if (rec.notas[critId] <= 2) {
@@ -714,16 +713,12 @@
                 }
             });
 
-            // Converte para array e calcula média agrupada
             rankingEquipesGlobal = Object.values(equipes).map(eq => {
                 eq.notaMedia = eq.somaNotas / eq.qtd;
                 return eq;
             });
-
-            // Ordena o ranking consolidado
             rankingEquipesGlobal.sort((a, b) => b.notaMedia - a.notaMedia);
 
-            // Renderiza as Equipes Agrupadas
             let html = '';
             rankingEquipesGlobal.forEach((eq, index) => {
                 let cor = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
@@ -737,7 +732,6 @@
                     </div>`;
                 }
 
-                // Botões de edição individuais para as avaliações que formam a média
                 let botoesAcao = '<div style="margin-top: 10px; display:flex; gap: 5px; flex-wrap:wrap; border-top: 1px dashed #cbd5e1; padding-top: 10px;">';
                 botoesAcao += '<span style="font-size:0.75rem; color:#64748b; width:100%;">Editar laudos individuais:</span>';
                 eq.avaliacoesOriginais.forEach(av => {
@@ -785,7 +779,6 @@
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // RELATÓRIO PDF CONSOLIDADO COM PONTOS DE MELHORIA
     function imprimirRelatorioFechamento() {
         if(rankingEquipesGlobal.length === 0) return alert("Não há dados consolidados para gerar o PDF.");
 
@@ -916,7 +909,6 @@
         });
     }
 
-    // IMPRESSÕES (SEM DATAS NO CABEÇALHO)
     function imprimirChecklistAuditoria() {
         let html = `<html><head><title>Checklist de Campo</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px; text-align:left;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body>
         <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-align:center;">
@@ -928,7 +920,6 @@
         let win = window.open('','_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); win.close(); }, 500);
     }
 
-    // INICIALIZAÇÃO
     function switchGestorTab(t) {
         document.querySelectorAll('#view-gestor .g-tab').forEach(el => el.classList.remove('active'));
         document.getElementById('gtab-'+t).classList.add('active');

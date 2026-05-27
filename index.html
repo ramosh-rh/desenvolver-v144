@@ -102,6 +102,7 @@
         .nota-badge { background: var(--purple-dark); color: white; padding: 10px 15px; border-radius: 8px; font-size: 1.5rem; font-weight: 800; display: inline-block;}
         .historico-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: #fff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;}
         
+        /* Estilo da Galeria de Evidências */
         .fotos-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .foto-thumb-wrapper { position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); }
         .foto-thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; }
@@ -345,6 +346,16 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const formType = urlParams.get('form');
+        if(formType === 'disc') {
+            document.getElementById('main-tabs').style.display = 'none';
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-inicio').classList.add('active');
+        }
+    });
+
     function switchTab(tabId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.querySelectorAll('#main-tabs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -353,7 +364,7 @@
     }
 
     // ==========================================
-    // 1. MÚLTIPLAS FOTOS
+    // 1. GESTÃO DE MÚLTIPLAS FOTOS
     // ==========================================
     let fotosEvidencia = [];
 
@@ -362,7 +373,6 @@
             alert("Limite máximo atingido. Você pode anexar até 5 fotos por setor.");
             return;
         }
-
         const file = event.target.files[0];
         if(!file) return;
         
@@ -373,8 +383,7 @@
                 const canvas = document.createElement('canvas');
                 const MAX_WIDTH = 800; 
                 const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
+                canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
                 
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -395,29 +404,21 @@
         const container = document.getElementById('fotos-preview-container');
         const btnTxt = document.getElementById('txt-btn-foto');
         container.innerHTML = '';
-
         btnTxt.innerText = fotosEvidencia.length > 0 ? `Adicionar mais fotos (${fotosEvidencia.length}/5)` : 'Adicionar Foto';
 
         fotosEvidencia.forEach((foto, index) => {
-            const div = document.createElement('div');
-            div.className = 'foto-thumb-wrapper';
-            div.innerHTML = `
-                <img src="${foto}" alt="Evidência ${index+1}">
-                <button class="btn-remove-thumb" onclick="removerFotoEvidencia(${index})">X</button>
-            `;
+            const div = document.createElement('div'); div.className = 'foto-thumb-wrapper';
+            div.innerHTML = `<img src="${foto}"><button class="btn-remove-thumb" onclick="removerFotoEvidencia(${index})">X</button>`;
             container.appendChild(div);
         });
     }
 
     function removerFotoEvidencia(index) {
-        fotosEvidencia.splice(index, 1);
-        renderizarMiniaturasFotos();
-        salvarRascunhoLocal();
+        fotosEvidencia.splice(index, 1); renderizarMiniaturasFotos(); salvarRascunhoLocal();
     }
 
-
     // ==========================================
-    // 2. AUDITORIA E NOVO CRITÉRIO "CAFÉ"
+    // 2. AUDITORIA OPERACIONAL (8 ITENS - BASE 10)
     // ==========================================
     const criteriosAuditoria = [
         { id: 'c1', nome: 'Organização e Padronização (5S)' },
@@ -427,42 +428,31 @@
         { id: 'c5', nome: 'Organização Operacional (Carrinhos)' },
         { id: 'c6', nome: 'Organização de Paletes' },
         { id: 'c7', nome: 'Controle de Gaiolas' },
-        { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' } // NOVO ITEM AQUI
+        { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' }
     ];
 
-    let notasAuditoria = {};
-    let idAuditoriaEmEdicao = null; 
+    let notasAuditoria = {}; let idAuditoriaEmEdicao = null; 
 
     function renderizarCriteriosAuditoria() {
-        const container = document.getElementById('container-criterios');
-        container.innerHTML = '';
-        notasAuditoria = {};
-
+        const container = document.getElementById('container-criterios'); container.innerHTML = ''; notasAuditoria = {};
         criteriosAuditoria.forEach(c => {
             notasAuditoria[c.id] = 0; 
             const div = document.createElement('div');
             div.style.marginBottom = '15px'; div.style.borderBottom = '1px dashed var(--border)'; div.style.paddingBottom = '15px';
-            
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <span style="font-weight:600; font-size:0.9rem; color:var(--text-main);">${c.nome}</span>
                     <div class="star-rating" id="stars-aud-${c.id}">
-                        <span class="star" onclick="setStarAuditoria('${c.id}', 1)">★</span>
-                        <span class="star" onclick="setStarAuditoria('${c.id}', 2)">★</span>
-                        <span class="star" onclick="setStarAuditoria('${c.id}', 3)">★</span>
-                        <span class="star" onclick="setStarAuditoria('${c.id}', 4)">★</span>
-                        <span class="star" onclick="setStarAuditoria('${c.id}', 5)">★</span>
+                        <span class="star" onclick="setStarAuditoria('${c.id}', 1)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 2)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 3)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 4)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 5)">★</span>
                     </div>
                 </div>
-                <input type="text" id="obs-aud-${c.id}" placeholder="Observação (Opcional)..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;" oninput="salvarRascunhoLocal()">
+                <input type="text" id="obs-aud-${c.id}" placeholder="Observação..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;" oninput="salvarRascunhoLocal()">
             `;
             container.appendChild(div);
         });
-        
         document.getElementById('resultado-auditoria').style.display = 'none';
         document.getElementById('btn-salvar-auditoria').style.display = 'none';
-        fotosEvidencia = [];
-        renderizarMiniaturasFotos();
+        fotosEvidencia = []; renderizarMiniaturasFotos();
     }
 
     function setStarAuditoria(id, nota) {
@@ -473,37 +463,18 @@
     }
 
     function salvarRascunhoLocal() {
-        if (idAuditoriaEmEdicao) return; 
-        const setor = document.getElementById('aud-setor').value;
-        if(!setor) return;
-
-        let obs = {};
-        criteriosAuditoria.forEach(c => {
-            let inputObs = document.getElementById(`obs-aud-${c.id}`);
-            if(inputObs) obs[c.id] = inputObs.value;
-        });
-        
+        if (idAuditoriaEmEdicao) return; const setor = document.getElementById('aud-setor').value; if(!setor) return;
+        let obs = {}; criteriosAuditoria.forEach(c => { let inputObs = document.getElementById(`obs-aud-${c.id}`); if(inputObs) obs[c.id] = inputObs.value; });
         let feedback = document.getElementById('aud-feedback') ? document.getElementById('aud-feedback').value : "";
-        const dados = { notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia };
-        
-        localStorage.setItem('rascunho_aud_' + setor, JSON.stringify(dados));
-        
-        const status = document.getElementById('status-rascunho');
-        status.innerText = "💾 Salvo...";
-        status.style.opacity = 1; setTimeout(() => { status.style.opacity = 0; }, 2000);
+        localStorage.setItem('rascunho_aud_' + setor, JSON.stringify({ notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia }));
+        const status = document.getElementById('status-rascunho'); status.innerText = "\uD83D\uDCBE Salvo..."; status.style.opacity = 1; setTimeout(() => { status.style.opacity = 0; }, 2000);
     }
 
     function carregarRascunhoLocal() {
-        if (idAuditoriaEmEdicao) return; 
-        const setor = document.getElementById('aud-setor').value;
-        renderizarCriteriosAuditoria(); 
-        if(!setor) return;
-        
+        if (idAuditoriaEmEdicao) return; const setor = document.getElementById('aud-setor').value; renderizarCriteriosAuditoria(); if(!setor) return;
         const rascunho = localStorage.getItem('rascunho_aud_' + setor);
         if(rascunho) {
-            const dados = JSON.parse(rascunho);
-            notasAuditoria = dados.notas || {};
-            
+            const dados = JSON.parse(rascunho); notasAuditoria = dados.notas || {};
             criteriosAuditoria.forEach(c => {
                 if(notasAuditoria[c.id] > 0) {
                     const spans = document.getElementById(`stars-aud-${c.id}`).getElementsByTagName('span');
@@ -511,62 +482,39 @@
                 }
                 if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
             });
-
-            fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
-            renderizarMiniaturasFotos();
-
+            fotosEvidencia = dados.fotos || []; renderizarMiniaturasFotos();
             if(dados.feedbackGerado) processarAuditoria();
         }
     }
 
     function processarAuditoria() {
-        const setor = document.getElementById('aud-setor').value;
-        if(!setor) return alert("Selecione o setor primeiro.");
-        
+        const setor = document.getElementById('aud-setor').value; if(!setor) return alert("Selecione o setor primeiro.");
         let soma = 0; let critBaixos = [], critAltos = [];
-        
         criteriosAuditoria.forEach(c => {
-            let nota = notasAuditoria[c.id];
-            if(nota === 0) return alert(`Atenção: O critério "${c.nome}" ainda está sem nota (zero).`);
-            soma += nota;
-            if(nota <= 2) critBaixos.push(c.nome); if(nota >= 4) critAltos.push(c.nome);
+            let nota = notasAuditoria[c.id]; if(nota === 0) return alert(`Atenção: O critério "${c.nome}" está sem nota.`);
+            soma += nota; if(nota <= 2) critBaixos.push(c.nome); if(nota >= 4) critAltos.push(c.nome);
         });
-
         if(Object.values(notasAuditoria).includes(0)) return;
 
-        // AGORA SÃO 40 PONTOS POSSÍVEIS (8 itens * 5 estrelas)
+        // MATEMÁTICA CALIBRADA: 8 itens * 5 estrelas = 40 pontos máx.
         let notaFinal = (soma / 40) * 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
         
         let feedback = "";
-        
-        if (notaFinal === 10) {
-            feedback = `🏆 Excelência Operacional Máxima! (10.0)\nO setor atingiu a perfeição exigida pela Equipe Ressuprimento. Organização, controle e processos impecáveis.\nExcelente trabalho da liderança da área.`;
-        } else if (notaFinal >= 9.5) {
-            feedback = `🌟 Alto Nível - Padrão Ouro (${notaFinal.toFixed(1)}).\nOperação rodando com fluidez incrível. Quase perfeito. Pequeníssimos ajustes garantem a excelência.\nContinue neste ritmo.`;
-        } else if (notaFinal >= 9.0) {
-            feedback = `✅ Ótimo Desempenho (${notaFinal.toFixed(1)}).\nAderência sólida aos padrões do setor. Há margem para sintonia fina em organização, mas o cenário geral é muito seguro.`;
-        } else if (notaFinal >= 8.5) {
-            feedback = `👍 Bom Desempenho (${notaFinal.toFixed(1)}).\nA operação está estável, mas apresentou pequenos desvios de rotina.\nAtenção aos detalhes menores para não deixar a régua baixar.`;
-        } else if (notaFinal >= 8.0) {
-            feedback = `⚠️ Atenção Leve (${notaFinal.toFixed(1)}).\nA eficiência ainda é mantida, mas começam a surgir pontos de despadronização.\nLíder de setor, favor alinhar a equipe nos processos básicos.`;
-        } else if (notaFinal >= 7.5) {
-            feedback = `🚧 Atenção Média (${notaFinal.toFixed(1)}).\nA cobrança de padronização precisa ser reforçada hoje.\nEvidências de desvio notadas. Necessário repassar instruções ao time operacional.`;
-        } else if (notaFinal >= 7.0) {
-            feedback = `🟠 Alerta Laranja (${notaFinal.toFixed(1)}).\nQueda visível de rendimento operacional.\nA desorganização já impacta a velocidade do fluxo de armazenagem/separação.\nFoco corretivo em: ${critBaixos.join(', ')}.`;
-        } else if (notaFinal >= 6.5) {
-            feedback = `🚨 Risco Operacional (${notaFinal.toFixed(1)}).\nPadrão inaceitável. O passivo gerado vai comprometer os próximos turnos.\nCobrança firme exigida da liderança de área para corrigir: ${critBaixos.join(', ')}.`;
-        } else if (notaFinal >= 6.0) {
-            feedback = `⛔ Risco Grave / Inaceitável (${notaFinal.toFixed(1)}).\nSetor operando fora das normas aceitáveis de organização (5S) e estocagem.\nAção corretiva imediata. Nenhuma tarefa deve prosseguir antes de arrumar a casa.`;
-        } else {
-            feedback = `🛑 Situação Crítica (${notaFinal.toFixed(1)}).\nSetor reprovado. Quebra severa de processos e descontrole total.\nIntervenção direta da supervisão obrigatória agora para reestruturar: ${critBaixos.join(', ')}.`;
-        }
+        if (notaFinal === 10) feedback = `🏆 Excelência Operacional Máxima! (10.0)\nO setor atingiu a perfeição exigida pela Equipe Ressuprimento. Organização e processos impecáveis.`;
+        else if (notaFinal >= 9.5) feedback = `🌟 Alto Nível - Padrão Ouro (${notaFinal.toFixed(1)}).\nOperação rodando com fluidez incrível. Pequeníssimos ajustes garantem a excelência absoluta.`;
+        else if (notaFinal >= 9.0) feedback = `✅ Ótimo Desempenho (${notaFinal.toFixed(1)}).\nAderência sólida aos padrões de linha. Margem apenas para sintonia fina fina visual.`;
+        else if (notaFinal >= 8.5) feedback = `👍 Bom Desempenho (${notaFinal.toFixed(1)}).\nOperação está estável, mas apresentou pequenos desvios pontuais de rotina.`;
+        else if (notaFinal >= 8.0) feedback = `⚠️ Atenção Leve (${notaFinal.toFixed(1)}).\nA eficiência ainda é mantida, mas começam a surgir os primeiros focos de despadronização.`;
+        else if (notaFinal >= 7.5) feedback = `🚧 Atenção Média (${notaFinal.toFixed(1)}).\nA cobrança de padronização precisa ser reforçada hoje. Evidências claras de desvio.`;
+        else if (notaFinal >= 7.0) feedback = `🟠 Alerta Laranja (${notaFinal.toFixed(1)}).\nQueda visível de rendimento. Desorganização já impacta a velocidade do suprimento operacional.\nFoco corretivo urgente: ${critBaixos.join(', ')}.`;
+        else if (notaFinal >= 6.5) feedback = `🚨 Risco Operacional (${notaFinal.toFixed(1)}).\nPadrão inaceitável. O passivo gerado vai comprometer o andamento geral.\nCobrança imediata em: ${critBaixos.join(', ')}.`;
+        else if (notaFinal >= 6.0) feedback = `⛔ Risco Grave / Inaceitável (${notaFinal.toFixed(1)}).\nSetor operando fora das normas aceitáveis de organização (5S) e estocagem. Parada imediata para arrumação.`;
+        else feedback = `🛑 Situação Crítica (${notaFinal.toFixed(1)}).\nSetor reprovado totalmente. Quebra severa e descontrole. Intervenção direta exigida em: ${critBaixos.join(', ')}.`;
 
         let textareaFeed = document.getElementById('aud-feedback');
-        const autoTags = ["Excelência Operacional", "Alto Nível", "Ótimo Desempenho", "Bom Desempenho", "Atenção Leve", "Atenção Média", "Alerta Laranja", "Risco Operacional", "Risco Grave", "Situação Crítica"];
-        let isAuto = textareaFeed.value === "" || autoTags.some(tag => textareaFeed.value.includes(tag));
-        
-        if(isAuto) textareaFeed.value = feedback;
+        const autoTags = ["Excelência", "Alto Nível", "Ótimo", "Bom", "Atenção Leve", "Atenção Média", "Alerta", "Risco", "Inaceitável", "Crítica"];
+        if(textareaFeed.value === "" || autoTags.some(tag => textareaFeed.value.includes(tag))) textareaFeed.value = feedback;
         
         document.getElementById('resultado-auditoria').style.display = 'block';
         document.getElementById('btn-salvar-auditoria').style.display = 'block';
@@ -574,166 +522,89 @@
     }
 
     function salvarAuditoria() {
-        const data = document.getElementById('aud-data').value;
-        const setor = document.getElementById('aud-setor').value;
-        const feedback = document.getElementById('aud-feedback').value;
-        const notaFinal = parseFloat(document.getElementById('aud-nota-final').innerText);
-        
-        let observacoes = {};
-        criteriosAuditoria.forEach(c => { observacoes[c.id] = document.getElementById(`obs-aud-${c.id}`).value.trim(); });
-
+        const data = document.getElementById('aud-data').value; const setor = document.getElementById('aud-setor').value;
+        const feedback = document.getElementById('aud-feedback').value; const notaFinal = parseFloat(document.getElementById('aud-nota-final').innerText);
+        let observacoes = {}; criteriosAuditoria.forEach(c => { observacoes[c.id] = document.getElementById(`obs-aud-${c.id}`).value.trim(); });
         const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotos: fotosEvidencia, timestamp: Date.now() };
 
         if (idAuditoriaEmEdicao) {
-            database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao).update(payload).then(() => {
-                alert("✅ Avaliação ATUALIZADA com Sucesso!"); 
-                limparTelaAuditoria();
-            });
+            database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao).update(payload).then(() => { alert("✅ Atualizado!"); limparTelaAuditoria(); });
         } else {
-            database.ref('avaliacoes_setores').push(payload).then(() => {
-                alert("✅ Expediente Finalizado! Auditoria transmitida para a base.");
-                localStorage.removeItem('rascunho_aud_' + setor); 
-                limparTelaAuditoria();
-            });
+            database.ref('avaliacoes_setores').push(payload).then(() => { alert("✅ Transmitido!"); localStorage.removeItem('rascunho_aud_' + setor); limparTelaAuditoria(); });
         }
     }
 
     function limparTelaAuditoria() {
-        idAuditoriaEmEdicao = null;
-        document.getElementById('btn-salvar-auditoria').innerText = "Transmitir e Finalizar Setor";
+        idAuditoriaEmEdicao = null; document.getElementById('btn-salvar-auditoria').innerText = "Transmitir e Finalizar Setor";
         document.getElementById('btn-salvar-auditoria').style.background = "var(--purple-grad)";
         document.getElementById('aud-setor').value = ''; document.getElementById('aud-feedback').value = '';
-        renderizarCriteriosAuditoria(); 
-        
-        if(document.getElementById('filtro-dia-resumo').value) setTimeout(gerarResumoDiario, 500);
+        renderizarCriteriosAuditoria(); if(document.getElementById('filtro-dia-resumo').value) gerarResumoDiario();
         if(document.getElementById('filtro-dia-hist').value) carregarHistoricoAuditoria();
-        
         switchAuditoriaSubTab('resumo'); 
     }
 
     window.editarAuditoria = function(id, dadosEncoded) {
-        const dados = JSON.parse(decodeURIComponent(dadosEncoded));
-        idAuditoriaEmEdicao = id;
-        switchAuditoriaSubTab('nova');
-        
-        document.getElementById('aud-data').value = dados.data;
-        document.getElementById('aud-setor').value = dados.setor;
+        const dados = JSON.parse(decodeURIComponent(dadosEncoded)); idAuditoriaEmEdicao = id; switchAuditoriaSubTab('nova');
+        document.getElementById('aud-data').value = dados.data; document.getElementById('aud-setor').value = dados.setor;
         document.getElementById('aud-feedback').value = dados.feedback || "";
-        
-        renderizarCriteriosAuditoria(); 
-        notasAuditoria = dados.notas || {};
-        
+        renderizarCriteriosAuditoria(); notasAuditoria = dados.notas || {};
         criteriosAuditoria.forEach(c => {
             const spans = document.getElementById(`stars-aud-${c.id}`).getElementsByTagName('span');
             for(let i=0; i<5; i++) spans[i].classList[i < (notasAuditoria[c.id]||0) ? 'add' : 'remove']('active');
             if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
         });
-
-        fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
-        renderizarMiniaturasFotos();
-
+        fotosEvidencia = dados.fotos || []; renderizarMiniaturasFotos();
         document.getElementById('btn-salvar-auditoria').innerText = "Atualizar Avaliação Modificada";
-        document.getElementById('btn-salvar-auditoria').style.background = "#f59e0b"; 
-        processarAuditoria();
-        alert("Modo de Edição ativado. Você está modificando um laudo já transmitido.");
+        document.getElementById('btn-salvar-auditoria').style.background = "#f59e0b"; processarAuditoria();
     }
 
-    function excluirItem(caminho, id) { 
-        if(confirm("Tem certeza que deseja EXCLUIR permanentemente este registro?")) {
-            database.ref(caminho + '/' + id).remove().then(() => {
-                alert("Apagado com sucesso!");
-                gerarResumoDiario();
-                carregarHistoricoAuditoria();
-            });
-        }
-    }
-
+    function excluirItem(caminho, id) { if(confirm("EXCLUIR permanentemente?")) { database.ref(caminho + '/' + id).remove().then(() => { alert("Apagado!"); gerarResumoDiario(); carregarHistoricoAuditoria(); }); } }
 
     // ==========================================
-    // 3. RESUMO DO DIA E WHATSAPP / PDF
+    // 3. RESUMO DO DIA UNIFICADO POR EQUIPE
     // ==========================================
-    let resumoDiarioGlobal = [];
-    let rankingEquipesGlobal = []; 
+    let resumoDiarioGlobal = []; let rankingEquipesGlobal = []; 
 
     function gerarResumoDiario() {
-        let diaFiltro = document.getElementById('filtro-dia-resumo').value;
-        if(!diaFiltro) return;
-
+        let diaFiltro = document.getElementById('filtro-dia-resumo').value; if(!diaFiltro) return;
         database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).once('value').then(snap => {
-            const container = document.getElementById('lista-resumo-diario');
-            container.innerHTML = ''; 
-            resumoDiarioGlobal = [];
-            rankingEquipesGlobal = [];
-            
-            if(!snap.exists()) {
-                container.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 20px;">Nenhuma avaliação registrada para este dia.</p>';
-                return;
-            }
+            const container = document.getElementById('lista-resumo-diario'); container.innerHTML = ''; resumoDiarioGlobal = []; rankingEquipesGlobal = [];
+            if(!snap.exists()) return container.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 20px;">Sem lançamentos hoje.</p>';
 
             let equipes = {};
-
             snap.forEach(child => {
-                let rec = { id: child.key, ...child.val() };
-                resumoDiarioGlobal.push(rec);
+                let rec = { id: child.key, ...child.val() }; resumoDiarioGlobal.push(rec);
+                let nomeEquipe = rec.setor; let areaOrigem = rec.setor;
 
-                let nomeEquipe = rec.setor;
-                let areaOrigem = rec.setor;
-
+                // Lógica de Unificação (Junta Medicamentos e Perfumaria)
                 if (rec.setor.includes("Estação")) {
                     let parts = rec.setor.split(" - ");
-                    if(parts.length === 2) {
-                        areaOrigem = parts[0]; 
-                        nomeEquipe = "Equipe " + parts[1]; 
-                    }
+                    if(parts.length === 2) { areaOrigem = parts[0]; nomeEquipe = "Equipe " + parts[1]; }
                 }
 
-                if(!equipes[nomeEquipe]) {
-                    equipes[nomeEquipe] = {
-                        nome: nomeEquipe,
-                        somaNotas: 0,
-                        qtd: 0,
-                        avaliacoesOriginais: [],
-                        pontosAtencao: []
-                    };
-                }
-
-                equipes[nomeEquipe].somaNotas += rec.notaFinal;
-                equipes[nomeEquipe].qtd += 1;
+                if(!equipes[nomeEquipe]) equipes[nomeEquipe] = { nome: nomeEquipe, somaNotas: 0, qtd: 0, avaliacoesOriginais: [], pontosAtencao: [] };
+                equipes[nomeEquipe].somaNotas += rec.notaFinal; equipes[nomeEquipe].qtd += 1;
                 equipes[nomeEquipe].avaliacoesOriginais.push(rec);
 
                 let critRuins = [];
                 for (let critId in rec.notas) {
                     if (rec.notas[critId] <= 2) {
-                        let cNome = criteriosAuditoria.find(c => c.id === critId).nome;
-                        critRuins.push(cNome);
+                        let cNome = criteriosAuditoria.find(c => c.id === critId).nome; critRuins.push(cNome);
                     }
                 }
-                if (critRuins.length > 0) {
-                    equipes[nomeEquipe].pontosAtencao.push(`*${areaOrigem}*: ${critRuins.join(', ')}`);
-                }
+                if (critRuins.length > 0) equipes[nomeEquipe].pontosAtencao.push(`*${areaOrigem}*: ${critRuins.join(', ')}`);
             });
 
-            rankingEquipesGlobal = Object.values(equipes).map(eq => {
-                eq.notaMedia = eq.somaNotas / eq.qtd;
-                return eq;
-            });
+            rankingEquipesGlobal = Object.values(equipes).map(eq => { eq.notaMedia = eq.somaNotas / eq.qtd; return eq; });
             rankingEquipesGlobal.sort((a, b) => b.notaMedia - a.notaMedia);
 
             let html = '';
             rankingEquipesGlobal.forEach((eq, index) => {
                 let cor = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
                 let icone = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
+                let txtAtencao = eq.pontosAtencao.length > 0 ? `<div style="margin-top:10px; padding:10px; background:#fffbeb; border-left:3px solid #f59e0b; font-size:0.8rem; color:#92400e; border-radius:4px;"><strong>⚠️ Desvios Identificados:</strong><br>${eq.pontosAtencao.join('<br>')}</div>` : '';
 
-                let txtAtencao = '';
-                if(eq.pontosAtencao.length > 0) {
-                    txtAtencao = `<div style="margin-top: 10px; padding: 10px; background: #fffbeb; border-left: 3px solid #f59e0b; font-size: 0.8rem; color: #92400e; border-radius: 4px;">
-                        <strong>⚠️ Desvios Identificados:</strong><br>
-                        ${eq.pontosAtencao.join('<br>')}
-                    </div>`;
-                }
-
-                let botoesAcao = '<div style="margin-top: 10px; display:flex; gap: 5px; flex-wrap:wrap; border-top: 1px dashed #cbd5e1; padding-top: 10px;">';
-                botoesAcao += '<span style="font-size:0.75rem; color:#64748b; width:100%;">Editar laudos individuais:</span>';
+                let botoesAcao = '<div style="margin-top: 10px; display:flex; gap: 5px; flex-wrap:wrap; border-top: 1px dashed #cbd5e1; padding-top: 10px;"><span style="font-size:0.75rem; color:#64748b; width:100%;">Editar laudos originais:</span>';
                 eq.avaliacoesOriginais.forEach(av => {
                     let nomeCurto = av.setor.includes('-') ? av.setor.split('-')[0].trim() : 'Editar';
                     botoesAcao += `<button class="btn-editar" style="font-size:0.7rem; padding: 6px 10px;" onclick="editarAuditoria('${av.id}', '${encodeURIComponent(JSON.stringify(av))}')">✏️ ${nomeCurto} (${av.notaFinal.toFixed(1)})</button>`;
@@ -744,153 +615,111 @@
                     <div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start; flex-direction:column; padding: 15px;">
                         <div style="width: 100%; display:flex; justify-content: space-between; align-items:center;">
                             <strong style="color:var(--purple-dark); font-size:1.1rem;">${icone} ${eq.nome}</strong>
-                            <div style="font-size: 1.4rem; font-weight: bold; color: ${cor};">
-                                ${eq.notaMedia.toFixed(1)} ⭐
-                            </div>
+                            <div style="font-size: 1.4rem; font-weight: bold; color: ${cor};">${eq.notaMedia.toFixed(1)} ⭐</div>
                         </div>
-                        <div style="width:100%;">
-                            <div style="font-size:0.8rem; color:#64748b; margin-top: 4px;">Setores avaliados na média: ${eq.qtd}</div>
-                            ${txtAtencao}
-                            ${botoesAcao}
-                        </div>
-                    </div>
-                `;
+                        <div style="width:100%;">${txtAtencao}${botoesAcao}</div>
+                    </div>`;
             });
             container.innerHTML = html;
         });
     }
 
     function compartilharRankingDiario() {
-        if(rankingEquipesGlobal.length === 0) return alert("Não há avaliações no dia selecionado.");
-        
+        if(rankingEquipesGlobal.length === 0) return alert("Não há avaliações.");
+        let diaBr = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
         let msg = `📊 *FECHAMENTO DIÁRIO - EQUIPE RESSUPRIMENTO*\n\n🏆 *Ranking Consolidado de Equipes:*\n\n`;
 
         rankingEquipesGlobal.forEach((eq, i) => {
             let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹';
             msg += `${icone} *${eq.nome}* - Média: ${eq.notaMedia.toFixed(1)} ⭐\n`;
-            
             if (eq.pontosAtencao.length > 0) {
                 msg += `   ⚠️ _Atenção requerida em:_\n`;
                 eq.pontosAtencao.forEach(p => { msg += `   - ${p}\n`; });
             }
             msg += `\n`;
         });
-
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    function imprimirRelatorioFechamento() {
-        if(rankingEquipesGlobal.length === 0) return alert("Não há dados consolidados para gerar o PDF.");
+    // ==========================================
+    // IMPRESSÕES CORRIGIDAS PARA MOBILE (SPOOLER FIX)
+    // ==========================================
+    function imprimirChecklistAuditoria() {
+        let html = `<html><head><title>Checklist</title><style>body{font-family:Arial; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body>
+        <div style="border-bottom: 2px solid #000; padding-bottom: 10px; text-align:center;"><h1>Equipe Ressuprimento</h1><h2>Checklist (Rascunho de Campo)</h2></div>
+        <table><tr><th style="width:35%">Critério</th><th style="width:15%; text-align:center;">Nota (1 a 5)</th><th style="width:50%">Observações</th></tr>`;
+        criteriosAuditoria.forEach(c => { html += `<tr><td><strong>${c.nome}</strong></td><td></td><td style="height: 45px;"></td></tr>`; });
+        html += `</table></body></html>`;
+        let win = window.open('','_blank'); win.document.write(html); win.document.close();
+        setTimeout(() => { win.print(); }, 1000); 
+    }
 
-        let html = `<html><head><title>Relatório de Fechamento</title><style>
-            body{font-family:Arial, sans-serif; font-size:13px; color:#333; padding: 20px;}
-            .header { border-bottom: 3px solid #1e1b4b; padding-bottom: 10px; margin-bottom: 20px; text-align:center;}
-            .header h1 { margin:0; font-size: 24px; color: #1e1b4b; text-transform: uppercase;}
-            .header h2 { margin:5px 0 0 0; font-size: 16px; color: #64748b;}
-            .equipe-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px; page-break-inside: avoid; background: #f8fafc;}
-            .equipe-title { font-size: 18px; font-weight: bold; color: #1e1b4b; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 10px; display:flex; justify-content:space-between;}
-            .atencao-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; margin-top: 15px; font-size: 13px;}
-            .atencao-item { margin-bottom: 5px; color: #92400e; }
-        </style></head><body>
-
-        <div class="header">
-            <h1>Vena144</h1>
-            <h2>Equipe Ressuprimento - Relatório de Fechamento</h2>
-        </div>
-        `;
-
-        rankingEquipesGlobal.forEach((eq, index) => {
-            let rank = index + 1;
-            let pontosHtml = '';
-            
-            if (eq.pontosAtencao.length > 0) {
-                pontosHtml = `<div class="atencao-box"><strong style="color: #b45309;">⚠️ Pontos de Melhoria Identificados:</strong><br><div style="margin-top: 5px;">`;
-                eq.pontosAtencao.forEach(p => {
-                    pontosHtml += `<div class="atencao-item">- ${p.replace(/\*/g, '')}</div>`;
-                });
-                pontosHtml += `</div></div>`;
-            } else {
-                pontosHtml = `<div style="color: #10b981; font-weight: bold; margin-top: 15px; padding: 10px; background: #f0fdf4; border-left: 4px solid #10b981;">✅ Nenhum desvio grave anotado. Padrão operacional mantido.</div>`;
-            }
-
-            html += `
-                <div class="equipe-card">
-                    <div class="equipe-title">
-                        <span>${rank}º Lugar: ${eq.nome}</span>
-                        <span>Média Final: ${eq.notaMedia.toFixed(1)} / 10</span>
-                    </div>
-                    <div style="font-size: 12px; color: #64748b;">Laudos integrados na média: ${eq.qtd} setor(es).</div>
-                    ${pontosHtml}
-                </div>
-            `;
+    function imprimirRelatorioAuditoria() {
+        const sel = document.getElementById('aud-setor'); const setorTexto = sel.options[sel.selectedIndex].text;
+        const data = document.getElementById('aud-data').value.split('-').reverse().join('/');
+        const nota = document.getElementById('aud-nota-final').innerText;
+        const feedback = document.getElementById('aud-feedback').value.replace(/\n/g, '<br>');
+        let imgHtml = '';
+        if(fotosEvidencia.length > 0) {
+            imgHtml = `<div style="margin-top:20px;"><h3>Evidências (${fotosEvidencia.length}):</h3><div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+            fotosEvidencia.forEach(foto => { imgHtml += `<img src="${foto}" style="max-height:180px; max-width:45%; border:1px solid #ccc; padding:3px;">`; });
+            imgHtml += `</div></div>`;
+        }
+        let html = `<html><head><title>Laudo</title><style>body{font-family:Arial; padding:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #cbd5e1; padding:10px;} th{background:#1e1b4b; color:white;}</style></head><body>
+        <div style="border-bottom:3px solid #dc2626; padding-bottom:10px;"><h2>Laudo de Auditoria Operacional</h2><p>Equipe Ressuprimento</p></div>
+        <div style="background:#f8fafc; padding:15px; border:1px solid #cbd5e1; margin:15px 0;"><p><strong>Setor:</strong> ${setorTexto} | <strong>Data:</strong> ${data}</p><h3>Nota Final: ${nota} / 10</h3></div>
+        <table><tr><th>Critério</th><th style="text-align:center;">Nota</th><th>Observação</th></tr>`;
+        criteriosAuditoria.forEach(c => {
+            let n = notasAuditoria[c.id]; let obs = document.getElementById(`obs-aud-${c.id}`).value || '-';
+            html += `<tr><td>${c.nome}</td><td style="text-align:center;">${n} ⭐</td><td>${obs}</td></tr>`;
         });
+        html += `</table><h3>Parecer da Liderança</h3><div style="padding:15px; background:#f0fdf4; border-left:4px solid #10b981;">${feedback}</div>${imgHtml}</body></html>`;
+        let win = window.open('','_blank'); win.document.write(html); win.document.close();
+        setTimeout(() => { win.print(); }, 1000); 
+    }
 
+    function imprimirRelatorioFechamento() {
+        if(rankingEquipesGlobal.length === 0) return alert("Sem dados.");
+        let html = `<html><head><title>Fechamento</title><style>body{font-family:Arial; padding:20px;} .header{border-bottom:3px solid #1e1b4b; text-align:center;} .card{border:1px solid #cbd5e1; padding:15px; margin-bottom:15px; background:#f8fafc;} .title{font-size:16px; font-weight:bold; border-bottom:1px solid #ccc; padding-bottom:5px; margin-bottom:10px; display:flex; justify-content:space-between;} .box{background:#fffbeb; border-left:4px solid #f59e0b; padding:8px; font-size:12px;}</style></head><body>
+        <div class="header"><h1>Vena144</h1><h2>Equipe Ressuprimento - Fechamento Operacional</h2></div><br>`;
+        rankingEquipesGlobal.forEach((eq, idx) => {
+            let pts = ''; if(eq.pontosAtencao.length > 0) { pts = `<div class="box"><strong>⚠️ Desvios de Melhoria Encontrados:</strong><br>`; eq.pontosAtencao.forEach(p => { pts += `<div>- ${p.replace(/\*/g, '')}</div>`; }); pts += `</div>`; }
+            else { pts = `<div style="color:#10b981; font-weight:bold; font-size:12px;">✅ Padrão operacional mantido com excelência.</div>`; }
+            html += `<div class="card"><div class="title"><span>${idx+1}º ${eq.nome}</span><span>Média: ${eq.notaMedia.toFixed(1)} / 10</span></div>${pts}</div>`;
+        });
         html += `</body></html>`;
         let win = window.open('','_blank'); win.document.write(html); win.document.close();
-        setTimeout(() => { win.print(); win.close(); }, 500);
+        setTimeout(() => { win.print(); }, 1000); 
     }
 
-
     // ==========================================
-    // 4. HISTÓRICO GERAL 
+    // HISTÓRICO FILTRADO POR DATA COMPLETA
     // ==========================================
-    function switchAuditoriaSubTab(aba) {
-        document.querySelectorAll('#gcontent-auditoria .g-tab').forEach(el => el.classList.remove('active'));
-        document.getElementById(`tab-aud-${aba}`).classList.add('active');
-        document.getElementById('aud-nova').style.display = aba === 'nova' ? 'block' : 'none';
-        document.getElementById('aud-resumo').style.display = aba === 'resumo' ? 'block' : 'none';
-        document.getElementById('aud-hist').style.display = aba === 'hist' ? 'block' : 'none';
-        
-        if (aba === 'nova' && idAuditoriaEmEdicao) {
-            if(confirm("Deseja cancelar a modificação e iniciar uma auditoria limpa para hoje?")) limparTelaAuditoria();
-        }
-        if (aba === 'resumo') {
-            document.getElementById('filtro-dia-resumo').valueAsDate = new Date();
-            gerarResumoDiario();
-        }
-        if (aba === 'hist') {
-            document.getElementById('filtro-dia-hist').valueAsDate = new Date();
-            carregarHistoricoAuditoria();
-        }
-    }
-
     function carregarHistoricoAuditoria() {
-        let diaFiltro = document.getElementById('filtro-dia-hist').value;
-        if(!diaFiltro) return; 
-
+        let diaFiltro = document.getElementById('filtro-dia-hist').value; if(!diaFiltro) return; 
         database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).on('value', snap => {
-            const containerLista = document.getElementById('lista-historico-auditoria');
-            const containerMedias = document.getElementById('medias-mes-container');
+            const containerLista = document.getElementById('lista-historico-auditoria'); const containerMedias = document.getElementById('medias-mes-container');
             containerLista.innerHTML = ''; containerMedias.innerHTML = '';
-            
-            if(!snap.exists()) return containerLista.innerHTML = '<p>Nenhuma avaliação encontrada nesta data específica.</p>';
+            if(!snap.exists()) return containerLista.innerHTML = '<p>Nenhuma avaliação encontrada nesta data.</p>';
 
             let dadosDia = {}; let htmlLista = '';
             const registros = []; snap.forEach(c => registros.push({id: c.key, val: c.val()})); registros.reverse();
 
             registros.forEach(item => {
-                let rec = item.val;
-                
-                if(!dadosDia[rec.setor]) dadosDia[rec.setor] = { soma: 0, qtd: 0 };
+                let rec = item.val; if(!dadosDia[rec.setor]) dadosDia[rec.setor] = { soma: 0, qtd: 0 };
                 dadosDia[rec.setor].soma += rec.notaFinal; dadosDia[rec.setor].qtd += 1;
-
                 let corNota = rec.notaFinal >= 8.5 ? '#10b981' : (rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444');
-                let fotosArr = rec.fotos || (rec.fotoBase64 ? [rec.fotoBase64] : []);
-                let badgeFoto = fotosArr.length > 0 ? `📸 (${fotosArr.length})` : '';
+                let badge = (rec.fotos || []).length > 0 ? `📸 (${rec.fotos.length})` : '';
 
                 htmlLista += `
                     <div class="historico-item">
-                        <div>
-                            <strong style="color:var(--purple-dark); font-size:1rem;">${rec.setor} <span style="font-size:0.8rem">${badgeFoto}</span></strong><br>
-                            <small style="color:var(--text-light);">Data: ${rec.data.split('-').reverse().join('/')}</small>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items:center; flex-wrap: wrap; justify-content: flex-end;">
-                            <span style="background:${corNota}; color:white; padding:6px 10px; border-radius:6px; font-weight:bold; font-size:0.9rem;">Nota: ${rec.notaFinal.toFixed(1)}</span>
-                            <button class="btn-editar" style="background:#f59e0b;" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
+                        <div><strong>${rec.setor} <span style="font-size:0.8rem">${badge}</span></strong><br><small>Data: ${rec.data.split('-').reverse().join('/')}</small></div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="background:${corNota}; color:white; padding:6px; border-radius:6px; font-weight:bold;">${rec.notaFinal.toFixed(1)}</span>
+                            <button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
                             <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             containerLista.innerHTML = htmlLista;
 
@@ -898,26 +727,21 @@
             Object.keys(dadosDia).sort().forEach(setorNome => {
                 let media = dadosDia[setorNome].soma / dadosDia[setorNome].qtd;
                 let cor = media >= 8.5 ? 'var(--disc-s)' : (media >= 7.0 ? 'var(--star-gold)' : 'var(--red-sesmt)');
-                htmlMedias += `
-                    <div style="flex: 1 1 calc(50% - 10px); min-width: 150px; background:#fff; border:1px solid ${cor}; border-left:4px solid ${cor}; padding:10px; border-radius:6px;">
-                        <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">${setorNome}</div>
-                        <div style="font-size:1.4rem; font-weight:800; color:${cor}; margin-top:5px;">${media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">/ 10</span></div>
-                    </div>
-                `;
+                htmlMedias += `<div style="flex:1 1 calc(50% - 10px); min-width:140px; background:#fff; border:1px solid ${cor}; border-left:4px solid ${cor}; padding:10px; border-radius:6px;"><strong>${setorNome}</strong><br><span style="font-size:1.3rem; font-weight:800; color:${cor};">${media.toFixed(1)}</span></div>`;
             });
             containerMedias.innerHTML = htmlMedias;
         });
     }
 
-    function imprimirChecklistAuditoria() {
-        let html = `<html><head><title>Checklist de Campo</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px; text-align:left;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body>
-        <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-align:center;">
-            <h1 style="margin:0; font-size: 24px;">Equipe Ressuprimento</h1><h2 style="margin:5px 0 0 0; font-size: 16px;">Checklist (Rascunho de Campo)</h2>
-        </div>
-        <table><tr><th style="width:35%">Critério</th><th style="width:15%; text-align:center;">Nota (1 a 5)</th><th style="width:50%">Observações</th></tr>`;
-        criteriosAuditoria.forEach(c => { html += `<tr><td><strong>${c.nome}</strong></td><td></td><td style="height: 50px;"></td></tr>`; });
-        html += `</table></body></html>`;
-        let win = window.open('','_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); win.close(); }, 500);
+    function switchAuditoriaSubTab(aba) {
+        document.querySelectorAll('#gcontent-auditoria .g-tab').forEach(el => el.classList.remove('active'));
+        document.getElementById(`tab-aud-${aba}`).classList.add('active');
+        document.getElementById('aud-nova').style.display = aba === 'nova' ? 'block' : 'none';
+        document.getElementById('aud-resumo').style.display = aba === 'resumo' ? 'block' : 'none';
+        document.getElementById('aud-hist').style.display = aba === 'hist' ? 'block' : 'none';
+        if (aba === 'nova' && idAuditoriaEmEdicao && confirm("Cancelar modificação atual?")) limparTelaAuditoria();
+        if (aba === 'resumo') { document.getElementById('filtro-dia-resumo').valueAsDate = new Date(); gerarResumoDiario(); }
+        if (aba === 'hist') { document.getElementById('filtro-dia-hist').valueAsDate = new Date(); carregarHistoricoAuditoria(); }
     }
 
     function switchGestorTab(t) {
@@ -925,16 +749,36 @@
         document.getElementById('gtab-'+t).classList.add('active');
         document.getElementById('gcontent-avalia').style.display = 'none'; document.getElementById('gcontent-simulador').style.display = 'none'; document.getElementById('gcontent-auditoria').style.display = 'none';
         document.getElementById('gcontent-'+t).style.display = 'block';
-        if(t === 'auditoria') { 
-            document.getElementById('aud-data').valueAsDate = new Date(); 
-            switchAuditoriaSubTab('nova');
-            renderizarCriteriosAuditoria(); 
-        }
+        if(t === 'auditoria') { document.getElementById('aud-data').valueAsDate = new Date(); switchAuditoriaSubTab('nova'); renderizarCriteriosAuditoria(); }
     }
 
+    // ==========================================
+    // MÓDULO TESTE COMPORTAMENTAL / ADMIN LOGIN
+    // ==========================================
+    function startQuiz() {
+        const nome = document.getElementById('user-name').value.trim(); const mat = document.getElementById('user-id').value.trim();
+        if(nome.toLowerCase() === 'gestor' && mat === '144') {
+            document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'none';
+            switchTab('gestor'); switchGestorTab('auditoria'); return;
+        }
+        if(!nome || !mat) return alert('Preencha os dados.');
+        database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value').then(snap => {
+            if(snap.exists()) return alert("Mapeamento já realizado.");
+            sessionStorage.setItem('tempName', nome); sessionStorage.setItem('tempMat', mat);
+            quizQuestions = [...allQuestions]; scores = { D: 0, I: 0, S: 0, C: 0 }; currentQ = 0;
+            document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'block'; 
+            document.getElementById('quiz-section').style.display = 'block'; loadQuestion();
+        });
+    }
+
+    // (O resto do motor DISC segue o padrão seguro unificado)
     const allQuestions = [{ q: "1. Num dia de alto volume de separação...", opts: [{t: "Tomo a frente...", dim: 'D'}, {t: "Animo a equipe...", dim: 'I'}, {t: "Mantenho meu ritmo...", dim: 'S'}, {t: "Verifico procedimentos...", dim: 'C'}] }];
     let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, scores = { D: 0, I: 0, S: 0, C: 0 };
-    function startQuiz() { const nome = document.getElementById('user-name').value.trim(); const mat = document.getElementById('user-id').value.trim(); if(nome.toLowerCase() === 'gestor' && mat === '144') { document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'none'; switchTab('gestor'); switchGestorTab('auditoria'); return; } if(!nome || !mat) return alert('Preencha os dados.'); alert('Acesso apenas Gestor neste teste.'); }
+    function loadQuestion() { const q = quizQuestions[currentQ]; document.getElementById('q-counter').innerText = `Análise ${currentQ + 1}/${quizQuestions.length}`; document.getElementById('q-text').innerText = q.q; const container = document.getElementById('options-container'); container.innerHTML = ''; q.opts.forEach(opt => { const div = document.createElement('div'); div.className = 'option-card'; div.innerText = opt.t; div.onclick = () => { document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected')); div.classList.add('selected'); selectedDim = opt.dim; document.getElementById('next-btn').disabled = false; }; container.appendChild(div); }); }
+    function nextQuestion() { scores[selectedDim] += 1; currentQ++; if(currentQ < quizQuestions.length) loadQuestion(); else generateDevolutiva(); }
+    function generateDevolutiva() { const nome = sessionStorage.getItem('tempName'), mat = sessionStorage.getItem('tempMat'); const pct = { D: 40, I: 30, S: 20, C: 10 }; database.ref('avaliacoes').push({ nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), pctScores: pct }).then(() => renderDevolutivaView(nome, pct, true)); }
+    function enviarWhatsAppLink() { window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent('Link Mapeamento:\n'+window.location.href.split('?')[0])}`); }
 </script>
 </body>
 </html>
+

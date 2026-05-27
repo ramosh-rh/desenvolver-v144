@@ -76,7 +76,7 @@
         .option-card { padding: 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; font-weight: 600; color: var(--text-light); }
         .option-card.selected { border-color: var(--purple-light); background: var(--purple-light); color: var(--white); }
 
-        .gestor-item { padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; background: #fafafa; transition: all 0.2s; }
+        .gestor-item { padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; background: #fafafa; transition: all 0.2s; flex-wrap: wrap;}
         .gestor-item:hover { border-color: var(--purple-light); background: #f3e8ff; }
 
         .gestor-tabs { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -100,10 +100,13 @@
         .progress-bar { width: 100%; background: #e2e8f0; border-radius: 4px; height: 10px; overflow: hidden; }
         .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
         .nota-badge { background: var(--purple-dark); color: white; padding: 10px 15px; border-radius: 8px; font-size: 1.5rem; font-weight: 800; display: inline-block;}
-        .historico-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: #fff; display: flex; justify-content: space-between; align-items: center;}
+        .historico-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: #fff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;}
         
-        /* Estilo da Imagem Evidência */
-        .foto-preview { max-width: 100%; max-height: 250px; border-radius: 8px; margin-top: 10px; border: 2px dashed var(--border); display: none; object-fit: contain; background: #000;}
+        /* Estilo da Galeria de Evidências */
+        .fotos-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .foto-thumb-wrapper { position: relative; width: 100px; height: 100px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); }
+        .foto-thumb-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-remove-thumb { position: absolute; top: 2px; right: 2px; background: rgba(220,38,38,0.9); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -115,7 +118,8 @@
             .card { box-shadow: none; border: 1px solid #cbd5e1; padding: 15px; margin: 0; border-radius: 0; }
             .hr-grid { display: block !important; }
             .hr-box { border: 1px solid #cbd5e1; margin-bottom: 15px; height: auto !important; }
-            .foto-preview { max-height: 150px !important; }
+            .foto-thumb-wrapper { width: 150px; height: 150px; }
+            .btn-remove-thumb { display: none !important; }
         }
     </style>
 </head>
@@ -211,7 +215,7 @@
                     <div class="gestor-tabs" style="margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">
                         <div class="g-tab active" id="tab-aud-nova" onclick="switchAuditoriaSubTab('nova')">📝 Nova Avaliação</div>
                         <div class="g-tab" id="tab-aud-resumo" onclick="switchAuditoriaSubTab('resumo')">📊 Resumo do Dia</div>
-                        <div class="g-tab" id="tab-aud-hist" onclick="switchAuditoriaSubTab('hist')">🗓️ Histórico Mensal</div>
+                        <div class="g-tab" id="tab-aud-hist" onclick="switchAuditoriaSubTab('hist')">🗓️ Histórico (Data Completa)</div>
                     </div>
 
                     <div id="aud-nova">
@@ -260,18 +264,19 @@
                         </div>
 
                         <div style="margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #f59e0b;">
-                            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #b45309;">Anexar Evidência (Opcional)</label>
-                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 10px;">Tire uma foto para registrar irregularidades no setor.</p>
-                            <button class="btn-outline" style="border-color: #f59e0b; color: #b45309; width: 100%; margin-top: 0;" onclick="document.getElementById('aud-foto-input').click()">
-                                📸 Abrir Câmera / Galeria
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #b45309;">Anexar Múltiplas Evidências (Opcional)</label>
+                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 10px;">Você pode tirar várias fotos do setor (Máximo 5).</p>
+                            
+                            <button class="btn-outline" style="border-color: #f59e0b; color: #b45309; width: 100%; margin-top: 0; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="document.getElementById('aud-foto-input').click()">
+                                📸 <span id="txt-btn-foto">Adicionar Foto</span>
                             </button>
                             <input type="file" id="aud-foto-input" accept="image/*" capture="environment" style="display: none;" onchange="processarFotoEvidencia(event)">
-                            <img id="aud-foto-preview" class="foto-preview">
-                            <button id="btn-remover-foto" class="btn-excluir" style="display:none; width: 100%; margin-top: 5px;" onclick="removerFotoEvidencia()">Remover Foto</button>
+                            
+                            <div id="fotos-preview-container" class="fotos-container"></div>
                         </div>
 
                         <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
-                            <h3 style="font-size: 0.95rem; color: var(--purple-dark); margin-bottom: 15px;">Critérios (Salva automático ao preencher no Mobile)</h3>
+                            <h3 style="font-size: 0.95rem; color: var(--purple-dark); margin-bottom: 15px;">Critérios de Avaliação</h3>
                             <div id="container-criterios"></div>
                         </div>
 
@@ -281,8 +286,8 @@
                             <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 5px;">Nota Diária do Setor</div>
                             <div class="nota-badge" id="aud-nota-final">0.0</div>
                             <div style="margin-top: 15px; text-align: left;">
-                                <label style="font-weight: 600; font-size: 0.85rem; color: var(--purple-dark);">Feedback Automático (IA):</label>
-                                <textarea id="aud-feedback" rows="5" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px;" oninput="salvarRascunhoLocal()"></textarea>
+                                <label style="font-weight: 600; font-size: 0.85rem; color: var(--purple-dark);">Feedback Automático Multi-Nível (IA):</label>
+                                <textarea id="aud-feedback" rows="6" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px;" oninput="salvarRascunhoLocal()"></textarea>
                             </div>
                         </div>
 
@@ -301,12 +306,13 @@
                         </div>
                         
                         <h3 style="font-size: 1rem; color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px;">🏆 Ranking de Setores do Dia</h3>
-                        <div id="lista-resumo-diario">
-                            </div>
+                        <div id="lista-resumo-diario"></div>
                     </div>
 
                     <div id="aud-hist" style="display: none;">
-                        <input type="month" id="filtro-mes-aud" class="input-group" style="padding: 10px; width: 100%; margin-bottom: 15px;" onchange="carregarHistoricoAuditoria()">
+                        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Busca por Data Específica:</label>
+                        <input type="date" id="filtro-dia-hist" class="input-group" style="padding: 10px; width: 100%; margin-bottom: 15px;" onchange="carregarHistoricoAuditoria()">
+                        
                         <div id="medias-mes-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
                         <div id="lista-historico-auditoria"></div>
                     </div>
@@ -341,11 +347,16 @@
     }
 
     // ==========================================
-    // 1. LÓGICA DE FOTOS E EVIDÊNCIAS
+    // 1. MÚLTIPLAS FOTOS E EVIDÊNCIAS
     // ==========================================
-    let fotoEvidenciaBase64 = null;
+    let fotosEvidencia = []; // Agora é um Array
 
     function processarFotoEvidencia(event) {
+        if(fotosEvidencia.length >= 5) {
+            alert("Limite máximo atingido. Você pode anexar até 5 fotos por setor.");
+            return;
+        }
+
         const file = event.target.files[0];
         if(!file) return;
         
@@ -353,9 +364,8 @@
         reader.onload = function(e) {
             const img = new Image();
             img.onload = function() {
-                // Comprimir a imagem para o Firebase não travar
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 800; // Limite de tamanho
+                const MAX_WIDTH = 800; 
                 const scaleSize = MAX_WIDTH / img.width;
                 canvas.width = MAX_WIDTH;
                 canvas.height = img.height * scaleSize;
@@ -363,32 +373,45 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Converte para Base64 com 60% de qualidade
-                fotoEvidenciaBase64 = canvas.toDataURL('image/jpeg', 0.6); 
+                const base64 = canvas.toDataURL('image/jpeg', 0.6); 
+                fotosEvidencia.push(base64);
                 
-                document.getElementById('aud-foto-preview').src = fotoEvidenciaBase64;
-                document.getElementById('aud-foto-preview').style.display = 'block';
-                document.getElementById('btn-remover-foto').style.display = 'block';
-                
-                salvarRascunhoLocal(); // Salva a foto no rascunho
+                renderizarMiniaturasFotos();
+                salvarRascunhoLocal(); 
+                document.getElementById('aud-foto-input').value = ""; // Reseta o input para aceitar nova foto
             }
             img.src = e.target.result;
         }
         reader.readAsDataURL(file);
     }
 
-    function removerFotoEvidencia() {
-        fotoEvidenciaBase64 = null;
-        document.getElementById('aud-foto-preview').src = "";
-        document.getElementById('aud-foto-preview').style.display = 'none';
-        document.getElementById('btn-remover-foto').style.display = 'none';
-        document.getElementById('aud-foto-input').value = "";
+    function renderizarMiniaturasFotos() {
+        const container = document.getElementById('fotos-preview-container');
+        const btnTxt = document.getElementById('txt-btn-foto');
+        container.innerHTML = '';
+
+        btnTxt.innerText = fotosEvidencia.length > 0 ? `Adicionar mais fotos (${fotosEvidencia.length}/5)` : 'Adicionar Foto';
+
+        fotosEvidencia.forEach((foto, index) => {
+            const div = document.createElement('div');
+            div.className = 'foto-thumb-wrapper';
+            div.innerHTML = `
+                <img src="${foto}" alt="Evidência ${index+1}">
+                <button class="btn-remove-thumb" onclick="removerFotoEvidencia(${index})">X</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function removerFotoEvidencia(index) {
+        fotosEvidencia.splice(index, 1);
+        renderizarMiniaturasFotos();
         salvarRascunhoLocal();
     }
 
 
     // ==========================================
-    // 2. AUDITORIA (FORMULÁRIO, AUTO-SAVE E ENVIO)
+    // 2. AUDITORIA: LÓGICA DE FEEDBACK (0.5 em 0.5)
     // ==========================================
     const criteriosAuditoria = [
         { id: 'c1', nome: 'Organização e Padronização (5S)' },
@@ -431,7 +454,8 @@
         
         document.getElementById('resultado-auditoria').style.display = 'none';
         document.getElementById('btn-salvar-auditoria').style.display = 'none';
-        removerFotoEvidencia(); // Limpa foto ao renderizar
+        fotosEvidencia = [];
+        renderizarMiniaturasFotos();
     }
 
     function setStarAuditoria(id, nota) {
@@ -453,12 +477,12 @@
         });
         
         let feedback = document.getElementById('aud-feedback') ? document.getElementById('aud-feedback').value : "";
-        const dados = { notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotoBase64: fotoEvidenciaBase64 };
+        const dados = { notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia };
         
         localStorage.setItem('rascunho_aud_' + setor, JSON.stringify(dados));
         
         const status = document.getElementById('status-rascunho');
-        status.innerText = "💾 Salvo (Rascunho)...";
+        status.innerText = "💾 Salvo...";
         status.style.opacity = 1; setTimeout(() => { status.style.opacity = 0; }, 2000);
     }
 
@@ -481,12 +505,9 @@
                 if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
             });
 
-            if(dados.fotoBase64) {
-                fotoEvidenciaBase64 = dados.fotoBase64;
-                document.getElementById('aud-foto-preview').src = fotoEvidenciaBase64;
-                document.getElementById('aud-foto-preview').style.display = 'block';
-                document.getElementById('btn-remover-foto').style.display = 'block';
-            }
+            // Compatibilidade com rascunho antigo que tinha só 1 foto, ou pega o array novo
+            fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
+            renderizarMiniaturasFotos();
 
             if(dados.feedbackGerado) processarAuditoria();
         }
@@ -510,17 +531,37 @@
         let notaFinal = (soma / 35) * 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
         
-        let feedback = `Avaliação Operacional:\n\n`;
-        if (notaFinal >= 9) feedback += "🏆 Desempenho Excepcional! O setor operou dentro dos mais altos padrões.";
-        else if (notaFinal >= 7) {
-            feedback += `Aderência Operacional Boa. Pontos fortes notados em: ${critAltos.join(', ')}.\n\n`;
-            if(critBaixos.length > 0) feedback += `⚠️ Atenção necessária nestes itens: ${critBaixos.join(', ')}.`;
+        // NOVO MOTOR DE FEEDBACK (ESCALA 0.5)
+        let feedback = "";
+        
+        if (notaFinal === 10) {
+            feedback = `🏆 Excelência Operacional Máxima! (10.0)\nO setor atingiu a perfeição exigida pela Equipe Ressuprimento. Organização, controle e processos impecáveis.\nExcelente trabalho da liderança da área.`;
+        } else if (notaFinal >= 9.5) {
+            feedback = `🌟 Alto Nível - Padrão Ouro (${notaFinal.toFixed(1)}).\nOperação rodando com fluidez incrível. Quase perfeito. Pequeníssimos ajustes garantem a excelência.\nContinue neste ritmo.`;
+        } else if (notaFinal >= 9.0) {
+            feedback = `✅ Ótimo Desempenho (${notaFinal.toFixed(1)}).\nAderência sólida aos padrões do setor. Há margem para sintonia fina em organização, mas o cenário geral é muito seguro.`;
+        } else if (notaFinal >= 8.5) {
+            feedback = `👍 Bom Desempenho (${notaFinal.toFixed(1)}).\nA operação está estável, mas apresentou pequenos desvios de rotina.\nAtenção aos detalhes menores para não deixar a régua baixar.`;
+        } else if (notaFinal >= 8.0) {
+            feedback = `⚠️ Atenção Leve (${notaFinal.toFixed(1)}).\nA eficiência ainda é mantida, mas começam a surgir pontos de despadronização.\nLíder de setor, favor alinhar a equipe nos processos básicos.`;
+        } else if (notaFinal >= 7.5) {
+            feedback = `🚧 Atenção Média (${notaFinal.toFixed(1)}).\nA cobrança de padronização precisa ser reforçada hoje.\nEvidências de desvio notadas. Necessário repassar instruções ao time operacional.`;
+        } else if (notaFinal >= 7.0) {
+            feedback = `🟠 Alerta Laranja (${notaFinal.toFixed(1)}).\nQueda visível de rendimento operacional.\nA desorganização já impacta a velocidade do fluxo de armazenagem/separação.\nFoco corretivo em: ${critBaixos.join(', ')}.`;
+        } else if (notaFinal >= 6.5) {
+            feedback = `🚨 Risco Operacional (${notaFinal.toFixed(1)}).\nPadrão inaceitável. O passivo gerado vai comprometer os próximos turnos.\nCobrança firme exigida da liderança de área para corrigir: ${critBaixos.join(', ')}.`;
+        } else if (notaFinal >= 6.0) {
+            feedback = `⛔ Risco Grave / Inaceitável (${notaFinal.toFixed(1)}).\nSetor operando fora das normas aceitáveis de organização (5S) e estocagem.\nAção corretiva imediata. Nenhuma tarefa deve prosseguir antes de arrumar a casa.`;
         } else {
-            feedback += `🚨 Situação Crítica. A nota ficou abaixo do aceitável.\nFocos de Ação Imediata: ${critBaixos.join(', ')}.\nSugestão: O líder deve direcionar a equipe urgentemente para corrigir esses pontos antes do fim do turno.`;
+            feedback = `🛑 Situação Crítica (${notaFinal.toFixed(1)}).\nSetor reprovado. Quebra severa de processos e descontrole total.\nIntervenção direta da supervisão obrigatória agora para reestruturar: ${critBaixos.join(', ')}.`;
         }
 
         let textareaFeed = document.getElementById('aud-feedback');
-        if(textareaFeed.value === "" || textareaFeed.value.includes("Avaliação Operacional")) textareaFeed.value = feedback;
+        // Sobrescreve apenas se for o texto automático padrão (não apaga edições manuais customizadas)
+        const autoTags = ["Excelência Operacional", "Alto Nível", "Ótimo Desempenho", "Bom Desempenho", "Atenção Leve", "Atenção Média", "Alerta Laranja", "Risco Operacional", "Risco Grave", "Situação Crítica"];
+        let isAuto = textareaFeed.value === "" || autoTags.some(tag => textareaFeed.value.includes(tag));
+        
+        if(isAuto) textareaFeed.value = feedback;
         
         document.getElementById('resultado-auditoria').style.display = 'block';
         document.getElementById('btn-salvar-auditoria').style.display = 'block';
@@ -536,16 +577,18 @@
         let observacoes = {};
         criteriosAuditoria.forEach(c => { observacoes[c.id] = document.getElementById(`obs-aud-${c.id}`).value.trim(); });
 
-        const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotoBase64: fotoEvidenciaBase64, timestamp: Date.now() };
+        const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotos: fotosEvidencia, timestamp: Date.now() };
 
         if (idAuditoriaEmEdicao) {
             database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao).update(payload).then(() => {
-                alert("✅ Avaliação ATUALIZADA com Sucesso!"); limparTelaAuditoria();
+                alert("✅ Avaliação ATUALIZADA com Sucesso!"); 
+                limparTelaAuditoria();
             });
         } else {
             database.ref('avaliacoes_setores').push(payload).then(() => {
                 alert("✅ Expediente Finalizado! Auditoria transmitida para a base.");
-                localStorage.removeItem('rascunho_aud_' + setor); limparTelaAuditoria();
+                localStorage.removeItem('rascunho_aud_' + setor); 
+                limparTelaAuditoria();
             });
         }
     }
@@ -555,8 +598,12 @@
         document.getElementById('btn-salvar-auditoria').innerText = "Transmitir e Finalizar Setor";
         document.getElementById('btn-salvar-auditoria').style.background = "var(--purple-grad)";
         document.getElementById('aud-setor').value = ''; document.getElementById('aud-feedback').value = '';
-        renderizarCriteriosAuditoria(); carregarHistoricoAuditoria();
-        switchAuditoriaSubTab('resumo'); // Pula pro resumo para ver a nota consolidada
+        renderizarCriteriosAuditoria(); 
+        
+        if(document.getElementById('filtro-dia-resumo').value) generatingTimeout = setTimeout(gerarResumoDiario, 500);
+        if(document.getElementById('filtro-dia-hist').value) carregarHistoricoAuditoria();
+        
+        switchAuditoriaSubTab('resumo'); 
     }
 
     window.editarAuditoria = function(id, dadosEncoded) {
@@ -577,12 +624,9 @@
             if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
         });
 
-        if(dados.fotoBase64) {
-            fotoEvidenciaBase64 = dados.fotoBase64;
-            document.getElementById('aud-foto-preview').src = fotoEvidenciaBase64;
-            document.getElementById('aud-foto-preview').style.display = 'block';
-            document.getElementById('btn-remover-foto').style.display = 'block';
-        }
+        // Carrega as fotos (suporta string antiga ou array novo)
+        fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
+        renderizarMiniaturasFotos();
 
         document.getElementById('btn-salvar-auditoria').innerText = "Atualizar Avaliação Modificada";
         document.getElementById('btn-salvar-auditoria').style.background = "#f59e0b"; 
@@ -590,9 +634,19 @@
         alert("Modo de Edição ativado. Você está modificando um laudo já transmitido.");
     }
 
+    function excluirItem(caminho, id) { 
+        if(confirm("Tem certeza que deseja EXCLUIR permanentemente este registro?")) {
+            database.ref(caminho + '/' + id).remove().then(() => {
+                alert("Apagado com sucesso!");
+                gerarResumoDiario();
+                carregarHistoricoAuditoria();
+            });
+        }
+    }
+
 
     // ==========================================
-    // 3. RESUMO DO DIA E RANKING DIÁRIO
+    // 3. RESUMO DO DIA
     // ==========================================
     let resumoDiarioGlobal = [];
 
@@ -610,24 +664,30 @@
             }
 
             snap.forEach(child => { resumoDiarioGlobal.push({ id: child.key, ...child.val() }); });
-            
-            // Ordenar do Maior para o Menor
             resumoDiarioGlobal.sort((a, b) => b.notaFinal - a.notaFinal);
 
             let html = '';
             resumoDiarioGlobal.forEach((rec, index) => {
-                let cor = rec.notaFinal >= 8 ? '#10b981' : (rec.notaFinal >= 6 ? '#f59e0b' : '#ef4444');
+                let cor = rec.notaFinal >= 8.5 ? '#10b981' : (rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444');
                 let icone = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
-                let txtFoto = rec.fotoBase64 ? '<span style="font-size: 0.75rem; background: #e2e8f0; padding: 2px 5px; border-radius: 4px; margin-left: 5px;">📸 Tem Foto</span>' : '';
+                
+                // Trata contagem de fotos (arrays ou string legado)
+                let fotosArr = rec.fotos || (rec.fotoBase64 ? [rec.fotoBase64] : []);
+                let txtFoto = fotosArr.length > 0 ? `<span style="font-size: 0.75rem; background: #e2e8f0; padding: 2px 5px; border-radius: 4px; margin-left: 5px; font-weight:bold; color: #475569;">📸 ${fotosArr.length} Foto(s)</span>` : '';
                 
                 html += `
-                    <div class="historico-item" style="border-left: 5px solid ${cor};">
-                        <div>
-                            <strong style="color:var(--purple-dark); font-size:1rem;">${icone} ${rec.setor}</strong> ${txtFoto}<br>
-                            <small style="color:var(--text-light); font-size: 0.8rem;">Feedback: ${rec.feedback.substring(0, 50)}...</small>
-                        </div>
-                        <div style="font-size: 1.2rem; font-weight: bold; color: ${cor};">
-                            ${rec.notaFinal.toFixed(1)}
+                    <div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start;">
+                        <div style="flex:1;">
+                            <strong style="color:var(--purple-dark); font-size:1.05rem;">${icone} ${rec.setor}</strong> ${txtFoto}
+                            <div style="font-size: 1.4rem; font-weight: bold; color: ${cor}; margin: 5px 0;">
+                                Nota: ${rec.notaFinal.toFixed(1)}
+                            </div>
+                            <small style="color:var(--text-light); font-size: 0.8rem; display:block; margin-bottom:10px;">${rec.feedback.substring(0, 90)}...</small>
+                            
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-editar" onclick="editarAuditoria('${rec.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar Setor</button>
+                                <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${rec.id}')">❌ Excluir</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -641,23 +701,22 @@
         let diaBr = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
         
         let msg = `📊 *FECHAMENTO DIÁRIO - RESSUPRIMENTO*\n📅 Data: ${diaBr}\n\n🏆 *Ranking de Setores:*\n\n`;
-        
         let pontosCriticos = [];
 
         resumoDiarioGlobal.forEach((rec, i) => {
             let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹';
             msg += `${icone} *${rec.setor}* - Nota: ${rec.notaFinal.toFixed(1)} ⭐\n`;
             
-            if(rec.notaFinal < 7) {
-                pontosCriticos.push(`- *${rec.setor}:* ${rec.feedback.split('\n')[2] || 'Atenção geral necessária.'}`);
+            if(rec.notaFinal < 8.0) {
+                pontosCriticos.push(`- *${rec.setor} (${rec.notaFinal.toFixed(1)}):* ${rec.feedback.split('\n')[2] || 'Atenção geral necessária.'}`);
             }
         });
 
         if(pontosCriticos.length > 0) {
-            msg += `\n⚠️ *PONTOS CRÍTICOS DO DIA (Requer Orientação):*\n`;
+            msg += `\n⚠️ *PONTOS DE ATENÇÃO DA LIDERANÇA:*\n`;
             msg += pontosCriticos.join('\n');
         } else {
-            msg += `\n✅ *PONTOS CRÍTICOS:* Nenhum setor ficou abaixo da média aceitável hoje. Parabéns à equipe!`;
+            msg += `\n✅ *PONTOS CRÍTICOS:* Nenhum setor ficou com nota de alerta hoje. Excelente fechamento!`;
         }
 
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
@@ -665,7 +724,7 @@
 
 
     // ==========================================
-    // 4. HISTÓRICO MENSAL E NAVEGAÇÃO
+    // 4. HISTÓRICO GERAL 
     // ==========================================
     function switchAuditoriaSubTab(aba) {
         document.querySelectorAll('#gcontent-auditoria .g-tab').forEach(el => el.classList.remove('active'));
@@ -681,65 +740,70 @@
             document.getElementById('filtro-dia-resumo').valueAsDate = new Date();
             gerarResumoDiario();
         }
+        if (aba === 'hist') {
+            document.getElementById('filtro-dia-hist').valueAsDate = new Date();
+            carregarHistoricoAuditoria();
+        }
     }
 
     function carregarHistoricoAuditoria() {
-        let mesFiltro = document.getElementById('filtro-mes-aud').value;
-        if(!mesFiltro) { const hj = new Date(); mesFiltro = `${hj.getFullYear()}-${String(hj.getMonth()+1).padStart(2,'0')}`; document.getElementById('filtro-mes-aud').value = mesFiltro; }
+        let diaFiltro = document.getElementById('filtro-dia-hist').value;
+        if(!diaFiltro) return; 
 
-        database.ref('avaliacoes_setores').orderByChild('timestamp').on('value', snap => {
+        database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).on('value', snap => {
             const containerLista = document.getElementById('lista-historico-auditoria');
             const containerMedias = document.getElementById('medias-mes-container');
             containerLista.innerHTML = ''; containerMedias.innerHTML = '';
-            if(!snap.exists()) return containerLista.innerHTML = '<p>Nenhum lançamento no sistema.</p>';
+            
+            if(!snap.exists()) return containerLista.innerHTML = '<p>Nenhuma avaliação encontrada nesta data específica.</p>';
 
-            let dadosMes = {}; let htmlLista = '';
+            let dadosDia = {}; let htmlLista = '';
             const registros = []; snap.forEach(c => registros.push({id: c.key, val: c.val()})); registros.reverse();
 
             registros.forEach(item => {
-                let rec = item.val; let mesAno = rec.data.substring(0, 7); 
-                if(mesAno === mesFiltro) {
-                    if(!dadosMes[rec.setor]) dadosMes[rec.setor] = { soma: 0, qtd: 0 };
-                    dadosMes[rec.setor].soma += rec.notaFinal; dadosMes[rec.setor].qtd += 1;
+                let rec = item.val;
+                
+                if(!dadosDia[rec.setor]) dadosDia[rec.setor] = { soma: 0, qtd: 0 };
+                dadosDia[rec.setor].soma += rec.notaFinal; dadosDia[rec.setor].qtd += 1;
 
-                    let corNota = rec.notaFinal >= 8 ? '#10b981' : (rec.notaFinal >= 6 ? '#f59e0b' : '#ef4444');
-                    let badgeFoto = rec.fotoBase64 ? '📸' : '';
+                let corNota = rec.notaFinal >= 8.5 ? '#10b981' : (rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444');
+                
+                let fotosArr = rec.fotos || (rec.fotoBase64 ? [rec.fotoBase64] : []);
+                let badgeFoto = fotosArr.length > 0 ? `📸 (${fotosArr.length})` : '';
 
-                    htmlLista += `
-                        <div class="historico-item">
-                            <div>
-                                <strong style="color:var(--purple-dark); font-size:1rem;">${rec.setor} ${badgeFoto}</strong><br>
-                                <small style="color:var(--text-light);">Data: ${rec.data.split('-').reverse().join('/')}</small>
-                            </div>
-                            <div style="display: flex; gap: 10px; align-items:center;">
-                                <span style="background:${corNota}; color:white; padding:6px 10px; border-radius:6px; font-weight:bold; font-size:0.9rem;">Nota: ${rec.notaFinal.toFixed(1)}</span>
-                                <button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
-                                <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button>
-                            </div>
+                htmlLista += `
+                    <div class="historico-item">
+                        <div>
+                            <strong style="color:var(--purple-dark); font-size:1rem;">${rec.setor} <span style="font-size:0.8rem">${badgeFoto}</span></strong><br>
+                            <small style="color:var(--text-light);">Data: ${rec.data.split('-').reverse().join('/')}</small>
                         </div>
-                    `;
-                }
+                        <div style="display: flex; gap: 10px; align-items:center; flex-wrap: wrap; justify-content: flex-end;">
+                            <span style="background:${corNota}; color:white; padding:6px 10px; border-radius:6px; font-weight:bold; font-size:0.9rem;">Nota: ${rec.notaFinal.toFixed(1)}</span>
+                            <button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
+                            <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button>
+                        </div>
+                    </div>
+                `;
             });
-            containerLista.innerHTML = htmlLista || '<p style="font-size:0.9rem; color:var(--text-light);">Nenhuma avaliação feita neste mês.</p>';
+            containerLista.innerHTML = htmlLista;
 
             let htmlMedias = '';
-            Object.keys(dadosMes).sort().forEach(setorNome => {
-                let media = dadosMes[setorNome].soma / dadosMes[setorNome].qtd;
-                let cor = media >= 8 ? 'var(--disc-s)' : (media >= 6 ? 'var(--star-gold)' : 'var(--red-sesmt)');
+            Object.keys(dadosDia).sort().forEach(setorNome => {
+                let media = dadosDia[setorNome].soma / dadosDia[setorNome].qtd;
+                let cor = media >= 8.5 ? 'var(--disc-s)' : (media >= 7.0 ? 'var(--star-gold)' : 'var(--red-sesmt)');
                 htmlMedias += `
                     <div style="flex: 1 1 calc(50% - 10px); min-width: 150px; background:#fff; border:1px solid ${cor}; border-left:4px solid ${cor}; padding:10px; border-radius:6px;">
                         <div style="font-size:0.8rem; color:var(--text-light); text-transform:uppercase; font-weight:700;">${setorNome}</div>
                         <div style="font-size:1.4rem; font-weight:800; color:${cor}; margin-top:5px;">${media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">/ 10</span></div>
-                        <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">Auditorias no mês: ${dadosMes[setorNome].qtd}</div>
                     </div>
                 `;
             });
-            containerMedias.innerHTML = htmlMedias || '<p style="font-size:0.9rem; color:var(--text-light);">Sem dados para médias neste mês.</p>';
+            containerMedias.innerHTML = htmlMedias;
         });
     }
 
     // ==========================================
-    // IMPRESSÕES MANTIDAS E AJUSTADAS
+    // IMPRESSÕES (COMPATÍVEL COM MÚLTIPLAS FOTOS E SEM DATA HARDCODED NO CABEÇALHO GERAL)
     // ==========================================
     function imprimirChecklistAuditoria() {
         let html = `<html><head><title>Checklist de Campo</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px; text-align:left;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body>
@@ -758,14 +822,22 @@
         const data = document.getElementById('aud-data').value.split('-').reverse().join('/');
         const nota = document.getElementById('aud-nota-final').innerText;
         const feedback = document.getElementById('aud-feedback').value.replace(/\n/g, '<br>');
-        let imgHtml = fotoEvidenciaBase64 ? `<div style="margin-top: 20px;"><h3>Evidência Fotográfica:</h3><img src="${fotoEvidenciaBase64}" style="max-height: 250px; border: 1px solid #ccc; padding: 5px;"></div>` : '';
+        
+        let imgHtml = '';
+        if(fotosEvidencia.length > 0) {
+            imgHtml = `<div style="margin-top: 20px;"><h3>Evidências Fotográficas (${fotosEvidencia.length}):</h3><div style="display:flex; flex-wrap:wrap; gap:10px;">`;
+            fotosEvidencia.forEach((foto, i) => {
+                imgHtml += `<img src="${foto}" style="max-height: 200px; max-width:48%; border: 1px solid #ccc; padding: 5px;">`;
+            });
+            imgHtml += `</div></div>`;
+        }
         
         let html = `<html><head><title>Relatório Final</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #cbd5e1; padding:10px; text-align:left;} th{background:#1e1b4b; color:white;}</style></head><body>
         <div style="border-bottom: 3px solid #dc2626; padding-bottom: 10px; margin-bottom: 20px;">
             <h1 style="color: #1e1b4b; margin:0; font-size:22px;">Laudo de Auditoria Operacional</h1><p style="margin:5px 0 0 0;">Equipe Ressuprimento</p>
         </div>
         <div style="background:#f8fafc; padding:15px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:20px;">
-            <p><strong>Setor:</strong> ${setorTexto} | <strong>Data:</strong> ${data}</p><p style="font-size:18px;"><strong>Nota Final: <span style="color:#dc2626;">${nota} / 10</span></strong></p>
+            <p><strong>Setor:</strong> ${setorTexto} | <strong>Data da Inspeção:</strong> ${data}</p><p style="font-size:18px;"><strong>Nota Final: <span style="color:#dc2626;">${nota} / 10</span></strong></p>
         </div>
         <table><tr><th style="width:35%">Critério</th><th style="width:10%; text-align:center;">Nota</th><th style="width:55%">Observação Lançada</th></tr>`;
         
@@ -781,7 +853,7 @@
     }
 
     // ==========================================
-    // INICIALIZAÇÃO DA ÁREA DO GESTOR
+    // INICIALIZAÇÃO E OUTROS MÓDULOS
     // ==========================================
     function switchGestorTab(t) {
         document.querySelectorAll('#view-gestor .g-tab').forEach(el => el.classList.remove('active'));
@@ -792,16 +864,13 @@
             document.getElementById('aud-data').valueAsDate = new Date(); 
             switchAuditoriaSubTab('nova');
             renderizarCriteriosAuditoria(); 
-            carregarHistoricoAuditoria(); 
         }
     }
 
-    // ==========================================
-    // CÓDIGO DISC (OMITIDO PARA ENCURTAR - COPIE DO ANTERIOR SE PRECISAR EDITAR, MAS JÁ ESTÁ RODANDO NORMALMENTE AQUI)
-    // ==========================================
+    // Código Omitido de Quiz DISC/Simulador (Permanece inalterado da sua versão funcional)
     const allQuestions = [{ q: "1. Num dia de alto volume de separação...", opts: [{t: "Tomo a frente...", dim: 'D'}, {t: "Animo a equipe...", dim: 'I'}, {t: "Mantenho meu ritmo...", dim: 'S'}, {t: "Verifico procedimentos...", dim: 'C'}] }];
     let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, scores = { D: 0, I: 0, S: 0, C: 0 };
     function startQuiz() { const nome = document.getElementById('user-name').value.trim(); const mat = document.getElementById('user-id').value.trim(); if(nome.toLowerCase() === 'gestor' && mat === '144') { document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'none'; switchTab('gestor'); switchGestorTab('auditoria'); return; } if(!nome || !mat) return alert('Preencha os dados.'); alert('Acesso apenas Gestor neste teste.'); }
 </script>
 </body>
-    </html>
+</html>

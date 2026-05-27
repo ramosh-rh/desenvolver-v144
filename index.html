@@ -24,7 +24,7 @@
             --text-light: #64748b;
             --border: #e2e8f0;
             --whatsapp: #25D366;
-            --print-btn: #334155;
+            --print-btn: #dc2626;
             --star-gold: #f59e0b;
             --star-gray: #cbd5e1;
             --disc-d: #dc2626;
@@ -70,7 +70,7 @@
         .btn-whatsapp { background: var(--whatsapp); }
         .btn-whatsapp:hover { background: #1ebc59; }
         .btn-print { background: var(--print-btn); }
-        .btn-print:hover { background: #1e293b; }
+        .btn-print:hover { background: #b91c1c; }
         .btn-whatsapp svg { width: 20px; height: 20px; fill: currentColor; }
 
         .option-card { padding: 16px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; margin-bottom: 12px; transition: all 0.2s; font-weight: 600; color: var(--text-light); }
@@ -84,7 +84,7 @@
         .g-tab.active { background: var(--purple-light); color: white; border-color: var(--purple-light); }
 
         .btn-excluir { background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
-        .btn-editar { background: var(--star-gold); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .btn-editar { background: #475569; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
         .btn-acao { background: var(--purple-light); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s;}
         
         .star-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
@@ -214,8 +214,8 @@
                     
                     <div class="gestor-tabs" style="margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">
                         <div class="g-tab active" id="tab-aud-nova" onclick="switchAuditoriaSubTab('nova')">📝 Nova Avaliação</div>
-                        <div class="g-tab" id="tab-aud-resumo" onclick="switchAuditoriaSubTab('resumo')">📊 Resumo do Dia</div>
-                        <div class="g-tab" id="tab-aud-hist" onclick="switchAuditoriaSubTab('hist')">🗓️ Histórico (Data Completa)</div>
+                        <div class="g-tab" id="tab-aud-resumo" onclick="switchAuditoriaSubTab('resumo')">📊 Resumo Diário (Equipes)</div>
+                        <div class="g-tab" id="tab-aud-hist" onclick="switchAuditoriaSubTab('hist')">🗓️ Histórico (Data)</div>
                     </div>
 
                     <div id="aud-nova">
@@ -243,12 +243,12 @@
                                         <option value="Medicamentos - 4ª Estação">4ª Estação</option>
                                         <option value="Medicamentos - 5ª Estação">5ª Estação</option>
                                     </optgroup>
-                                    <optgroup label="Rua 57 Perfumaria">
-                                        <option value="Rua 57 Perfumaria - 1ª Estação">1ª Estação</option>
-                                        <option value="Rua 57 Perfumaria - 2ª Estação">2ª Estação</option>
-                                        <option value="Rua 57 Perfumaria - 3ª Estação">3ª Estação</option>
-                                        <option value="Rua 57 Perfumaria - 4ª Estação">4ª Estação</option>
-                                        <option value="Rua 57 Perfumaria - 5ª Estação">5ª Estação</option>
+                                    <optgroup label="Perfumaria">
+                                        <option value="Perfumaria - 1ª Estação">1ª Estação</option>
+                                        <option value="Perfumaria - 2ª Estação">2ª Estação</option>
+                                        <option value="Perfumaria - 3ª Estação">3ª Estação</option>
+                                        <option value="Perfumaria - 4ª Estação">4ª Estação</option>
+                                        <option value="Perfumaria - 5ª Estação">5ª Estação</option>
                                     </optgroup>
                                     <optgroup label="Demais Setores">
                                         <option value="Volumoso">Volumoso</option>
@@ -265,7 +265,7 @@
 
                         <div style="margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #f59e0b;">
                             <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #b45309;">Anexar Múltiplas Evidências (Opcional)</label>
-                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 10px;">Você pode tirar várias fotos do setor (Máximo 5).</p>
+                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 10px;">Tire fotos para registrar irregularidades. (Máximo 5).</p>
                             
                             <button class="btn-outline" style="border-color: #f59e0b; color: #b45309; width: 100%; margin-top: 0; display:flex; justify-content:center; align-items:center; gap:8px;" onclick="document.getElementById('aud-foto-input').click()">
                                 📸 <span id="txt-btn-foto">Adicionar Foto</span>
@@ -295,17 +295,24 @@
                     </div>
 
                     <div id="aud-resumo" style="display: none;">
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                            <div style="flex: 1;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 150px;">
                                 <label style="font-size: 0.85rem; font-weight: bold; color: #166534;">Data do Fechamento</label>
                                 <input type="date" id="filtro-dia-resumo" class="input-group" style="padding: 10px; width: 100%; border: 1px solid #bbf7d0; border-radius: 6px; margin-bottom: 0;" onchange="gerarResumoDiario()">
                             </div>
-                            <button class="btn-whatsapp" style="flex: 1; height: 100%; margin-top: 22px;" onclick="compartilharRankingDiario()">
-                                📲 Compartilhar no Grupo
-                            </button>
+                            <div style="display: flex; gap: 5px; flex: 2; margin-top: 22px;">
+                                <button class="btn-whatsapp" style="flex: 1; height: 42px;" onclick="compartilharRankingDiario()">
+                                    📲 Zap
+                                </button>
+                                <button class="btn-print" style="flex: 1; height: 42px;" onclick="imprimirRelatorioFechamento()">
+                                    🖨️ PDF Completo
+                                </button>
+                            </div>
                         </div>
                         
-                        <h3 style="font-size: 1rem; color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px;">🏆 Ranking de Setores do Dia</h3>
+                        <h3 style="font-size: 1rem; color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px;">🏆 Fechamento Unificado por Equipe</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px;">Nota média calculada juntando Medicamentos e Perfumaria da mesma estação.</p>
+                        
                         <div id="lista-resumo-diario"></div>
                     </div>
 
@@ -349,7 +356,7 @@
     // ==========================================
     // 1. MÚLTIPLAS FOTOS E EVIDÊNCIAS
     // ==========================================
-    let fotosEvidencia = []; // Agora é um Array
+    let fotosEvidencia = [];
 
     function processarFotoEvidencia(event) {
         if(fotosEvidencia.length >= 5) {
@@ -378,7 +385,7 @@
                 
                 renderizarMiniaturasFotos();
                 salvarRascunhoLocal(); 
-                document.getElementById('aud-foto-input').value = ""; // Reseta o input para aceitar nova foto
+                document.getElementById('aud-foto-input').value = "";
             }
             img.src = e.target.result;
         }
@@ -411,7 +418,7 @@
 
 
     // ==========================================
-    // 2. AUDITORIA: LÓGICA DE FEEDBACK (0.5 em 0.5)
+    // 2. AUDITORIA E LÓGICA DE FEEDBACK
     // ==========================================
     const criteriosAuditoria = [
         { id: 'c1', nome: 'Organização e Padronização (5S)' },
@@ -505,7 +512,6 @@
                 if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
             });
 
-            // Compatibilidade com rascunho antigo que tinha só 1 foto, ou pega o array novo
             fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
             renderizarMiniaturasFotos();
 
@@ -531,7 +537,6 @@
         let notaFinal = (soma / 35) * 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
         
-        // NOVO MOTOR DE FEEDBACK (ESCALA 0.5)
         let feedback = "";
         
         if (notaFinal === 10) {
@@ -557,7 +562,6 @@
         }
 
         let textareaFeed = document.getElementById('aud-feedback');
-        // Sobrescreve apenas se for o texto automático padrão (não apaga edições manuais customizadas)
         const autoTags = ["Excelência Operacional", "Alto Nível", "Ótimo Desempenho", "Bom Desempenho", "Atenção Leve", "Atenção Média", "Alerta Laranja", "Risco Operacional", "Risco Grave", "Situação Crítica"];
         let isAuto = textareaFeed.value === "" || autoTags.some(tag => textareaFeed.value.includes(tag));
         
@@ -600,7 +604,7 @@
         document.getElementById('aud-setor').value = ''; document.getElementById('aud-feedback').value = '';
         renderizarCriteriosAuditoria(); 
         
-        if(document.getElementById('filtro-dia-resumo').value) generatingTimeout = setTimeout(gerarResumoDiario, 500);
+        if(document.getElementById('filtro-dia-resumo').value) setTimeout(gerarResumoDiario, 500);
         if(document.getElementById('filtro-dia-hist').value) carregarHistoricoAuditoria();
         
         switchAuditoriaSubTab('resumo'); 
@@ -624,7 +628,6 @@
             if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
         });
 
-        // Carrega as fotos (suporta string antiga ou array novo)
         fotosEvidencia = dados.fotos || (dados.fotoBase64 ? [dados.fotoBase64] : []);
         renderizarMiniaturasFotos();
 
@@ -646,9 +649,10 @@
 
 
     // ==========================================
-    // 3. RESUMO DO DIA
+    // 3. RESUMO DO DIA: UNIFICADO (WhatsApp e PDF)
     // ==========================================
     let resumoDiarioGlobal = [];
+    let rankingEquipesGlobal = []; // Array agrupado unificado
 
     function gerarResumoDiario() {
         let diaFiltro = document.getElementById('filtro-dia-resumo').value;
@@ -656,38 +660,104 @@
 
         database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).once('value').then(snap => {
             const container = document.getElementById('lista-resumo-diario');
-            container.innerHTML = ''; resumoDiarioGlobal = [];
+            container.innerHTML = ''; 
+            resumoDiarioGlobal = [];
+            rankingEquipesGlobal = [];
             
             if(!snap.exists()) {
                 container.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 20px;">Nenhuma avaliação registrada para este dia.</p>';
                 return;
             }
 
-            snap.forEach(child => { resumoDiarioGlobal.push({ id: child.key, ...child.val() }); });
-            resumoDiarioGlobal.sort((a, b) => b.notaFinal - a.notaFinal);
+            let equipes = {};
 
+            snap.forEach(child => {
+                let rec = { id: child.key, ...child.val() };
+                resumoDiarioGlobal.push(rec);
+
+                let nomeEquipe = rec.setor;
+                let areaOrigem = rec.setor;
+
+                // Lógica de Unificação (Juntar Medicamentos e Perfumaria da mesma estação)
+                if (rec.setor.includes("Estação")) {
+                    let parts = rec.setor.split(" - ");
+                    if(parts.length === 2) {
+                        areaOrigem = parts[0]; 
+                        nomeEquipe = "Equipe " + parts[1]; // Ex: Equipe 1ª Estação
+                    }
+                }
+
+                if(!equipes[nomeEquipe]) {
+                    equipes[nomeEquipe] = {
+                        nome: nomeEquipe,
+                        somaNotas: 0,
+                        qtd: 0,
+                        avaliacoesOriginais: [],
+                        pontosAtencao: []
+                    };
+                }
+
+                equipes[nomeEquipe].somaNotas += rec.notaFinal;
+                equipes[nomeEquipe].qtd += 1;
+                equipes[nomeEquipe].avaliacoesOriginais.push(rec);
+
+                // Levantar os pontos de atenção especificando a área de origem
+                let critRuins = [];
+                for (let critId in rec.notas) {
+                    if (rec.notas[critId] <= 2) {
+                        let cNome = criteriosAuditoria.find(c => c.id === critId).nome;
+                        critRuins.push(cNome);
+                    }
+                }
+                if (critRuins.length > 0) {
+                    equipes[nomeEquipe].pontosAtencao.push(`*${areaOrigem}*: ${critRuins.join(', ')}`);
+                }
+            });
+
+            // Converte para array e calcula média agrupada
+            rankingEquipesGlobal = Object.values(equipes).map(eq => {
+                eq.notaMedia = eq.somaNotas / eq.qtd;
+                return eq;
+            });
+
+            // Ordena o ranking consolidado
+            rankingEquipesGlobal.sort((a, b) => b.notaMedia - a.notaMedia);
+
+            // Renderiza as Equipes Agrupadas
             let html = '';
-            resumoDiarioGlobal.forEach((rec, index) => {
-                let cor = rec.notaFinal >= 8.5 ? '#10b981' : (rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444');
+            rankingEquipesGlobal.forEach((eq, index) => {
+                let cor = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
                 let icone = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
-                
-                // Trata contagem de fotos (arrays ou string legado)
-                let fotosArr = rec.fotos || (rec.fotoBase64 ? [rec.fotoBase64] : []);
-                let txtFoto = fotosArr.length > 0 ? `<span style="font-size: 0.75rem; background: #e2e8f0; padding: 2px 5px; border-radius: 4px; margin-left: 5px; font-weight:bold; color: #475569;">📸 ${fotosArr.length} Foto(s)</span>` : '';
-                
+
+                let txtAtencao = '';
+                if(eq.pontosAtencao.length > 0) {
+                    txtAtencao = `<div style="margin-top: 10px; padding: 10px; background: #fffbeb; border-left: 3px solid #f59e0b; font-size: 0.8rem; color: #92400e; border-radius: 4px;">
+                        <strong>⚠️ Desvios Identificados:</strong><br>
+                        ${eq.pontosAtencao.join('<br>')}
+                    </div>`;
+                }
+
+                // Botões de edição individuais para as avaliações que formam a média
+                let botoesAcao = '<div style="margin-top: 10px; display:flex; gap: 5px; flex-wrap:wrap; border-top: 1px dashed #cbd5e1; padding-top: 10px;">';
+                botoesAcao += '<span style="font-size:0.75rem; color:#64748b; width:100%;">Editar laudos individuais:</span>';
+                eq.avaliacoesOriginais.forEach(av => {
+                    let nomeCurto = av.setor.includes('-') ? av.setor.split('-')[0].trim() : 'Editar';
+                    botoesAcao += `<button class="btn-editar" style="font-size:0.7rem; padding: 6px 10px;" onclick="editarAuditoria('${av.id}', '${encodeURIComponent(JSON.stringify(av))}')">✏️ ${nomeCurto} (${av.notaFinal.toFixed(1)})</button>`;
+                });
+                botoesAcao += '</div>';
+
                 html += `
-                    <div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start;">
-                        <div style="flex:1;">
-                            <strong style="color:var(--purple-dark); font-size:1.05rem;">${icone} ${rec.setor}</strong> ${txtFoto}
-                            <div style="font-size: 1.4rem; font-weight: bold; color: ${cor}; margin: 5px 0;">
-                                Nota: ${rec.notaFinal.toFixed(1)}
+                    <div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start; flex-direction:column; padding: 15px;">
+                        <div style="width: 100%; display:flex; justify-content: space-between; align-items:center;">
+                            <strong style="color:var(--purple-dark); font-size:1.1rem;">${icone} ${eq.nome}</strong>
+                            <div style="font-size: 1.4rem; font-weight: bold; color: ${cor};">
+                                ${eq.notaMedia.toFixed(1)} ⭐
                             </div>
-                            <small style="color:var(--text-light); font-size: 0.8rem; display:block; margin-bottom:10px;">${rec.feedback.substring(0, 90)}...</small>
-                            
-                            <div style="display:flex; gap:8px;">
-                                <button class="btn-editar" onclick="editarAuditoria('${rec.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar Setor</button>
-                                <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${rec.id}')">❌ Excluir</button>
-                            </div>
+                        </div>
+                        <div style="width:100%;">
+                            <div style="font-size:0.8rem; color:#64748b; margin-top: 4px;">Setores avaliados na média: ${eq.qtd}</div>
+                            ${txtAtencao}
+                            ${botoesAcao}
                         </div>
                     </div>
                 `;
@@ -697,29 +767,74 @@
     }
 
     function compartilharRankingDiario() {
-        if(resumoDiarioGlobal.length === 0) return alert("Não há avaliações no dia selecionado para compartilhar.");
-        let diaBr = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
+        if(rankingEquipesGlobal.length === 0) return alert("Não há avaliações no dia selecionado.");
         
-        let msg = `📊 *FECHAMENTO DIÁRIO - RESSUPRIMENTO*\n📅 Data: ${diaBr}\n\n🏆 *Ranking de Setores:*\n\n`;
-        let pontosCriticos = [];
+        let msg = `📊 *FECHAMENTO DIÁRIO - EQUIPE RESSUPRIMENTO*\n\n🏆 *Ranking Consolidado de Equipes:*\n\n`;
 
-        resumoDiarioGlobal.forEach((rec, i) => {
+        rankingEquipesGlobal.forEach((eq, i) => {
             let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹';
-            msg += `${icone} *${rec.setor}* - Nota: ${rec.notaFinal.toFixed(1)} ⭐\n`;
+            msg += `${icone} *${eq.nome}* - Média: ${eq.notaMedia.toFixed(1)} ⭐\n`;
             
-            if(rec.notaFinal < 8.0) {
-                pontosCriticos.push(`- *${rec.setor} (${rec.notaFinal.toFixed(1)}):* ${rec.feedback.split('\n')[2] || 'Atenção geral necessária.'}`);
+            if (eq.pontosAtencao.length > 0) {
+                msg += `   ⚠️ _Atenção requerida em:_\n`;
+                eq.pontosAtencao.forEach(p => { msg += `   - ${p}\n`; });
             }
+            msg += `\n`;
         });
 
-        if(pontosCriticos.length > 0) {
-            msg += `\n⚠️ *PONTOS DE ATENÇÃO DA LIDERANÇA:*\n`;
-            msg += pontosCriticos.join('\n');
-        } else {
-            msg += `\n✅ *PONTOS CRÍTICOS:* Nenhum setor ficou com nota de alerta hoje. Excelente fechamento!`;
-        }
-
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // RELATÓRIO PDF CONSOLIDADO COM PONTOS DE MELHORIA
+    function imprimirRelatorioFechamento() {
+        if(rankingEquipesGlobal.length === 0) return alert("Não há dados consolidados para gerar o PDF.");
+
+        let html = `<html><head><title>Relatório de Fechamento</title><style>
+            body{font-family:Arial, sans-serif; font-size:13px; color:#333; padding: 20px;}
+            .header { border-bottom: 3px solid #1e1b4b; padding-bottom: 10px; margin-bottom: 20px; text-align:center;}
+            .header h1 { margin:0; font-size: 24px; color: #1e1b4b; text-transform: uppercase;}
+            .header h2 { margin:5px 0 0 0; font-size: 16px; color: #64748b;}
+            .equipe-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 15px; margin-bottom: 15px; page-break-inside: avoid; background: #f8fafc;}
+            .equipe-title { font-size: 18px; font-weight: bold; color: #1e1b4b; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 10px; display:flex; justify-content:space-between;}
+            .atencao-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; margin-top: 15px; font-size: 13px;}
+            .atencao-item { margin-bottom: 5px; color: #92400e; }
+        </style></head><body>
+
+        <div class="header">
+            <h1>Vena144</h1>
+            <h2>Equipe Ressuprimento - Relatório de Fechamento</h2>
+        </div>
+        `;
+
+        rankingEquipesGlobal.forEach((eq, index) => {
+            let rank = index + 1;
+            let pontosHtml = '';
+            
+            if (eq.pontosAtencao.length > 0) {
+                pontosHtml = `<div class="atencao-box"><strong style="color: #b45309;">⚠️ Pontos de Melhoria Identificados:</strong><br><div style="margin-top: 5px;">`;
+                eq.pontosAtencao.forEach(p => {
+                    pontosHtml += `<div class="atencao-item">- ${p.replace(/\*/g, '')}</div>`;
+                });
+                pontosHtml += `</div></div>`;
+            } else {
+                pontosHtml = `<div style="color: #10b981; font-weight: bold; margin-top: 15px; padding: 10px; background: #f0fdf4; border-left: 4px solid #10b981;">✅ Nenhum desvio grave anotado. Padrão operacional mantido.</div>`;
+            }
+
+            html += `
+                <div class="equipe-card">
+                    <div class="equipe-title">
+                        <span>${rank}º Lugar: ${eq.nome}</span>
+                        <span>Média Final: ${eq.notaMedia.toFixed(1)} / 10</span>
+                    </div>
+                    <div style="font-size: 12px; color: #64748b;">Laudos integrados na média: ${eq.qtd} setor(es).</div>
+                    ${pontosHtml}
+                </div>
+            `;
+        });
+
+        html += `</body></html>`;
+        let win = window.open('','_blank'); win.document.write(html); win.document.close();
+        setTimeout(() => { win.print(); win.close(); }, 500);
     }
 
 
@@ -767,7 +882,6 @@
                 dadosDia[rec.setor].soma += rec.notaFinal; dadosDia[rec.setor].qtd += 1;
 
                 let corNota = rec.notaFinal >= 8.5 ? '#10b981' : (rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444');
-                
                 let fotosArr = rec.fotos || (rec.fotoBase64 ? [rec.fotoBase64] : []);
                 let badgeFoto = fotosArr.length > 0 ? `📸 (${fotosArr.length})` : '';
 
@@ -779,7 +893,7 @@
                         </div>
                         <div style="display: flex; gap: 10px; align-items:center; flex-wrap: wrap; justify-content: flex-end;">
                             <span style="background:${corNota}; color:white; padding:6px 10px; border-radius:6px; font-weight:bold; font-size:0.9rem;">Nota: ${rec.notaFinal.toFixed(1)}</span>
-                            <button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
+                            <button class="btn-editar" style="background:#f59e0b;" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️ Editar</button>
                             <button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button>
                         </div>
                     </div>
@@ -802,14 +916,11 @@
         });
     }
 
-    // ==========================================
-    // IMPRESSÕES (COMPATÍVEL COM MÚLTIPLAS FOTOS E SEM DATA HARDCODED NO CABEÇALHO GERAL)
-    // ==========================================
+    // IMPRESSÕES (SEM DATAS NO CABEÇALHO)
     function imprimirChecklistAuditoria() {
         let html = `<html><head><title>Checklist de Campo</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px; text-align:left;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body>
-        <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between;">
-            <div><h1 style="margin:0; font-size: 20px;">Equipe Ressuprimento</h1><h2 style="margin:5px 0 0 0; font-size: 16px;">Checklist (Rascunho Físico)</h2></div>
-            <div style="text-align:right;"><strong>Data:</strong> ____/____/________<br><br><strong>Setor:</strong> ________________________________</div>
+        <div style="border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; text-align:center;">
+            <h1 style="margin:0; font-size: 24px;">Equipe Ressuprimento</h1><h2 style="margin:5px 0 0 0; font-size: 16px;">Checklist (Rascunho de Campo)</h2>
         </div>
         <table><tr><th style="width:35%">Critério</th><th style="width:15%; text-align:center;">Nota (1 a 5)</th><th style="width:50%">Observações</th></tr>`;
         criteriosAuditoria.forEach(c => { html += `<tr><td><strong>${c.nome}</strong></td><td></td><td style="height: 50px;"></td></tr>`; });
@@ -817,44 +928,7 @@
         let win = window.open('','_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); win.close(); }, 500);
     }
 
-    function imprimirRelatorioAuditoria() {
-        const sel = document.getElementById('aud-setor'); const setorTexto = sel.options[sel.selectedIndex].text;
-        const data = document.getElementById('aud-data').value.split('-').reverse().join('/');
-        const nota = document.getElementById('aud-nota-final').innerText;
-        const feedback = document.getElementById('aud-feedback').value.replace(/\n/g, '<br>');
-        
-        let imgHtml = '';
-        if(fotosEvidencia.length > 0) {
-            imgHtml = `<div style="margin-top: 20px;"><h3>Evidências Fotográficas (${fotosEvidencia.length}):</h3><div style="display:flex; flex-wrap:wrap; gap:10px;">`;
-            fotosEvidencia.forEach((foto, i) => {
-                imgHtml += `<img src="${foto}" style="max-height: 200px; max-width:48%; border: 1px solid #ccc; padding: 5px;">`;
-            });
-            imgHtml += `</div></div>`;
-        }
-        
-        let html = `<html><head><title>Relatório Final</title><style>body{font-family:Arial, sans-serif; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #cbd5e1; padding:10px; text-align:left;} th{background:#1e1b4b; color:white;}</style></head><body>
-        <div style="border-bottom: 3px solid #dc2626; padding-bottom: 10px; margin-bottom: 20px;">
-            <h1 style="color: #1e1b4b; margin:0; font-size:22px;">Laudo de Auditoria Operacional</h1><p style="margin:5px 0 0 0;">Equipe Ressuprimento</p>
-        </div>
-        <div style="background:#f8fafc; padding:15px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:20px;">
-            <p><strong>Setor:</strong> ${setorTexto} | <strong>Data da Inspeção:</strong> ${data}</p><p style="font-size:18px;"><strong>Nota Final: <span style="color:#dc2626;">${nota} / 10</span></strong></p>
-        </div>
-        <table><tr><th style="width:35%">Critério</th><th style="width:10%; text-align:center;">Nota</th><th style="width:55%">Observação Lançada</th></tr>`;
-        
-        criteriosAuditoria.forEach(c => {
-            let n = notasAuditoria[c.id]; let obs = document.getElementById(`obs-aud-${c.id}`).value || '-';
-            html += `<tr><td>${c.nome}</td><td style="text-align:center;">${n} ⭐</td><td>${obs}</td></tr>`;
-        });
-        
-        html += `</table><h3 style="margin-top:25px; margin-bottom:5px;">Parecer da Liderança</h3>
-        <div style="padding:15px; border-left:4px solid #10b981; background:#f0fdf4;">${feedback}</div>${imgHtml}</body></html>`;
-        
-        let win = window.open('','_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); win.close(); }, 500);
-    }
-
-    // ==========================================
-    // INICIALIZAÇÃO E OUTROS MÓDULOS
-    // ==========================================
+    // INICIALIZAÇÃO
     function switchGestorTab(t) {
         document.querySelectorAll('#view-gestor .g-tab').forEach(el => el.classList.remove('active'));
         document.getElementById('gtab-'+t).classList.add('active');
@@ -867,7 +941,6 @@
         }
     }
 
-    // Código Omitido de Quiz DISC/Simulador (Permanece inalterado da sua versão funcional)
     const allQuestions = [{ q: "1. Num dia de alto volume de separação...", opts: [{t: "Tomo a frente...", dim: 'D'}, {t: "Animo a equipe...", dim: 'I'}, {t: "Mantenho meu ritmo...", dim: 'S'}, {t: "Verifico procedimentos...", dim: 'C'}] }];
     let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, scores = { D: 0, I: 0, S: 0, C: 0 };
     function startQuiz() { const nome = document.getElementById('user-name').value.trim(); const mat = document.getElementById('user-id').value.trim(); if(nome.toLowerCase() === 'gestor' && mat === '144') { document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'none'; switchTab('gestor'); switchGestorTab('auditoria'); return; } if(!nome || !mat) return alert('Preencha os dados.'); alert('Acesso apenas Gestor neste teste.'); }

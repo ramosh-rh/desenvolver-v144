@@ -894,31 +894,87 @@
         }
     }
 
+    // ---- Funções de Feedback Dinâmico e Contextual ----
+    function getSugestaoContextual(critId, obs) {
+        if (obs && obs.trim().length > 5) return obs.trim();
+        const sugestoes = {
+            c1: 'Revisar a organização das posições e cobrar a devolução dos itens ao local correto após o uso.',
+            c2: 'Caixas acumuladas no piso representam risco de segurança e bloqueio de corredor. Descartar ou realocar antes do fechamento.',
+            c3: 'Verificar se o padrão de armazenamento está sendo seguido pela equipe durante todo o processo.',
+            c4: 'Identificar gargalos no abastecimento e priorizar as posições críticas com estoque baixo ou zerado.',
+            c5: 'Carrinhos devem retornar ao ponto padrão após o uso. Cobrar devolução ao final de cada ciclo.',
+            c6: 'Paletes fora de alinhamento ou sem identificação comprometem a rastreabilidade. Corrigir antes do fechamento.',
+            c7: 'Conferir o controle de gaiolas: identificação, integridade e posição correta nos locais designados.',
+            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade e a distribuição de tarefas.'
+        };
+        return sugestoes[critId] || 'Verificar e alinhar conforme padrão operacional estabelecido.';
+    }
+
+    function getAcaoRecomendada(notaFinal, maiorGap) {
+        if (notaFinal >= 9.5) return `✅ Manter o padrão atual e compartilhar as boas práticas com os demais setores.`;
+        if (notaFinal >= 8.5) return `📌 Ação de melhoria: reforçar o critério "${maiorGap.nome}" no início do próximo turno. Um ajuste pontual é suficiente para alcançar a excelência.`;
+        if (notaFinal >= 7.5) return `🔧 Plano corretivo: realizar uma parada rápida de 5 minutos com a equipe para nivelar o critério "${maiorGap.nome}". Verificar se houve falha de comunicação no início do turno.`;
+        if (notaFinal >= 6.5) return `🚨 Ação imediata: o critério "${maiorGap.nome}" está comprometendo o setor. Liderança deve intervir diretamente e monitorar a recuperação antes do fechamento.`;
+        return `🛑 Intervenção direta exigida. Parar, organizar e relançar o setor. O critério "${maiorGap.nome}" e os demais desvios indicam falha sistêmica no turno — não é um caso isolado.`;
+    }
+
+    function gerarFeedbackDinamico(notaFinal) {
+        let obsMap = {};
+        criteriosAuditoria.forEach(c => {
+            let inputEl = document.getElementById(`obs-aud-${c.id}`);
+            obsMap[c.id] = inputEl ? inputEl.value.trim() : '';
+        });
+        let criteriosSorted = criteriosAuditoria.map(c => ({
+            ...c, nota: notasAuditoria[c.id] || 0, obs: obsMap[c.id]
+        })).sort((a, b) => a.nota - b.nota);
+
+        let maiorGap = criteriosSorted[0];
+        let linhas = [];
+
+        if (notaFinal >= 9.5) linhas.push(`Setor com desempenho excepcional (${notaFinal.toFixed(1)}). A operação está alinhada ao padrão exigido em praticamente todos os pontos.`);
+        else if (notaFinal >= 8.5) linhas.push(`Bom desempenho geral (${notaFinal.toFixed(1)}), com pontos específicos que precisam de atenção para sustentar o padrão.`);
+        else if (notaFinal >= 7.5) linhas.push(`Desempenho regular (${notaFinal.toFixed(1)}). Há desvios identificados que precisam de ação corretiva ainda neste turno.`);
+        else if (notaFinal >= 6.5) linhas.push(`Desempenho abaixo do aceitável (${notaFinal.toFixed(1)}). O setor apresenta múltiplos pontos de não conformidade que comprometem a operação.`);
+        else linhas.push(`Situação crítica (${notaFinal.toFixed(1)}). O setor está fora dos padrões operacionais em praticamente todos os critérios avaliados.`);
+
+        linhas.push('');
+        linhas.push(`📍 MAIOR GAP DO SETOR: ${maiorGap.nome} (Nota ${maiorGap.nota}/5)`);
+        linhas.push(`→ ${getSugestaoContextual(maiorGap.id, maiorGap.obs)}`);
+
+        let demaisProblemas = criteriosSorted.slice(1).filter(c => c.nota <= 3);
+        if (demaisProblemas.length > 0) {
+            linhas.push('');
+            linhas.push(`⚠️ OUTROS PONTOS DE MELHORIA:`);
+            demaisProblemas.forEach(c => {
+                linhas.push(`• ${c.nome} (${c.nota}/5) — ${getSugestaoContextual(c.id, c.obs)}`);
+            });
+        }
+
+        let pontosBons = criteriosSorted.filter(c => c.nota >= 4).reverse();
+        if (pontosBons.length > 0 && notaFinal < 9.5) {
+            linhas.push('');
+            linhas.push(`✅ O QUE ESTÁ BEM HOJE:`);
+            pontosBons.forEach(c => { linhas.push(`• ${c.nome} (${c.nota}/5)`); });
+        }
+
+        linhas.push('');
+        linhas.push(getAcaoRecomendada(notaFinal, maiorGap));
+        return linhas.join('\n');
+    }
+
     function processarAuditoria() {
         const setor = document.getElementById('aud-setor').value; if(!setor) return alert("Selecione o setor.");
-        let soma = 0; let critBaixos = [];
-        criteriosAuditoria.forEach(c => { let nota = notasAuditoria[c.id]; if(nota === 0) return alert(`Critério "${c.nome}" sem nota.`); soma += nota; if(nota <= 2) critBaixos.push(c.nome); });
-        if(Object.values(notasAuditoria).includes(0)) return;
+        let soma = 0; let algumZero = false;
+        criteriosAuditoria.forEach(c => { let nota = notasAuditoria[c.id]; if(!nota || nota === 0) { if(!algumZero) alert(`Critério "${c.nome}" sem nota.`); algumZero = true; } else soma += nota; });
+        if(algumZero) return;
 
         let notaFinal = (soma / 40) * 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
-        
-        let feedback = "";
-        if (notaFinal === 10) feedback = `🏆 Excelência Operacional Máxima! (10.0)\nOrganização e processos impecáveis.`;
-        else if (notaFinal >= 9.5) feedback = `🌟 Alto Nível - Padrão Ouro (${notaFinal.toFixed(1)}).\nOperação incrível. Pequenos ajustes garantem a excelência.`;
-        else if (notaFinal >= 9.0) feedback = `✅ Ótimo Desempenho (${notaFinal.toFixed(1)}).\nAderência sólida aos padrões de linha. Margem apenas para sintonia fina visual.`;
-        else if (notaFinal >= 8.5) feedback = `👍 Bom Desempenho (${notaFinal.toFixed(1)}).\nEstável, mas apresentou pequenos desvios pontuais de rotina.`;
-        else if (notaFinal >= 8.0) feedback = `⚠️ Atenção Leve (${notaFinal.toFixed(1)}).\nEficiência mantida, mas começam a surgir focos de despadronização.`;
-        else if (notaFinal >= 7.5) feedback = `🚧 Atenção Média (${notaFinal.toFixed(1)}).\nReforçar a cobrança de padronização hoje. Evidências de desvio.`;
-        else if (notaFinal >= 7.0) feedback = `🟠 Alerta Laranja (${notaFinal.toFixed(1)}).\nQueda de rendimento. Foco corretivo: ${critBaixos.join(', ')}.`;
-        else if (notaFinal >= 6.5) feedback = `🚨 Risco Operacional (${notaFinal.toFixed(1)}).\nPadrão inaceitável. O passivo comprometerá o andamento. Cobrança imediata.`;
-        else if (notaFinal >= 6.0) feedback = `⛔ Risco Grave (${notaFinal.toFixed(1)}).\nFora das normas de 5S. Parada imediata para arrumação.`;
-        else feedback = `🛑 Situação Crítica (${notaFinal.toFixed(1)}).\nSetor reprovado totalmente. Intervenção direta exigida.`;
 
         let textareaFeed = document.getElementById('aud-feedback');
-        const autoTags = ["Excelência", "Alto Nível", "Ótimo", "Bom", "Atenção", "Alerta", "Risco", "Crítica"];
-        if(textareaFeed.value === "" || autoTags.some(tag => textareaFeed.value.includes(tag))) textareaFeed.value = feedback;
-        
+        textareaFeed.value = gerarFeedbackDinamico(notaFinal);
+        textareaFeed.removeAttribute('data-gerado');
+
         document.getElementById('resultado-auditoria').style.display = 'block'; document.getElementById('btn-salvar-auditoria').style.display = 'block'; salvarRascunhoLocal();
     }
 
@@ -997,14 +1053,138 @@
         let win = window.open('','_blank'); win.document.write(html + `</table></body></html>`); win.document.close(); setTimeout(() => { win.print(); }, 1000); 
     }
 
+    function gerarCorNota(nota) {
+        if (nota >= 4.5) return '#10b981';
+        if (nota >= 3.5) return '#3b82f6';
+        if (nota >= 2.5) return '#f59e0b';
+        return '#ef4444';
+    }
+
     function imprimirRelatorioFechamento() {
         if(rankingEquipesGlobal.length === 0) return alert("Sem dados.");
-        let html = `<html><head><title>Fechamento</title><style>body{font-family:Arial; padding:20px;} .card{border:1px solid #cbd5e1; padding:15px; margin-bottom:15px; background:#f8fafc;} .box{background:#fffbeb; border-left:4px solid #f59e0b; padding:8px; font-size:12px;}</style></head><body><h2 style="text-align:center; border-bottom: 2px solid #000;">Equipe Ressuprimento - Fechamento Operacional</h2>`;
+        const dataFormatada = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
+        const criteriosNomes = {};
+        criteriosAuditoria.forEach(c => { criteriosNomes[c.id] = c.nome; });
+
+        let styles = `
+            body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; color: #1e293b; }
+            h1 { text-align: center; font-size: 16px; border-bottom: 3px solid #1e1b4b; padding-bottom: 8px; margin-bottom: 5px; }
+            .subtitulo { text-align: center; font-size: 11px; color: #64748b; margin-bottom: 20px; }
+            .equipe-bloco { border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 18px; overflow: hidden; page-break-inside: avoid; }
+            .equipe-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; color: white; }
+            .equipe-body { padding: 12px 15px; }
+            .badge-nota { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 5px; }
+            .secao-titulo { font-size: 10px; text-transform: uppercase; font-weight: bold; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin: 10px 0 6px; letter-spacing: 0.5px; }
+            .gap-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
+            .gap-box strong { color: #991b1b; }
+            .melhoria-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
+            .ok-box { background: #f0fdf4; border-left: 4px solid #10b981; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
+            .acao-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 8px 10px; margin: 8px 0; font-size: 11px; font-weight: bold; }
+            table.criterios { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 11px; }
+            table.criterios th { background: #f1f5f9; padding: 5px 8px; text-align: left; font-size: 10px; text-transform: uppercase; }
+            table.criterios td { padding: 5px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+            .nota-estrela { font-weight: bold; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+            .feedback-area { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; margin-top: 8px; font-size: 11px; line-height: 1.6; white-space: pre-line; }
+            .foto-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+            .foto-grid img { width: 120px; height: 90px; object-fit: cover; border: 1px solid #cbd5e1; border-radius: 4px; }
+            @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
+        `;
+
+        let html = `<html><head><title>Fechamento Operacional - ${dataFormatada}</title><style>${styles}</style></head><body>`;
+        html += `<h1>Equipe Ressuprimento — Fechamento Operacional</h1>`;
+        html += `<p class="subtitulo">Data: ${dataFormatada} &nbsp;|&nbsp; Gerado em: ${new Date().toLocaleString('pt-BR')}</p>`;
+
         rankingEquipesGlobal.forEach((eq, idx) => {
-            let pts = eq.pontosAtencao.length > 0 ? `<div class="box"><strong>⚠️ Desvios:</strong><br>${eq.pontosAtencao.join('<br>').replace(/\*/g,'')}</div>` : `<div style="color:#10b981;">✅ Padrão mantido.</div>`;
-            html += `<div class="card"><h3>${idx+1}º ${eq.nome} | Média: ${eq.notaMedia.toFixed(1)}</h3>${pts}</div>`;
+            let corHeader = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
+            let icone = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}º`;
+
+            html += `<div class="equipe-bloco">`;
+            html += `<div class="equipe-header" style="background:${corHeader};">`;
+            html += `<strong style="font-size:14px;">${icone} ${eq.nome}</strong>`;
+            html += `<span class="badge-nota">Média: ${eq.notaMedia.toFixed(1)} / 10</span>`;
+            html += `</div><div class="equipe-body">`;
+
+            eq.avaliacoesOriginais.forEach(av => {
+                let critOrdenados = Object.entries(av.notas || {}).map(([id, nota]) => ({
+                    id, nota, nome: criteriosNomes[id] || id, obs: (av.observacoes || {})[id] || ''
+                })).sort((a, b) => a.nota - b.nota);
+
+                let maiorGapAv = critOrdenados[0];
+                let critBaixos = critOrdenados.filter(c => c.nota <= 2);
+                let critMedios = critOrdenados.filter(c => c.nota === 3);
+                let critBons = critOrdenados.filter(c => c.nota >= 4).reverse();
+
+                if (eq.avaliacoesOriginais.length > 1) {
+                    html += `<div class="secao-titulo">📋 ${av.setor} — Nota: ${av.notaFinal.toFixed(1)}</div>`;
+                } else {
+                    html += `<div class="secao-titulo">📋 Detalhamento dos Critérios</div>`;
+                }
+
+                html += `<table class="criterios"><tr><th>Critério</th><th>Nota</th><th>Observação Registrada</th></tr>`;
+                critOrdenados.forEach(c => {
+                    let cor = gerarCorNota(c.nota);
+                    let obsTexto = c.obs || '—';
+                    html += `<tr><td>${c.nome}</td><td><span class="nota-estrela" style="background:${cor};">${c.nota}/5</span></td><td style="color:#475569;">${obsTexto}</td></tr>`;
+                });
+                html += `</table>`;
+
+                if (maiorGapAv) {
+                    html += `<div class="secao-titulo">📍 Análise de Gap e Melhorias</div>`;
+                    html += `<div class="gap-box"><strong>MAIOR GAP: ${maiorGapAv.nome} (${maiorGapAv.nota}/5)</strong><br>`;
+                    let sugestaoGap = maiorGapAv.obs ? maiorGapAv.obs : getSugestaoContextual_PDF(maiorGapAv.id);
+                    html += `→ ${sugestaoGap}</div>`;
+                }
+
+                if (critBaixos.length > 1 || critMedios.length > 0) {
+                    let demais = critOrdenados.slice(1).filter(c => c.nota <= 3);
+                    if (demais.length > 0) {
+                        html += `<div class="melhoria-box"><strong>⚠️ Outros pontos de melhoria:</strong><br>`;
+                        demais.forEach(c => {
+                            let txt = c.obs ? c.obs : getSugestaoContextual_PDF(c.id);
+                            html += `• <strong>${c.nome}</strong> (${c.nota}/5): ${txt}<br>`;
+                        });
+                        html += `</div>`;
+                    }
+                }
+
+                if (critBons.length > 0) {
+                    html += `<div class="ok-box"><strong>✅ O que está bem:</strong> `;
+                    html += critBons.map(c => `${c.nome} (${c.nota}/5)`).join(' · ');
+                    html += `</div>`;
+                }
+
+                if (av.feedback && av.feedback.trim()) {
+                    html += `<div class="secao-titulo">📝 Parecer da Liderança</div>`;
+                    html += `<div class="feedback-area">${av.feedback.trim()}</div>`;
+                }
+
+                if (av.fotos && av.fotos.length > 0) {
+                    html += `<div class="secao-titulo">📸 Evidências Fotográficas (${av.fotos.length})</div>`;
+                    html += `<div class="foto-grid">`;
+                    av.fotos.forEach(foto => { html += `<img src="${foto}" alt="evidência">`; });
+                    html += `</div>`;
+                }
+            });
+
+            html += `</div></div>`;
         });
-        let win = window.open('','_blank'); win.document.write(html + `</body></html>`); win.document.close(); setTimeout(() => { win.print(); }, 1000); 
+
+        html += `</body></html>`;
+        let win = window.open('', '_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); }, 1200);
+    }
+
+    function getSugestaoContextual_PDF(critId) {
+        const sugestoes = {
+            c1: 'Revisar a organização das posições e cobrar a devolução dos itens ao local correto após o uso.',
+            c2: 'Caixas acumuladas no piso: risco de segurança e bloqueio de corredor. Descartar ou realocar antes do fechamento.',
+            c3: 'Verificar se o padrão de armazenamento está sendo seguido durante todo o processo.',
+            c4: 'Identificar gargalos no abastecimento e priorizar posições críticas com estoque baixo ou zerado.',
+            c5: 'Carrinhos devem retornar ao ponto padrão após o uso. Cobrar devolução ao final de cada ciclo.',
+            c6: 'Paletes fora de alinhamento ou sem identificação comprometem a rastreabilidade. Corrigir antes do fechamento.',
+            c7: 'Conferir o controle de gaiolas: identificação, integridade e posição correta nos locais designados.',
+            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade do turno.'
+        };
+        return sugestoes[critId] || 'Verificar e alinhar conforme padrão operacional.';
     }
 
     function carregarHistoricoAuditoria() {

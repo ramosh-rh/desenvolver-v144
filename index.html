@@ -424,16 +424,31 @@
                     </div>
 
                     <div id="aud-resumo" style="display: none;">
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; flex-wrap: wrap;">
                             <div style="flex: 1; min-width: 150px;">
                                 <label style="font-size: 0.85rem; font-weight: bold; color: #166534;">Data do Fechamento</label>
                                 <input type="date" id="filtro-dia-resumo" class="input-group" style="padding: 10px; width: 100%; border: 1px solid #bbf7d0; border-radius: 6px; margin-bottom: 0;" onchange="gerarResumoDiario()">
                             </div>
                             <div style="display: flex; gap: 5px; flex: 2; margin-top: 22px;">
-                                <button class="btn-whatsapp" style="flex: 1; height: 42px; margin: 0;" onclick="compartilharRankingDiario()">📲 Zap</button>
-                                <button class="btn-print" style="flex: 1; height: 42px; margin: 0;" onclick="imprimirRelatorioFechamento()">🖨️ PDF Completo</button>
+                                <button class="btn-whatsapp" style="flex: 1; height: 42px; margin: 0;" onclick="compartilharRankingDiario()">📲 Zap Dia</button>
+                                <button class="btn-whatsapp" style="flex: 1; height: 42px; margin: 0; background:#10b981;" onclick="compartilharMediaMes()">📲 Zap Mês</button>
+                                <button class="btn-print" style="flex: 1; height: 42px; margin: 0;" onclick="imprimirRelatorioFechamento()">🖨️ PDF</button>
                             </div>
                         </div>
+
+                        <!-- Cards Média Dia e Mês -->
+                        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                            <div id="card-media-dia" style="flex:1; min-width:140px; background:#fff; border:2px solid #6366f1; border-radius:10px; padding:14px; text-align:center;">
+                                <div style="font-size:0.75rem; font-weight:700; color:#6366f1; text-transform:uppercase; letter-spacing:0.5px;">📅 Média do Dia</div>
+                                <div id="val-media-dia" style="font-size:2rem; font-weight:900; color:#1e1b4b; margin:4px 0;">—</div>
+                                <div id="sub-media-dia" style="font-size:0.72rem; color:#64748b;">aguardando...</div>
+                            </div>
+                            <div id="card-media-mes" style="flex:1; min-width:180px; background:#fff; border:2px solid #10b981; border-radius:10px; padding:14px;">
+                                <div style="font-size:0.75rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px;">📆 Média do Mês</div>
+                                <div style="font-size:0.82rem; color:#64748b; margin-top:6px;">aguardando dados...</div>
+                            </div>
+                        </div>
+
                         <h3 style="font-size: 1rem; color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px;">🏆 Fechamento Unificado por Equipe</h3>
                         <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px;">Nota média calculada juntando Medicamentos e Perfumaria da mesma estação.</p>
                         <div id="lista-resumo-diario"></div>
@@ -1087,14 +1102,116 @@
                 html += `<div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start; flex-direction:column; padding: 15px;"><div style="width: 100%; display:flex; justify-content: space-between;"><strong style="font-size:1.1rem;">${icone} ${eq.nome}</strong><strong style="color: ${cor}; font-size: 1.2rem;">${eq.notaMedia.toFixed(1)} ⭐</strong></div><div style="width:100%;">${txtAtencao}${botoesAcao}</div></div>`;
             });
             container.innerHTML = html;
+            atualizarCardMediaDia();
         });
     }
 
     function compartilharRankingDiario() {
         if(rankingEquipesGlobal.length === 0) return alert("Sem dados.");
-        let msg = `📊 *FECHAMENTO DIÁRIO - EQUIPE RESSUPRIMENTO*\n\n🏆 *Ranking Consolidado:*\n\n`;
-        rankingEquipesGlobal.forEach((eq, i) => { let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹'; msg += `${icone} *${eq.nome}* - Média: ${eq.notaMedia.toFixed(1)} ⭐\n`; if (eq.pontosAtencao.length > 0) { msg += `   ⚠️ _Atenção em:_\n`; eq.pontosAtencao.forEach(p => { msg += `   - ${p}\n`; }); } msg += `\n`; });
+        const dataFmt = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
+        const mediaDia = document.getElementById('val-media-dia').innerText;
+        let msg = `📊 *FECHAMENTO DIÁRIO — RESSUPRIMENTO*\n📅 *${dataFmt}*\n\n`;
+        msg += `📈 *Média Geral do Dia: ${mediaDia !== '—' ? mediaDia + ' ⭐' : 'N/D'}*\n\n`;
+        msg += `🏆 *Ranking por Equipe:*\n\n`;
+        rankingEquipesGlobal.forEach((eq, i) => {
+            let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹';
+            msg += `${icone} *${eq.nome}* — ${eq.notaMedia.toFixed(1)} ⭐\n`;
+            if (eq.pontosAtencao.length > 0) { msg += `   ⚠️ _Atenção:_\n`; eq.pontosAtencao.forEach(p => { msg += `   - ${p}\n`; }); }
+            msg += `\n`;
+        });
+        msg += `_Gerado automaticamente pelo sistema de auditoria._`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function calcularMediaMes(dataRef, callback) {
+        const d = new Date(dataRef + 'T00:00:00');
+        const ano = d.getFullYear();
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const prefixo = `${ano}-${mes}`;
+        // busca todas avaliações do mês
+        database.ref('avaliacoes_setores').orderByChild('data').startAt(prefixo + '-01').endAt(prefixo + '-31').once('value', snap => {
+            if (!snap.exists()) return callback(null, prefixo);
+            let soma = 0; let qtd = 0;
+            let porSetor = {};
+            snap.forEach(child => {
+                const rec = child.val();
+                // confirma que é do mesmo mês (endAt não é exato com strings)
+                if (!rec.data.startsWith(prefixo)) return;
+                soma += rec.notaFinal; qtd++;
+                if (!porSetor[rec.setor]) porSetor[rec.setor] = { soma: 0, qtd: 0 };
+                porSetor[rec.setor].soma += rec.notaFinal; porSetor[rec.setor].qtd++;
+            });
+            if (qtd === 0) return callback(null, prefixo);
+            callback({ media: soma / qtd, qtd, porSetor, prefixo }, prefixo);
+        });
+    }
+
+    function atualizarCardMediaDia() {
+        if (rankingEquipesGlobal.length === 0) {
+            document.getElementById('val-media-dia').innerText = '—';
+            document.getElementById('sub-media-dia').innerText = 'sem dados';
+            return;
+        }
+        let soma = 0; let qtd = 0;
+        rankingEquipesGlobal.forEach(eq => { soma += eq.notaMedia; qtd++; });
+        const media = soma / qtd;
+        const el = document.getElementById('val-media-dia');
+        el.innerText = media.toFixed(1);
+        el.style.color = media >= 8.5 ? '#10b981' : media >= 7.0 ? '#f59e0b' : '#ef4444';
+        document.getElementById('sub-media-dia').innerText = `${qtd} equipe(s) avaliada(s)`;
+
+        // atualiza card de média do mês por setor
+        const dataFiltro = document.getElementById('filtro-dia-resumo').value;
+        calcularMediaMes(dataFiltro, (resultado) => {
+            const cardMes = document.getElementById('card-media-mes');
+            if (!resultado) {
+                document.getElementById('val-media-mes').innerText = '—';
+                document.getElementById('sub-media-mes').innerText = 'sem dados no mês';
+                return;
+            }
+            const d = new Date(resultado.prefixo + '-01T00:00:00');
+            const nomeMes = d.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+
+            // monta lista de setores ordenada
+            let linhasHtml = '';
+            Object.keys(resultado.porSetor).sort().forEach(setor => {
+                const s = resultado.porSetor[setor];
+                const m = (s.soma / s.qtd);
+                const cor = m >= 8.5 ? '#10b981' : m >= 7.0 ? '#f59e0b' : '#ef4444';
+                const emoji = m >= 8.5 ? '🟢' : m >= 7.0 ? '🟡' : '🔴';
+                linhasHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #f1f5f9; font-size:0.78rem;">
+                    <span>${emoji} ${setor}</span>
+                    <strong style="color:${cor}; font-size:0.9rem;">${m.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">(${s.qtd}x)</span></strong>
+                </div>`;
+            });
+
+            cardMes.innerHTML = `
+                <div style="font-size:0.75rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">📆 Média do Mês — ${nomeMes}</div>
+                ${linhasHtml}
+                <div style="font-size:0.7rem; color:#94a3b8; margin-top:6px; text-align:right;">${resultado.qtd} avaliação(ões) no total</div>
+            `;
+        });
+    }
+
+    function compartilharMediaMes() {
+        const dataFiltro = document.getElementById('filtro-dia-resumo').value || new Date().toISOString().split('T')[0];
+        calcularMediaMes(dataFiltro, (resultado, prefixo) => {
+            if (!resultado) return alert('Sem avaliações registradas neste mês.');
+            const d = new Date(prefixo + '-01T00:00:00');
+            const nomeMes = d.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
+            let msg = `📆 *MÉDIA DO MÊS — RESSUPRIMENTO*\n🗓️ *${nomeMes}*\n\n`;
+            msg += `📊 *Média Geral: ${resultado.media.toFixed(1)} ⭐*\n`;
+            msg += `📋 Total de avaliações: ${resultado.qtd}\n\n`;
+            msg += `*Desempenho por Setor:*\n`;
+            Object.keys(resultado.porSetor).sort().forEach(setor => {
+                const s = resultado.porSetor[setor];
+                const m = (s.soma / s.qtd).toFixed(1);
+                const emoji = m >= 8.5 ? '🟢' : m >= 7.0 ? '🟡' : '🔴';
+                msg += `${emoji} ${setor}: *${m}* (${s.qtd} aval.)\n`;
+            });
+            msg += `\n_Gerado automaticamente pelo sistema de auditoria._`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        });
     }
 
     function imprimirChecklistAuditoria() {

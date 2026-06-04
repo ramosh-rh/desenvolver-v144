@@ -396,6 +396,20 @@
                             <div id="container-criterios"></div>
                         </div>
 
+                        <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 2px dashed #f59e0b; margin-bottom: 20px;">
+                            <h3 style="font-size: 0.95rem; color: #b45309; margin-bottom: 5px;">⭐ Ponto Extra (Diferencial do Dia)</h3>
+                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 12px;">Para equipes que se destacaram ajudando outros setores ou enfrentaram grau de dificuldade elevado no turno.</p>
+                            <div style="display: flex; gap: 10px; margin-bottom: 12px; justify-content: center;">
+                                <button id="pe-btn-0" class="pe-btn" onclick="setPontoExtra(0)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">0</button>
+                                <button id="pe-btn-1" class="pe-btn" onclick="setPontoExtra(1)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">+1</button>
+                                <button id="pe-btn-2" class="pe-btn" onclick="setPontoExtra(2)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">+2</button>
+                            </div>
+                            <div id="pe-justificativa-area" style="display:none;">
+                                <label style="font-weight:600; font-size:0.85rem; color:#b45309;">Justificativa (obrigatória):</label>
+                                <input type="text" id="pe-justificativa" placeholder="Ex: Ajudou o setor de Ruas durante pico + dificuldade alta no abastecimento" style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; margin-top:6px; font-family:inherit;" oninput="salvarRascunhoLocal()">
+                            </div>
+                        </div>
+
                         <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 15px; padding: 16px; font-size: 1rem;" onclick="processarAuditoria()">✨ Calcular Nota Final</button>
                         
                         <div id="resultado-auditoria" style="display: none; background: #fff; border: 2px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
@@ -845,10 +859,11 @@
         { id: 'c5', nome: 'Organização Operacional (Carrinhos)' },
         { id: 'c6', nome: 'Organização de Paletes' },
         { id: 'c7', nome: 'Controle de Gaiolas' },
-        { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' }
+        { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' },
+        { id: 'c9', nome: 'Comportamental da Equipe' }
     ];
 
-    let notasAuditoria = {}; let idAuditoriaEmEdicao = null; 
+    let notasAuditoria = {}; let idAuditoriaEmEdicao = null; let pontoExtra = 0;
 
     function renderizarCriteriosAuditoria() {
         const container = document.getElementById('container-criterios'); container.innerHTML = ''; notasAuditoria = {};
@@ -863,6 +878,23 @@
         });
         document.getElementById('resultado-auditoria').style.display = 'none'; document.getElementById('btn-salvar-auditoria').style.display = 'none';
         fotosEvidencia = []; renderizarMiniaturasFotos();
+        // reset ponto extra
+        pontoExtra = 0; setPontoExtra(0, true);
+    }
+
+    function setPontoExtra(val, silencioso) {
+        pontoExtra = val;
+        [0,1,2].forEach(v => {
+            const btn = document.getElementById(`pe-btn-${v}`);
+            if(!btn) return;
+            btn.style.background = v === val && val > 0 ? '#f59e0b' : '#fff';
+            btn.style.color = v === val && val > 0 ? '#fff' : '#334155';
+            btn.style.borderColor = v === val && val > 0 ? '#f59e0b' : '#e2e8f0';
+        });
+        const areaJust = document.getElementById('pe-justificativa-area');
+        if(areaJust) areaJust.style.display = val > 0 ? 'block' : 'none';
+        if(val === 0) { const j = document.getElementById('pe-justificativa'); if(j) j.value = ''; }
+        if(!silencioso) salvarRascunhoLocal();
     }
 
     function setStarAuditoria(id, nota) {
@@ -876,7 +908,8 @@
         if (idAuditoriaEmEdicao) return; const setor = document.getElementById('aud-setor').value; if(!setor) return;
         let obs = {}; criteriosAuditoria.forEach(c => { let inputObs = document.getElementById(`obs-aud-${c.id}`); if(inputObs) obs[c.id] = inputObs.value; });
         let feedback = document.getElementById('aud-feedback') ? document.getElementById('aud-feedback').value : "";
-        localStorage.setItem('rascunho_aud_' + setor, JSON.stringify({ notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia }));
+        let peJust = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value : "";
+        localStorage.setItem('rascunho_aud_' + setor, JSON.stringify({ notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia, pontoExtra, peJustificativa: peJust }));
         const status = document.getElementById('status-rascunho'); status.innerText = "Salvo..."; status.style.opacity = 1; setTimeout(() => { status.style.opacity = 0; }, 2000);
     }
 
@@ -890,6 +923,7 @@
                 if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
             });
             fotosEvidencia = dados.fotos || []; renderizarMiniaturasFotos();
+            if(dados.pontoExtra) { setPontoExtra(dados.pontoExtra, true); if(dados.peJustificativa) { const j = document.getElementById('pe-justificativa'); if(j) j.value = dados.peJustificativa; } }
             if(dados.feedbackGerado) processarAuditoria();
         }
     }
@@ -905,7 +939,8 @@
             c5: 'Carrinhos devem retornar ao ponto padrão após o uso. Cobrar devolução ao final de cada ciclo.',
             c6: 'Paletes fora de alinhamento ou sem identificação comprometem a rastreabilidade. Corrigir antes do fechamento.',
             c7: 'Conferir o controle de gaiolas: identificação, integridade e posição correta nos locais designados.',
-            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade e a distribuição de tarefas.'
+            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade e a distribuição de tarefas.',
+            c9: 'Avaliar postura, comunicação e trabalho em equipe. Identificar conflitos, desengajamento ou comportamentos que impactam negativamente o clima operacional do setor.'
         };
         return sugestoes[critId] || 'Verificar e alinhar conforme padrão operacional estabelecido.';
     }
@@ -959,6 +994,14 @@
 
         linhas.push('');
         linhas.push(getAcaoRecomendada(notaFinal, maiorGap));
+
+        if(pontoExtra > 0) {
+            const just = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value.trim() : '';
+            linhas.push('');
+            linhas.push(`⭐ PONTO EXTRA CONCEDIDO: +${pontoExtra} ponto(s)`);
+            if(just) linhas.push(`→ ${just}`);
+        }
+
         return linhas.join('\n');
     }
 
@@ -968,7 +1011,13 @@
         criteriosAuditoria.forEach(c => { let nota = notasAuditoria[c.id]; if(!nota || nota === 0) { if(!algumZero) alert(`Critério "${c.nome}" sem nota.`); algumZero = true; } else soma += nota; });
         if(algumZero) return;
 
-        let notaFinal = (soma / 40) * 10;
+        if(pontoExtra > 0) {
+            const just = document.getElementById('pe-justificativa').value.trim();
+            if(!just) { alert('Justificativa do Ponto Extra é obrigatória.'); document.getElementById('pe-justificativa').focus(); return; }
+        }
+
+        let notaBase = (soma / 45) * 10;
+        let notaFinal = Math.min(10, notaBase + pontoExtra);
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
 
         let textareaFeed = document.getElementById('aud-feedback');
@@ -982,7 +1031,8 @@
         const data = document.getElementById('aud-data').value; const setor = document.getElementById('aud-setor').value;
         const feedback = document.getElementById('aud-feedback').value; const notaFinal = parseFloat(document.getElementById('aud-nota-final').innerText);
         let observacoes = {}; criteriosAuditoria.forEach(c => { observacoes[c.id] = document.getElementById(`obs-aud-${c.id}`).value.trim(); });
-        const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotos: fotosEvidencia, timestamp: Date.now() };
+        const peJustificativa = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value.trim() : "";
+        const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotos: fotosEvidencia, pontoExtra, peJustificativa, timestamp: Date.now() };
 
         if (idAuditoriaEmEdicao) { database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao).update(payload).then(() => { alert("Atualizado!"); limparTelaAuditoria(); }); } 
         else { database.ref('avaliacoes_setores').push(payload).then(() => { alert("Transmitido!"); localStorage.removeItem('rascunho_aud_' + setor); limparTelaAuditoria(); }); }
@@ -1158,6 +1208,12 @@
                     html += `<div class="feedback-area">${av.feedback.trim()}</div>`;
                 }
 
+                if (av.pontoExtra > 0) {
+                    html += `<div class="ok-box" style="background:#fffbeb; border-left:4px solid #f59e0b;"><strong>⭐ Ponto Extra Concedido: +${av.pontoExtra} ponto(s)</strong>`;
+                    if (av.peJustificativa) html += `<br>→ ${av.peJustificativa}`;
+                    html += `</div>`;
+                }
+
                 if (av.fotos && av.fotos.length > 0) {
                     html += `<div class="secao-titulo">📸 Evidências Fotográficas (${av.fotos.length})</div>`;
                     html += `<div class="foto-grid">`;
@@ -1182,7 +1238,8 @@
             c5: 'Carrinhos devem retornar ao ponto padrão após o uso. Cobrar devolução ao final de cada ciclo.',
             c6: 'Paletes fora de alinhamento ou sem identificação comprometem a rastreabilidade. Corrigir antes do fechamento.',
             c7: 'Conferir o controle de gaiolas: identificação, integridade e posição correta nos locais designados.',
-            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade do turno.'
+            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade do turno.',
+            c9: 'Avaliar postura, comunicação e trabalho em equipe. Identificar conflitos, desengajamento ou comportamentos que impactam negativamente o clima operacional do setor.'
         };
         return sugestoes[critId] || 'Verificar e alinhar conforme padrão operacional.';
     }

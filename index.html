@@ -455,8 +455,18 @@
                     </div>
 
                     <div id="aud-hist" style="display: none;">
-                        <label style="font-size: 0.85rem; font-weight: bold; color: var(--text-main);">Busca por Data Específica:</label>
-                        <input type="date" id="filtro-dia-hist" class="input-group" style="padding: 10px; width: 100%; margin-bottom: 15px;" onchange="carregarHistoricoAuditoria()">
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                            <div style="flex:1; min-width:140px;">
+                                <label style="font-size:0.85rem; font-weight:bold; color:var(--text-main);">Data Específica</label>
+                                <input type="date" id="filtro-dia-hist" class="input-group" style="padding:10px; width:100%; margin-bottom:0;" onchange="carregarHistoricoAuditoria()">
+                            </div>
+                            <div style="flex:1; min-width:140px;">
+                                <label style="font-size:0.85rem; font-weight:bold; color:var(--text-main);">Filtrar por Setor</label>
+                                <select id="filtro-setor-hist" class="input-group" style="padding:10px; width:100%; margin-bottom:0;" onchange="carregarHistoricoAuditoria()">
+                                    <option value="">Todos os setores</option>
+                                </select>
+                            </div>
+                        </div>
                         <div id="medias-mes-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
                         <div id="lista-historico-auditoria"></div>
                     </div>
@@ -665,16 +675,26 @@
     // 3. MAPEAMENTO COMPORTAMENTAL E IA ADMIN
     // ==========================================
     const allQuestions = [
-        { q: "1. Num dia de alto volume de separação e pressão por metas, como você age?", opts: [{t: "Tomo a frente, acelero o processo e foco em bater a meta rápido.", dim: 'D'}, {t: "Animo a equipe e peço a colaboração de todos para agilizarmos o clima.", dim: 'I'}, {t: "Mantenho meu ritmo constante para não me estressar nem errar.", dim: 'S'}, {t: "Verifico se todos os procedimentos estão corretos para evitar retrabalho.", dim: 'C'}] },
-        { q: "2. Diante de um conflito inesperado entre colegas no armazém:", opts: [{t: "Enfrento a situação, aponto quem está errado e exijo foco na operação.", dim: 'D'}, {t: "Tento mediar com conversa e bom humor para não pesar o ambiente.", dim: 'I'}, {t: "Ouço os dois lados pacientemente buscando manter a paz no grupo.", dim: 'S'}, {t: "Recorro às normas da empresa e ao código de conduta para resolver.", dim: 'C'}] },
-        { q: "3. Quando um novo sistema operacional (WMS) é implantado:", opts: [{t: "Quero usar logo na prática, testando e aprendendo no erro e acerto.", dim: 'D'}, {t: "Gosto de perguntar aos outros e trocar ideias sobre como o sistema funciona.", dim: 'I'}, {t: "Prefiro que me ensinem com calma, passo a passo, antes de eu assumir.", dim: 'S'}, {t: "Preciso ler o manual e entender toda a lógica por trás dos botões.", dim: 'C'}] },
-        { q: "4. Ao lidar com as Normas de Segurança do SESMT (NRs / EPIs):", opts: [{t: "Uso de forma prática para não ter problemas e focar na minha produção.", dim: 'D'}, {t: "Incentivo os colegas a usar e costumo ser o porta-voz do assunto.", dim: 'I'}, {t: "Uso sempre, a rotina segura e previsível me dá tranquilidade para trabalhar.", dim: 'S'}, {t: "Sigo rigorosamente, pois a regra existe para ser cumprida e auditada.", dim: 'C'}] },
-        { q: "5. O que mais te motiva no seu dia a dia profissional?", opts: [{t: "Desafios difíceis, superar metas e ter autonomia.", dim: 'D'}, {t: "Reconhecimento público, fazer networking e ambiente descontraído.", dim: 'I'}, {t: "Estabilidade, saber exatamente o que esperam de mim e segurança.", dim: 'S'}, {t: "Fazer um trabalho perfeito, com alta qualidade e sem margem para erros.", dim: 'C'}] },
-        { q: "6. Como você prefere que o seu Gestor passe uma tarefa?", opts: [{t: "Que seja direto: 'O que precisa ser feito e para quando'. O resto eu resolvo.", dim: 'D'}, {t: "Que bata um papo rápido, explique o contexto e me dê liberdade para criar.", dim: 'I'}, {t: "Que explique com clareza como quer que seja feito e que me dê apoio.", dim: 'S'}, {t: "Que passe todos os detalhes, dados técnicos e métricas esperadas por escrito.", dim: 'C'}] },
-        { q: "7. Quando comete um erro operacional na logística:", opts: [{t: "Assumo rápido, conserto na hora e sigo em frente sem drama.", dim: 'D'}, {t: "Fico chateado, peço desculpas à equipe e tento compensar ajudando os outros.", dim: 'I'}, {t: "Sinto que quebrei a confiança, demoro um pouco para me recuperar do susto.", dim: 'S'}, {t: "Analiso onde o processo falhou para garantir que o mesmo erro não se repita.", dim: 'C'}] },
-        { q: "8. Em reuniões de alinhamento de turno:", opts: [{t: "Quero que seja rápida, direto ao ponto e que defina as metas do dia.", dim: 'D'}, {t: "Gosto de falar, dar minhas ideias e engajar a equipe para o turno.", dim: 'I'}, {t: "Prefiro ouvir, anotar o que mudou e concordar com o consenso da maioria.", dim: 'S'}, {t: "Gosto quando apresentam números, gráficos e relatórios detalhados.", dim: 'C'}] },
-        { q: "9. Seu estilo de organização do local de trabalho (5S):", opts: [{t: "Organizado o suficiente para eu achar o que preciso e ser rápido.", dim: 'D'}, {t: "Pode ser um pouco caótico, priorizo a interação, não a arrumação.", dim: 'I'}, {t: "Sempre arrumado da mesma forma, gosto das minhas coisas no mesmo lugar.", dim: 'S'}, {t: "Impecável. Tudo tem seu lugar, etiqueta e padrão visual exato.", dim: 'C'}] },
-        { q: "10. Tomada de Decisão em momento de emergência:", opts: [{t: "Decido na hora, assumo o risco. É melhor agir rápido do que não agir.", dim: 'D'}, {t: "Tento envolver as pessoas próximas rapidamente para decidirmos juntos.", dim: 'I'}, {t: "Procuro o líder ou o procedimento padrão antes de fazer qualquer movimento.", dim: 'S'}, {t: "Analiso todas as variáveis e consequências lógicas antes de dar o próximo passo.", dim: 'C'}] }
+        { q: "1. Num dia de alto volume de separação e pressão por metas, como você age?", opts: [{t:"Tomo a frente, acelero o processo e foco em bater a meta rápido.",dim:'D'},{t:"Animo a equipe e peço a colaboração de todos para agilizarmos.",dim:'I'},{t:"Mantenho meu ritmo constante para não errar nem me estressar.",dim:'S'},{t:"Verifico se todos os procedimentos estão corretos para evitar retrabalho.",dim:'C'}] },
+        { q: "2. Diante de um conflito verbal entre colegas na operação:", opts: [{t:"Entro, aponto quem está errado e exijo foco na operação.",dim:'D'},{t:"Tento mediar com conversa e bom humor para não pesar o ambiente.",dim:'I'},{t:"Fico de fora, espero esfriar e depois converso em particular.",dim:'S'},{t:"Analiso o que gerou o conflito e reporto ao gestor com fatos.",dim:'C'}] },
+        { q: "3. Quando um colega falta ao trabalho e você precisa cobrir a posição dele:", opts: [{t:"Absorvo o trabalho sem reclamar e mantenho o ritmo.",dim:'D'},{t:"Convido outros do time para dividir a carga.",dim:'I'},{t:"Aceito, mas espero orientação do gestor sobre prioridades.",dim:'S'},{t:"Avalio o impacto da ausência e sugiro um plano ao gestor.",dim:'C'}] },
+        { q: "4. Se um colega falta com frequência e sobrecarrega o time:", opts: [{t:"Falo direto com ele ou com o gestor para resolver logo.",dim:'D'},{t:"Converso de forma amigável para entender se ele está passando por algo.",dim:'I'},{t:"Aguento em silêncio, mas internamente fico desgastado.",dim:'S'},{t:"Registro os impactos e apresento os dados ao gestor de forma objetiva.",dim:'C'}] },
+        { q: "5. Quando você discorda de uma decisão do gestor:", opts: [{t:"Falo na hora, direto, mesmo que incomode.",dim:'D'},{t:"Uso humor ou conversa informal para expressar minha opinião.",dim:'I'},{t:"Aceito por fora, mas internamente fica um desconforto.",dim:'S'},{t:"Preparo argumentos e peço uma conversa formal para expor.",dim:'C'}] },
+        { q: "6. Como você prefere receber uma tarefa do gestor?", opts: [{t:"Só o que precisa ser feito e até quando. O resto eu resolvo.",dim:'D'},{t:"Um papo rápido com contexto e liberdade para criar.",dim:'I'},{t:"Explicação clara e apoio durante a execução.",dim:'S'},{t:"Todos os detalhes, dados técnicos e métricas esperadas.",dim:'C'}] },
+        { q: "7. Quando comete um erro operacional na logística:", opts: [{t:"Assumo rápido, conserto na hora e sigo em frente.",dim:'D'},{t:"Peço desculpas à equipe e tento compensar ajudando outros.",dim:'I'},{t:"Sinto que quebrei a confiança e demoro para me recuperar.",dim:'S'},{t:"Analiso onde o processo falhou para evitar reincidência.",dim:'C'}] },
+        { q: "8. Em reuniões de alinhamento de turno:", opts: [{t:"Quero rápida e direta ao ponto com as metas do dia.",dim:'D'},{t:"Gosto de falar, dar ideias e engajar a equipe.",dim:'I'},{t:"Prefiro ouvir, anotar o que mudou e concordar com o consenso.",dim:'S'},{t:"Gosto quando apresentam números e relatórios detalhados.",dim:'C'}] },
+        { q: "9. Quando o turno está incompleto e a demanda é alta:", opts: [{t:"Priorizo o que tem mais impacto e vou fundo até fechar.",dim:'D'},{t:"Energizo o time para compensar a falta e manter o moral.",dim:'I'},{t:"Sigo o plano padrão e espero instrução do gestor para ajustes.",dim:'S'},{t:"Mapeio as perdas e proponho ajustes no fluxo ao gestor.",dim:'C'}] },
+        { q: "10. Ao receber uma crítica do gestor na frente do time:", opts: [{t:"Aceito, mas respondo na hora se achar que não foi justo.",dim:'D'},{t:"Fico constrangido, mas tento transformar em aprendizado.",dim:'I'},{t:"Fico quieto, sinto por dentro mas não demonstro.",dim:'S'},{t:"Analiso se a crítica procede antes de aceitar ou questionar.",dim:'C'}] },
+        { q: "11. Quando está sobrecarregado de tarefas:", opts: [{t:"Priorizo no meu critério e resolvo sem parar.",dim:'D'},{t:"Falo para o time e mobilizo ajuda de forma descontraída.",dim:'I'},{t:"Aguento em silêncio, mas começo a sentir o desgaste.",dim:'S'},{t:"Listo as tarefas por urgência e apresento ao gestor pedindo apoio.",dim:'C'}] },
+        { q: "12. Ao perceber que um colega está com dificuldades na função:", opts: [{t:"Mostro como se faz rapidamente e peço que acompanhe o ritmo.",dim:'D'},{t:"Me aproximo, converso e incentivo.",dim:'I'},{t:"Ajudo com paciência, no ritmo dele.",dim:'S'},{t:"Observo onde está o erro e sugiro um método mais eficiente.",dim:'C'}] },
+        { q: "13. Quando o gestor muda a rotina sem avisar antes:", opts: [{t:"Me adapto e cobro explicações depois se precisar.",dim:'D'},{t:"Aceito bem, desde que o ambiente continue positivo.",dim:'I'},{t:"Me sinto desconfortável e preciso de tempo para me ajustar.",dim:'S'},{t:"Questiono o motivo antes de aceitar — preciso entender a lógica.",dim:'C'}] },
+        { q: "14. Em situação de erro grave na operação:", opts: [{t:"Resolvo o problema primeiro, depois explico o que aconteceu.",dim:'D'},{t:"Aviso a todos para que possam ajudar e evitar novo erro.",dim:'I'},{t:"Aviso o gestor imediatamente e aguardo orientação.",dim:'S'},{t:"Analiso a causa raiz antes de agir para evitar reincidência.",dim:'C'}] },
+        { q: "15. Quando há uma discussão que escala para briga entre colegas:", opts: [{t:"Me imponho e peço que todos se acalmem para continuar a operação.",dim:'D'},{t:"Tento descontrair com empatia ou palavras positivas.",dim:'I'},{t:"Recuo, deixo o clima baixar e busco reconciliação depois.",dim:'S'},{t:"Observo o que gerou o conflito e reporto ao gestor com fatos.",dim:'C'}] },
+        { q: "16. Como você se relaciona com os colegas de turno no dia a dia?", opts: [{t:"Focado na tarefa — converso o necessário para a operação fluir.",dim:'D'},{t:"Crio ambiente leve, falo bastante e integro todos.",dim:'I'},{t:"Tenho relações sólidas com um grupo fechado de confiança.",dim:'S'},{t:"Mantenho profissionalismo e respeito mútuo.",dim:'C'}] },
+        { q: "17. Quando um novo colaborador entra no setor:", opts: [{t:"Passo o básico rapidamente e espero que ele acompanhe.",dim:'D'},{t:"Acolho, apresento a todos e faço questão de integrar.",dim:'I'},{t:"Ajudo com calma e paciência, no ritmo que ele precisar.",dim:'S'},{t:"Explico o processo detalhadamente e mostro os padrões corretos.",dim:'C'}] },
+        { q: "18. Ao lidar com Normas de Segurança (NRs / EPIs):", opts: [{t:"Uso de forma prática para não ter problemas e focar na produção.",dim:'D'},{t:"Incentivo os colegas e costumo ser o porta-voz do assunto.",dim:'I'},{t:"Uso sempre — a rotina segura me dá tranquilidade.",dim:'S'},{t:"Sigo rigorosamente, pois a regra existe para ser cumprida.",dim:'C'}] },
+        { q: "19. Como você reage quando há pressão e cobranças do gestor?", opts: [{t:"Pressão me ativa — quanto mais cobrança, mais produtivo fico.",dim:'D'},{t:"Lido bem desde que o ambiente seja respeitoso e positivo.",dim:'I'},{t:"Prefiro cobranças em particular, com clareza e sem tensão.",dim:'S'},{t:"Aceito bem se vier com dados e justificativas concretas.",dim:'C'}] },
+        { q: "20. No final de um turno muito pesado, como você se sente?", opts: [{t:"Satisfeito se a meta foi batida — já penso no próximo turno.",dim:'D'},{t:"Valorizo o esforço coletivo e reconheço o time.",dim:'I'},{t:"Aliviado quando tudo está em ordem — preciso de equilíbrio.",dim:'S'},{t:"Reflito sobre o que poderia ter sido mais eficiente.",dim:'C'}] }
     ];
 
     let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, scores = { D: 0, I: 0, S: 0, C: 0 };
@@ -707,41 +727,126 @@
         });
     }
 
-    function nextQuestion() { scores[selectedDim] += 1; currentQ++; if(currentQ < quizQuestions.length) loadQuestion(); else generateDevolutiva(); }
+    function nextQuestion() {
+        scores[selectedDim] += 1; currentQ++;
+        if(currentQ < quizQuestions.length) { loadQuestion(); }
+        else { mostrarObservacaoFinal(); }
+    }
+
+    function mostrarObservacaoFinal() {
+        const quizSec = document.getElementById('quiz-section');
+        quizSec.innerHTML = `
+            <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:20px; margin-bottom:20px;">
+                <h3 style="color:#92400e; margin-bottom:8px;">✍️ Sua voz importa!</h3>
+                <p style="font-size:0.85rem; color:#78350f; margin-bottom:15px;">Antes de finalizar, compartilhe com a liderança:</p>
+                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">O que te incomoda no trabalho hoje?</label>
+                <textarea id="obs-incomoda" rows="3" placeholder="Ex: Falta de organização, comunicação ruim, sobrecarga..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit; margin-bottom:12px;"></textarea>
+                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">O que você acredita que precisa melhorar (em você ou no setor)?</label>
+                <textarea id="obs-melhora" rows="3" placeholder="Ex: Quero me desenvolver em X, o processo Y poderia melhorar..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit; margin-bottom:12px;"></textarea>
+                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">Algo mais que queira dizer à liderança? (opcional)</label>
+                <textarea id="obs-livre" rows="2" placeholder="Fique à vontade..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit;"></textarea>
+            </div>
+            <button class="btn btn-acao" style="width:100%; padding:16px; background:#10b981;" onclick="generateDevolutiva()">✅ Finalizar Avaliação</button>
+        `;
+        quizSec.style.display = 'block';
+    }
 
     function generateDevolutiva() {
         const nome = sessionStorage.getItem('tempName'), mat = sessionStorage.getItem('tempMat'), total = quizQuestions.length;
         const pctScores = { D: Math.round((scores.D/total)*100), I: Math.round((scores.I/total)*100), S: Math.round((scores.S/total)*100), C: Math.round((scores.C/total)*100) };
-        const resultData = { nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), pctScores };
+        const incomoda = document.getElementById('obs-incomoda') ? document.getElementById('obs-incomoda').value.trim() : '';
+        const melhora = document.getElementById('obs-melhora') ? document.getElementById('obs-melhora').value.trim() : '';
+        const livre = document.getElementById('obs-livre') ? document.getElementById('obs-livre').value.trim() : '';
+        const obsColaborador = [incomoda ? `Incomoda: ${incomoda}` : '', melhora ? `Precisa melhorar: ${melhora}` : '', livre ? `Outros: ${livre}` : ''].filter(Boolean).join(' | ');
+        const resultData = { nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), pctScores, obsColaborador };
         document.getElementById('quiz-section').style.display = 'none'; document.getElementById('loading-section').style.display = 'block';
-        database.ref('avaliacoes').push(resultData).then(() => { document.getElementById('loading-section').style.display = 'none'; renderDevolutivaView(nome, pctScores, true); });
+        database.ref('avaliacoes').push(resultData).then(() => { document.getElementById('loading-section').style.display = 'none'; renderDevolutivaView(nome, pctScores, true, obsColaborador); });
     }
 
-    window.abrirDossieAdmin = function(nome, pctEncoded) { renderDevolutivaView(nome, JSON.parse(decodeURIComponent(pctEncoded)), false); }
+    window.abrirDossieAdmin = function(nome, pctEncoded, obsEncoded) {
+        const obs = obsEncoded ? decodeURIComponent(obsEncoded) : '';
+        renderDevolutivaView(nome, JSON.parse(decodeURIComponent(pctEncoded)), false, obs);
+    }
 
-    function renderDevolutivaView(nome, pct, isColaborador = false) {
+    function renderDevolutivaView(nome, pct, isColaborador = false, obsColaborador = '') {
         const order = [{ id: 'D', val: pct.D, name: "Executor (D)", color: "var(--disc-d)" }, { id: 'I', val: pct.I, name: "Comunicador (I)", color: "var(--disc-i)" }, { id: 'S', val: pct.S, name: "Planejador (S)", color: "var(--disc-s)" }, { id: 'C', val: pct.C, name: "Analista (C)", color: "var(--disc-c)" }].sort((a, b) => b.val - a.val);
-        const primario = order[0]; const secundario = order[1].val > 0 ? order[1] : { name: "Puro" }; const combinacao = `${primario.name.split(' ')[0]}-${secundario.name.split(' ')[0]}`;
+        const primario = order[0]; const secundario = order[1].val > 0 ? order[1] : { name: "Puro", val: 0 }; const combinacao = `${primario.name.split(' ')[0]}-${secundario.name.split(' ')[0]}`;
         const focoPessoas = pct.I + pct.S; const focoTarefas = pct.D + pct.C; const decisaoRapida = pct.D + pct.I; const decisaoCautelosa = pct.S + pct.C;
-        let textoPerfil = "", pontosFortes = "", atencao = "";
 
-        if (primario.id === 'D') { textoPerfil = "Perfil impulsionado por resultados. Na logística, atua com extrema velocidade."; pontosFortes = "✅ Liderar crises; ✅ Tomada de decisão sob pressão."; atencao = "Pode atropelar processos para ganhar tempo."; }
-        else if (primario.id === 'I') { textoPerfil = "Movido pela interação. Facilidade para resolver conflitos de forma amistosa."; pontosFortes = "✅ Engajamento da equipe; ✅ Facilidade com treinamentos."; atencao = "Pode perder o foco na tarefa devido à socialização."; }
-        else if (primario.id === 'S') { textoPerfil = "Base de sustentação da operação logística. Não gosta de mudanças bruscas."; pontosFortes = "✅ Confiabilidade; ✅ Apaziguador nato."; atencao = "Dificuldade de adaptação rápida a novos sistemas."; }
-        else { textoPerfil = "Analítico, focado na qualidade e exatidão."; pontosFortes = "✅ Foco total em regras (NRs); ✅ Zero retrabalho."; atencao = "Pode apresentar lentidão por excesso de detalhismo."; }
+        // Score de maturidade comportamental (0–100)
+        const equilibrio = 100 - (Math.max(pct.D,pct.I,pct.S,pct.C) - Math.min(pct.D,pct.I,pct.S,pct.C));
+        const scoreTermometro = Math.round((equilibrio * 0.4) + (focoPessoas * 0.3) + (focoTarefas * 0.3));
+        const tempCor = scoreTermometro >= 75 ? '#10b981' : scoreTermometro >= 50 ? '#f59e0b' : '#ef4444';
+        const tempLabel = scoreTermometro >= 75 ? '🟢 Alta Maturidade Comportamental' : scoreTermometro >= 50 ? '🟡 Maturidade em Desenvolvimento' : '🔴 Atenção — Perfil em Formação';
+        const tempDica = scoreTermometro >= 75 ? 'Colaborador equilibrado. Pode assumir funções de referência e mentoria.' : scoreTermometro >= 50 ? 'Potencial em desenvolvimento. Requer acompanhamento estruturado.' : 'Requer plano de desenvolvimento ativo. Conversas frequentes com liderança.';
+
+        let textoPerfil, pontosFortes, atencao, tendencia, feedback, formaLidar, areaAtuacao, conselhos;
+
+        if (primario.id === 'D') {
+            textoPerfil = "Perfil impulsionado por resultados. Na logística, atua com extrema velocidade e foco em entregas. Tende a assumir o controle em situações de pressão.";
+            pontosFortes = "Liderança em crises · Tomada de decisão ágil · Autoconfiança · Alta produtividade individual";
+            atencao = "Pode atropelar processos para ganhar tempo · Impaciência com rotinas · Resistência a ordens percebidas como limitantes";
+            tendencia = "Tende a ser protagonista nos conflitos, porém com foco em solução. Quando sobrecarregado, pode se tornar agressivo verbalmente. Em ausência de colegas, tende a absorver o trabalho sozinho sem pedir ajuda.";
+            feedback = "Seja direto e objetivo. Vá ao ponto rapidamente. Foque em resultados esperados, não em regras. Ex: 'Você entregou bem, o próximo passo é...'";
+            formaLidar = "Dê autonomia com fronteiras claras. Reconheça publicamente suas entregas. Evite microgerenciamento. Canalize a energia competitiva para metas do time.";
+            areaAtuacao = "Liderança de turno · Situações de crise · Abertura de novos setores · Projetos com prazo curto";
+            conselhos = "1. Use metas de curto prazo para mantê-lo engajado.\n2. Atribua desafios visíveis e com impacto real.\n3. Antes de dar feedback corretivo, reconheça o esforço.\n4. Em conflitos, chame no privado — ele respeita quem o enfrenta com respeito.\n5. Monitore sinais de burnout — ele não pede ajuda facilmente.";
+        } else if (primario.id === 'I') {
+            textoPerfil = "Movido pela interação e pelo reconhecimento. Facilidade para criar ambiente positivo e resolver tensões. Pode dispersar atenção por excesso de socialização.";
+            pontosFortes = "Engajamento de equipe · Comunicação fluida · Resolução amigável de conflitos · Entusiasmo contagiante";
+            atencao = "Pode perder o foco na tarefa · Promete mais do que entrega · Dificuldade com tarefas repetitivas e solitárias";
+            tendencia = "Em conflito, tenta mediar e ser querido por todos. Em ausência de colegas, se sente desmotivado e produtividade cai. Pode criar fofoca ou clima emocional se mal gerido.";
+            feedback = "Use tom empático e acolhedor. Comece pelo positivo, depois aponte o que melhorar. Ex: 'Você tem um dom natural com pessoas, e isso vai ficar ainda melhor quando...'";
+            formaLidar = "Elogie publicamente. Envolva-o em apresentações de resultado do time. Dê tarefas com contato humano. Evite isolamento por longos períodos.";
+            areaAtuacao = "Integração de novos colaboradores · Treinamentos práticos · Atividades em equipe · Clima organizacional";
+            conselhos = "1. Use o ambiente positivo dele como ativo — coloque-o perto de quem está desmotivado.\n2. Em ausência de colega, explique o contexto e reforce o propósito coletivo.\n3. Estabeleça check-ins frequentes e curtos.\n4. Em conflito, ele precisa ser ouvido antes de aceitar uma solução.\n5. Monitore promessas — ele pode super comprometer-se por querer agradar.";
+        } else if (primario.id === 'S') {
+            textoPerfil = "Base de sustentação da operação. Confiável, paciente e consistente. Não gosta de mudanças bruscas e precisa de tempo para se adaptar a novos cenários.";
+            pontosFortes = "Confiabilidade extrema · Apaziguador natural · Lealdade ao time · Regularidade e consistência";
+            atencao = "Dificuldade de adaptação rápida · Pode acumular ressentimentos sem verbalizar · Resistência passiva à mudança";
+            tendencia = "Em conflito, recua e evita confronto — pode guardar mágoa por muito tempo. Em ausência de colegas, sente-se sobrecarregado mas não reclama abertamente. Precisa ser incentivado a falar.";
+            feedback = "Tom calmo, seguro e privado. Nunca exponha em grupo. Ex: 'Eu confio em você, e por isso quero conversar sobre algo que pode nos ajudar...'";
+            formaLidar = "Dê previsibilidade: avise mudanças com antecedência. Valorize a lealdade e consistência. Crie espaço seguro para ele expressar dificuldades.";
+            areaAtuacao = "Funções de rotina de alto padrão · Mentoria de novatos · Controle de processos repetitivos · Suporte de equipe";
+            conselhos = "1. Nunca mude a rotina dele sem explicação prévia.\n2. Em conflito, dê tempo — não force uma resposta na hora.\n3. Pergunte diretamente como ele está — ele não virá até você.\n4. Em ausência de colega, redistribua formalmente e reconheça o esforço extra.\n5. Ofereça segurança antes de qualquer feedback corretivo.";
+        } else {
+            textoPerfil = "Analítico, focado em qualidade e exatidão. Referência técnica da equipe. Pode ser lento por excesso de análise, mas entrega com altíssima precisão.";
+            pontosFortes = "Domínio técnico · Foco em conformidade · Atenção a detalhes · Solução de problemas complexos";
+            atencao = "Pode apresentar lentidão por excesso de análise · Dificuldade com ambiguidade · Pode parecer frio ou distante";
+            tendencia = "Em conflito, analisa a situação antes de agir — pode parecer omisso. Em ausência de colegas, questiona a organização do processo. Precisa de contexto e dados para aceitar mudanças.";
+            feedback = "Forneça dados, argumentos e lógica. Nunca use feeling como justificativa. Ex: 'Analisando os números do último turno, identifiquei que...'";
+            formaLidar = "Apresente evidências ao dar feedback. Peça a opinião técnica dele — ele se engaja quando é reconhecido como especialista. Tolere o tempo que ele precisa para decidir.";
+            areaAtuacao = "Qualidade operacional · Auditoria interna · Processos novos que exigem precisão · Treinamento técnico";
+            conselhos = "1. Nunca tome uma decisão que afete o processo dele sem consultar primeiro.\n2. Em conflito, apresente fatos — emoção não o convence.\n3. Para acelerar decisões, dê um prazo claro para análise.\n4. Reconheça seu trabalho por meio de métricas, não de elogio vazio.\n5. Em ausência de colega, mostre como o processo se mantém mesmo assim.";
+        }
 
         const dashHTML = `
-            <div class="card" style="max-width: 100%;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 3px solid var(--purple-dark); padding-bottom:15px; margin-bottom:20px;">
-                    <div><h2 style="color: var(--purple-dark); margin-bottom:5px;">${nome}</h2><span class="tag-perfil" style="background:${primario.color};">👑 Primário: ${primario.name}</span>${secundario.val > 0 ? `<span class="tag-perfil" style="background:#475569;">🧩 Secundário: ${secundario.name}</span>` : ''}</div>
+            <div class="card" style="max-width:100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--purple-dark); padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+                    <div><h2 style="color:var(--purple-dark); margin-bottom:5px;">${nome}</h2>
+                    <span class="tag-perfil" style="background:${primario.color};">👑 Primário: ${primario.name}</span>${secundario.val > 0 ? `<span class="tag-perfil" style="background:#475569;">🧩 Secundário: ${secundario.name}</span>` : ''}</div>
                     <div style="text-align:right;"><h3 style="color:var(--text-light); font-size:0.9rem;">Dossiê Profiler</h3><p style="font-weight:bold; font-size:1.1rem; color:var(--purple-dark);">${combinacao}</p></div>
                 </div>
+
+                <!-- TERMÔMETRO -->
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:20px;">
+                    <div style="font-weight:700; color:#1e1b4b; font-size:0.9rem; margin-bottom:8px;">🌡️ Termômetro Comportamental</div>
+                    <div style="background:#e2e8f0; border-radius:99px; height:22px; overflow:hidden; position:relative;">
+                        <div style="width:${scoreTermometro}%; height:100%; background:linear-gradient(90deg,#ef4444,#f59e0b,#10b981); border-radius:99px; transition:0.6s;"></div>
+                        <span style="position:absolute; right:8px; top:2px; font-size:0.75rem; font-weight:700; color:#1e1b4b;">${scoreTermometro}/100</span>
+                    </div>
+                    <div style="margin-top:8px; font-size:0.82rem; font-weight:700; color:${tempCor};">${tempLabel}</div>
+                    <div style="font-size:0.78rem; color:#64748b; margin-top:3px;">${tempDica}</div>
+                </div>
+
                 <div class="hr-grid">
                     <div>
-                        <div class="hr-box" style="margin-bottom:20px;"><div class="hr-title">Intensidade do Perfil</div><div class="chart-container" style="max-width: 250px;"><canvas id="radarChart"></canvas></div></div>
-                        <div class="hr-box"><div class="hr-title">Métricas de Competência Logística</div>
+                        <div class="hr-box" style="margin-bottom:20px;"><div class="hr-title">Intensidade do Perfil</div><div class="chart-container" style="max-width:250px;"><canvas id="radarChart"></canvas></div></div>
+                        <div class="hr-box"><div class="hr-title">Métricas de Competência</div>
                             <div class="progress-container"><div class="progress-label"><span>Foco em Metas/Tarefas</span><span>${focoTarefas}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${focoTarefas}%; background:var(--purple-dark);"></div></div></div>
                             <div class="progress-container"><div class="progress-label"><span>Foco em Clima/Pessoas</span><span>${focoPessoas}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${focoPessoas}%; background:var(--purple-light);"></div></div></div>
+                            <div class="progress-container"><div class="progress-label"><span>Decisão Rápida</span><span>${decisaoRapida}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${decisaoRapida}%; background:#f59e0b;"></div></div></div>
+                            <div class="progress-container"><div class="progress-label"><span>Decisão Cautelosa</span><span>${decisaoCautelosa}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${decisaoCautelosa}%; background:#6366f1;"></div></div></div>
                         </div>
                     </div>
                     <div>
@@ -753,18 +858,55 @@
                         </div>
                     </div>
                 </div>
-                <div id="area-botao-gestor" style="display:flex; gap:10px; margin-top:20px;"></div>
-            </div>`;
-        document.getElementById('result-content').innerHTML = dashHTML;
 
+                <!-- TENDÊNCIA / CENÁRIOS -->
+                <div class="hr-box" style="margin-top:15px;">
+                    <div class="hr-title">🔮 Tendência em Situações Críticas</div>
+                    <div class="hr-text-block" style="white-space:pre-line;">${tendencia}</div>
+                </div>
+
+                <!-- ONDE TRABALHAR -->
+                <div class="hr-box" style="margin-top:15px;">
+                    <div class="hr-title">🎯 Onde Este Colaborador Performa Melhor</div>
+                    <div class="hr-text-block">${areaAtuacao}</div>
+                </div>
+
+                <!-- FEEDBACK E FORMA DE LIDAR -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; flex-wrap:wrap;">
+                    <div class="hr-box">
+                        <div class="hr-title">💬 Como Dar Feedback</div>
+                        <div class="hr-text-block" style="font-size:0.82rem;">${feedback}</div>
+                    </div>
+                    <div class="hr-box">
+                        <div class="hr-title">🤝 Forma de Lidar</div>
+                        <div class="hr-text-block" style="font-size:0.82rem;">${formaLidar}</div>
+                    </div>
+                </div>
+
+                <!-- CONSELHOS PRÁTICOS -->
+                <div class="hr-box" style="margin-top:15px; background:#f0fdf4; border-left:4px solid #10b981;">
+                    <div class="hr-title" style="color:#166534;">📋 Conselhos Práticos para a Liderança</div>
+                    <div class="hr-text-block" style="white-space:pre-line; font-size:0.82rem;">${conselhos}</div>
+                </div>
+
+                ${obsColaborador ? `
+                <div class="hr-box" style="margin-top:15px; background:#fffbeb; border-left:4px solid #f59e0b;">
+                    <div class="hr-title" style="color:#92400e;">✍️ O Que o Colaborador Relatou</div>
+                    <div class="hr-text-block" style="font-style:italic; font-size:0.82rem;">"${obsColaborador}"</div>
+                </div>` : ''}
+
+                <div id="area-botao-gestor" style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;"></div>
+            </div>`;
+
+        document.getElementById('result-content').innerHTML = dashHTML;
         setTimeout(() => {
             const ctxR = document.getElementById('radarChart').getContext('2d'); if(myChartRadar) myChartRadar.destroy();
-            myChartRadar = new Chart(ctxR, { type: 'polarArea', data: { labels: ['D', 'I', 'S', 'C'], datasets: [{ data: [pct.D, pct.I, pct.S, pct.C], backgroundColor: ['rgba(220,38,38,0.7)', 'rgba(245,158,11,0.7)', 'rgba(16,185,129,0.7)', 'rgba(59,130,246,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } } });
+            myChartRadar = new Chart(ctxR, { type: 'polarArea', data: { labels: ['D','I','S','C'], datasets: [{ data: [pct.D,pct.I,pct.S,pct.C], backgroundColor: ['rgba(220,38,38,0.7)','rgba(245,158,11,0.7)','rgba(16,185,129,0.7)','rgba(59,130,246,0.7)'], borderColor: '#fff', borderWidth: 2 }] }, options: { scales: { r: { ticks: { display: false, min: 0, max: 100 } } }, plugins: { legend: { display: false } } } });
         }, 100);
-        
+
         switchTab('devolutivas'); document.getElementById('result-content').style.display = 'block';
         const areaBotao = document.getElementById('area-botao-gestor');
-        if (isColaborador) { areaBotao.innerHTML = `<button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Salvar em PDF</button><button class="btn" style="flex:1;" onclick="location.href=window.location.href.split('?')[0]">Sair</button>`; } 
+        if (isColaborador) { areaBotao.innerHTML = `<button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Salvar em PDF</button><button class="btn" style="flex:1;" onclick="location.href=window.location.href.split('?')[0]">Sair</button>`; }
         else { areaBotao.innerHTML = `<button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Imprimir Dossiê</button><button class="btn btn-outline" style="flex:1;" onclick="switchTab('gestor')">← Voltar</button>`; }
     }
 
@@ -798,8 +940,9 @@
             if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação.</p>';
             Object.entries(snap.val()).reverse().forEach(([key, item]) => {
                 const pctSeguro = encodeURIComponent(JSON.stringify(item.pctScores));
+                const obsSeguro = encodeURIComponent(item.obsColaborador || '');
                 const div = document.createElement('div'); div.className = 'gestor-item';
-                div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.matricula}</small></div><div><button class="btn-acao" onclick="abrirDossieAdmin('${item.nome}', '${pctSeguro}')">Dossiê</button> <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">X</button></div>`;
+                div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.matricula}</small></div><div><button class="btn-acao" onclick="abrirDossieAdmin('${item.nome}', '${pctSeguro}', '${obsSeguro}')">Dossiê</button> <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">X</button></div>`;
                 container.appendChild(div);
             });
         });
@@ -1032,7 +1175,7 @@
         }
 
         let notaBase = (soma / 45) * 10;
-        let notaFinal = Math.min(10, notaBase + pontoExtra);
+        let notaFinal = Math.round((notaBase + pontoExtra) * 10) / 10;
         document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
 
         let textareaFeed = document.getElementById('aud-feedback');
@@ -1362,24 +1505,65 @@
     }
 
     function carregarHistoricoAuditoria() {
-        let diaFiltro = document.getElementById('filtro-dia-hist').value; if(!diaFiltro) return; 
+        let diaFiltro = document.getElementById('filtro-dia-hist').value; if(!diaFiltro) return;
+        const setorFiltro = document.getElementById('filtro-setor-hist') ? document.getElementById('filtro-setor-hist').value : '';
+
         database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).on('value', snap => {
-            const containerLista = document.getElementById('lista-historico-auditoria'); const containerMedias = document.getElementById('medias-mes-container');
+            const containerLista = document.getElementById('lista-historico-auditoria');
+            const containerMedias = document.getElementById('medias-mes-container');
             containerLista.innerHTML = ''; containerMedias.innerHTML = '';
             if(!snap.exists()) return containerLista.innerHTML = '<p>Nenhuma avaliação.</p>';
 
-            let dadosDia = {}; let htmlLista = ''; const registros = []; snap.forEach(c => registros.push({id: c.key, val: c.val()})); registros.reverse();
+            const registros = []; snap.forEach(c => registros.push({id: c.key, val: c.val()})); registros.reverse();
+
+            // popula select de setores
+            const selectSetor = document.getElementById('filtro-setor-hist');
+            const setoresUnicos = [...new Set(registros.map(r => r.val.setor))].sort();
+            const valorAtual = selectSetor.value;
+            selectSetor.innerHTML = '<option value="">Todos os setores</option>';
+            setoresUnicos.forEach(s => { selectSetor.innerHTML += `<option value="${s}" ${s === valorAtual ? 'selected' : ''}>${s}</option>`; });
+
+            // filtra registros se setor selecionado
+            const registrosFiltrados = setorFiltro ? registros.filter(r => r.val.setor === setorFiltro) : registros;
+
+            // cards de média por setor (sempre todos, independente do filtro)
+            let dadosDia = {};
             registros.forEach(item => {
-                let rec = item.val; if(!dadosDia[rec.setor]) dadosDia[rec.setor] = { soma: 0, qtd: 0 };
+                let rec = item.val;
+                if(!dadosDia[rec.setor]) dadosDia[rec.setor] = { soma: 0, qtd: 0 };
                 dadosDia[rec.setor].soma += rec.notaFinal; dadosDia[rec.setor].qtd += 1;
-                let badge = (rec.fotos || []).length > 0 ? `📸` : '';
-                htmlLista += `<div class="historico-item"><div><strong>${rec.setor} ${badge}</strong><br><small>${rec.data.split('-').reverse().join('/')}</small></div><div style="display:flex; gap:10px;"><span style="background:#1e1b4b; color:white; padding:6px; border-radius:6px;">${rec.notaFinal.toFixed(1)}</span><button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️</button><button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button></div></div>`;
+            });
+            let htmlMedias = '';
+            Object.keys(dadosDia).sort().forEach(s => {
+                const m = dadosDia[s].soma / dadosDia[s].qtd;
+                const cor = m >= 8.5 ? '#10b981' : m >= 7.0 ? '#f59e0b' : '#ef4444';
+                const destaque = s === setorFiltro ? 'border:2px solid #6366f1;' : 'border:1px solid #e2e8f0;';
+                htmlMedias += `<div onclick="filtrarPorSetorHist('${s}')" style="flex:1 1 calc(50% - 10px); min-width:130px; background:#fff; ${destaque} padding:10px; border-radius:8px; cursor:pointer; transition:0.15s;">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:600;">${s}</div>
+                    <div style="font-size:1.5rem; font-weight:900; color:${cor};">${m.toFixed(1)}</div>
+                    <div style="font-size:0.7rem; color:#94a3b8;">${dadosDia[s].qtd} aval. — clique p/ filtrar</div>
+                </div>`;
+            });
+            containerMedias.innerHTML = htmlMedias;
+
+            // lista de registros (filtrada)
+            let htmlLista = '';
+            if(registrosFiltrados.length === 0) { htmlLista = '<p style="color:#64748b; font-size:0.85rem;">Nenhuma avaliação para este setor nesta data.</p>'; }
+            registrosFiltrados.forEach(item => {
+                let rec = item.val;
+                let badge = (rec.fotos || []).length > 0 ? '📸' : '';
+                let extraBadge = rec.pontoExtra > 0 ? `<span style="background:#f59e0b; color:#fff; padding:2px 6px; border-radius:4px; font-size:0.7rem; margin-left:4px;">+${rec.pontoExtra}⭐</span>` : '';
+                let notaCor = rec.notaFinal >= 8.5 ? '#10b981' : rec.notaFinal >= 7.0 ? '#f59e0b' : '#ef4444';
+                htmlLista += `<div class="historico-item"><div style="flex:1;"><strong>${rec.setor} ${badge}</strong>${extraBadge}<br><small style="color:#64748b;">${rec.data.split('-').reverse().join('/')}</small></div><div style="display:flex; gap:8px; align-items:center;"><span style="background:${notaCor}; color:white; padding:6px 10px; border-radius:6px; font-weight:700;">${rec.notaFinal.toFixed(1)}</span><button class="btn-editar" onclick="editarAuditoria('${item.id}', '${encodeURIComponent(JSON.stringify(rec))}')">✏️</button><button class="btn-excluir" onclick="excluirItem('avaliacoes_setores', '${item.id}')">X</button></div></div>`;
             });
             containerLista.innerHTML = htmlLista;
-            let htmlMedias = '';
-            Object.keys(dadosDia).sort().forEach(s => { let m = dadosDia[s].soma / dadosDia[s].qtd; htmlMedias += `<div style="flex:1 1 calc(50% - 10px); min-width:140px; background:#fff; border:1px solid #ccc; padding:10px;"><strong>${s}</strong><br><span style="font-size:1.3rem;">${m.toFixed(1)}</span></div>`; });
-            containerMedias.innerHTML = htmlMedias;
         });
+    }
+
+    function filtrarPorSetorHist(setor) {
+        const select = document.getElementById('filtro-setor-hist');
+        if(select.value === setor) { select.value = ''; } else { select.value = setor; }
+        carregarHistoricoAuditoria();
     }
 
     function switchAuditoriaSubTab(aba) {

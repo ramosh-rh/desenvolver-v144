@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Vena144 - Mapeamento e SESMT</title>
+    <title>Portal Vena144 - Avaliação Comportamental</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -146,7 +146,7 @@
 
     <div class="header">
         <h1>Vena144</h1>
-        <p>Portal Corporativo & People Analytics</p>
+        <p>Avaliação Comportamental · Equipe Ressuprimento</p>
     </div>
 
     <div class="tabs" id="main-tabs">
@@ -162,19 +162,28 @@
                     <div class="avatar-icon">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                     </div>
-                    <h2 style="text-align: center; margin-bottom: 5px; color: var(--purple-dark);">Acesso ao Sistema</h2>
-                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 25px;">Mapeamento Comportamental Profiler</p>
+                    <h2 style="text-align: center; margin-bottom: 5px; color: var(--purple-dark);">Avaliação Comportamental</h2>
+                    <p style="text-align: center; font-size: 0.85rem; color: var(--text-light); margin-bottom: 25px;">Equipe Ressuprimento</p>
                     
                     <div class="input-group">
-                        <label>Usuário (Nome Completo)</label>
+                        <label>Nome Completo</label>
                         <input type="text" id="user-name" placeholder="Ex: João da Silva">
                     </div>
                     <div class="input-group">
-                        <label>Senha (Matrícula)</label>
-                        <input type="password" id="user-id" placeholder="Ex: 12345">
+                        <label>Matrícula</label>
+                        <input type="text" id="user-id" placeholder="Ex: 12345" inputmode="numeric">
                     </div>
                     
-                    <button class="btn" onclick="startQuiz()">Iniciar Mapeamento</button>
+                    <button class="btn" onclick="startQuiz()">Iniciar Avaliação</button>
+
+                    <!-- Acesso gestor oculto: clicar 5x no ponto abaixo -->
+                    <div style="text-align:center; margin-top:18px;">
+                        <span id="logo-secret-tap" onclick="contarTapGestor()" style="font-size:0.6rem; color:#e2e8f0; cursor:default; user-select:none;" title="">●</span>
+                    </div>
+                    <div id="gestor-secret-area" style="display:none; margin-top:12px;">
+                        <input type="password" id="gestor-senha" placeholder="Senha de gestão" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-family:inherit; margin-bottom:10px;">
+                        <button class="btn btn-outline" style="width:100%; padding:12px;" onclick="tentarAcessoGestor()">Entrar como Gestor</button>
+                    </div>
                 </div>
             </div>
 
@@ -198,97 +207,22 @@
             <div id="result-content" style="display: none;"></div>
         </div>
 
-        <div id="view-form-bvi" class="view">
-            <div class="card" style="border-top: 5px solid var(--red-sesmt);">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h2 style="color: var(--red-sesmt);">INSCRIÇÃO BVI</h2>
-                    <p style="font-weight: 600;">Brigada Voluntária de Incêndio - 2026</p>
-                </div>
-
-                <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">Dados Pessoais</h3>
-                <div class="input-group">
-                    <label>Nome Completo</label>
-                    <input type="text" id="bvi-nome" placeholder="Digite seu nome completo">
-                </div>
-                <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;"><label>Matrícula</label><input type="text" id="bvi-matricula" placeholder="Ex: 4589"></div>
-                    <div style="flex: 1;">
-                        <label>Turno</label>
-                        <select id="bvi-turno">
-                            <option value="">Selecione...</option>
-                            <option value="Manhã">Manhã</option>
-                            <option value="Tarde">Tarde</option>
-                            <option value="Noite">Noite</option>
-                            <option value="Comercial">Comercial</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;"><label>Setor / Função</label><input type="text" id="bvi-setor" placeholder="Ex: Separação"></div>
-                    <div style="flex: 1;"><label>WhatsApp</label><input type="text" id="bvi-telefone" placeholder="(21) 99999-9999"></div>
-                </div>
-
-                <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin: 25px 0 15px;">Perfil Técnico para a Brigada</h3>
-                <div class="input-group">
-                    <label>1. Já atuou como Brigadista de Incêndio anteriormente?</label>
-                    <select id="bvi-exp"><option value="">Selecione...</option><option value="Sim">Sim, já tenho experiência</option><option value="Não">Não, será minha primeira vez</option></select>
-                </div>
-                <div class="input-group">
-                    <label>2. Possui alguma fobia ou restrição (Ex: altura, local fechado, sangue)?</label>
-                    <select id="bvi-fobia"><option value="">Selecione...</option><option value="Não possuo">Não possuo restrições</option><option value="Possuo restrições">Sim, possuo restrições/fobias</option></select>
-                </div>
-                <div class="input-group" style="display: flex; gap: 10px;">
-                    <div style="flex: 1;">
-                        <label>3. Tamanho da Camisa / Fardamento</label>
-                        <select id="bvi-fardamento"><option value="">Selecione...</option><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option></select>
-                    </div>
-                    <div style="flex: 1;">
-                        <label>4. Possui CNH?</label>
-                        <select id="bvi-cnh"><option value="">Selecione...</option><option value="Não">Não possuo</option><option value="Cat. A">Categoria A</option><option value="Cat. B">Categoria B</option><option value="Cat. AB">Categoria AB</option><option value="Cat. D/E">Categoria D/E</option></select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>5. Disponibilidade para treinos práticos (simulados) em dias específicos?</label>
-                    <select id="bvi-disp"><option value="">Selecione...</option><option value="Sim">Sim, tenho disponibilidade</option><option value="Não">Não possuo disponibilidade extra</option></select>
-                </div>
-                <div class="input-group">
-                    <label>6. Cursos Técnicos ou Conhecimentos Relevantes (Opcional)</label>
-                    <textarea id="bvi-cursos" rows="2" placeholder="Ex: Bombeiro Civil, Primeiros Socorros, Técnico em Enfermagem, etc..."></textarea>
-                </div>
-
-                <div style="background: #fef2f2; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; color: #991b1b; margin-top: 25px;">
-                    <label style="display: flex; gap: 10px; align-items: flex-start; cursor: pointer;">
-                        <input type="checkbox" id="bvi-termo" style="width: auto; margin-top: 3px;">
-                        <span>Confirmo meu interesse em participar da Brigada e declaro que as informações acima são verdadeiras.</span>
-                    </label>
-                </div>
-                
-                <button class="btn btn-red" onclick="enviarInscricaoBVI()">Finalizar e Enviar</button>
-            </div>
-        </div>
-
-        <div id="view-sucesso-bvi" class="view" style="text-align: center;">
-            <div class="card">
-                <h2 style="color: var(--red-sesmt);">✅ Inscrição Concluída!</h2>
-                <p style="margin-top: 15px;">Sua inscrição e perfil técnico foram salvos com sucesso e aguardam a validação da Liderança.</p>
-                <button class="btn btn-outline" onclick="location.reload()">Sair do Sistema</button>
-            </div>
-        </div>
-
         <div id="view-gestor" class="view">
-            <div class="card" style="max-width: 100%;">
-                <h2 style="color: var(--purple-dark); margin-bottom: 15px;">Painel de Gestão & Analytics</h2>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid var(--purple-dark); padding-bottom: 10px;">
+                    <h2 style="color: var(--purple-dark);">Painel de Gestão Vena144</h2>
+                    <button class="btn btn-outline" style="width: auto; padding: 8px 15px; margin-top: 0;" onclick="location.reload()">Sair</button>
+                </div>
                 
                 <div class="gestor-tabs">
-                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">Dossiês (DISC)</div>
-                    <div class="g-tab" id="gtab-simulador" onclick="switchGestorTab('simulador')">🤖 IA Ranking</div>
-                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">Brigada (BVI)</div>
-                    <div class="g-tab" id="gtab-auditoria" onclick="switchGestorTab('auditoria')">📝 Auditoria</div>
+                    <div class="g-tab active" id="gtab-avalia" onclick="switchGestorTab('avalia')">📊 Avaliações</div>
+                    <div class="g-tab" id="gtab-simulador" onclick="switchGestorTab('simulador')">🤖 Simulador IA</div>
+                    <div class="g-tab" id="gtab-bvi" onclick="switchGestorTab('bvi')">🚒 Brigada (BVI)</div>
+                    <div class="g-tab" id="gtab-auditoria" onclick="switchGestorTab('auditoria')">📋 Auditoria</div>
                 </div>
 
                 <div id="gcontent-avalia">
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
-                        <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">Partilhe o link abaixo com a sua equipe para realizarem o Mapeamento Profiler.</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                         <button class="btn-whatsapp" onclick="enviarWhatsAppLink('disc')">
                             <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
                             Enviar Link do Mapeamento
@@ -306,7 +240,7 @@
                             <label>Selecione o Cenário Desejado:</label>
                             <select id="simulador-cenario">
                                 <option value="desenvoltura">Cenário 1: Desenvoltura, Liderança e Agilidade (Foco em D e I)</option>
-                                <option value="qualidade">Cenário 2: Qualidade, Auditoria e Regras SESMT (Foco em C e S)</option>
+                                <option value="qualidade">Cenário 2: Qualidade, Auditoria e Regras Operacionais (Foco em C e S)</option>
                                 <option value="rotina">Cenário 3: Resiliência em Alta Demanda e Harmonia (Foco em S e I)</option>
                                 <option value="geral" style="font-weight: bold; background: #e0f2fe;">🏆 Cenário 4: CAMPEÃO GERAL (Média de todos os cenários)</option>
                             </select>
@@ -322,7 +256,7 @@
 
                 <div id="gcontent-bvi" style="display: none;">
                     <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                        <button class="btn-whatsapp" style="flex:1; background: var(--red-sesmt);" onclick="enviarWhatsAppLink('bvi')">
+                        <button class="btn-whatsapp" style="flex:1; background: var(--purple-dark);" onclick="enviarWhatsAppLink('bvi')">
                             <svg viewBox="0 0 24 24"><path d="M12.031 0C5.408 0 0 5.414 0 12.046c0 2.128.552 4.196 1.6 6.023L.266 24l6.095-1.597A11.956 11.956 0 0012.031 24c6.621 0 12.031-5.414 12.031-12.046C24.062 5.414 18.652 0 12.031 0zm7.156 17.18c-.305.86-1.742 1.593-2.422 1.672-.633.078-1.46.164-4.226-.984-3.352-1.39-5.524-4.82-5.696-5.047-.164-.234-1.351-1.797-1.351-3.43 0-1.632.851-2.437 1.156-2.765.305-.328.664-.414.883-.414.219 0 .445 0 .633.008.203.008.484-.078.758.586.281.68.961 2.344 1.047 2.516.086.172.14.375.031.594-.109.219-.164.351-.328.547-.164.195-.344.422-.492.578-.164.172-.344.359-.148.695.188.336.844 1.406 1.82 2.273 1.258 1.117 2.32 1.46 2.664 1.632.344.172.547.148.75-.086.203-.234.875-1.015 1.109-1.367.234-.351.469-.289.781-.172.312.117 1.984.938 2.328 1.109.344.172.57.258.656.406.086.148.086.86-.219 1.719z"/></svg>
                             Enviar Link BVI
                         </button>
@@ -341,148 +275,130 @@
                     </div>
 
                     <div id="aud-nova">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-                            <button class="btn-print" onclick="imprimirChecklistAuditoria()" style="background: #475569; width:auto; padding: 10px 15px; margin: 0;">
-                                🖨️ Imprimir Rascunho
-                            </button>
-                            <span id="status-rascunho" style="color: #10b981; font-weight: bold; font-size: 0.85rem; transition: opacity 0.3s;"></span>
-                        </div>
-
-                        <div class="input-group" style="display: flex; gap: 10px;">
-                            <div style="flex: 1;"><label>Data</label><input type="date" id="aud-data"></div>
-                            <div style="flex: 2;">
-                                <label>Setor</label>
-                                <select id="aud-setor" onchange="carregarRascunhoLocal()">
-                                    <option value="">Escolha...</option>
-                                    <optgroup label="Medicamentos">
-                                        <option value="Medicamentos - 1ª Estação">1ª Estação</option>
-                                        <option value="Medicamentos - 2ª Estação">2ª Estação</option>
-                                        <option value="Medicamentos - 3ª Estação">3ª Estação</option>
-                                        <option value="Medicamentos - 4ª Estação">4ª Estação</option>
-                                        <option value="Medicamentos - 5ª Estação">5ª Estação</option>
-                                    </optgroup>
-                                    <optgroup label="Perfumaria">
-                                        <option value="Perfumaria - 1ª Estação">1ª Estação</option>
-                                        <option value="Perfumaria - 2ª Estação">2ª Estação</option>
-                                        <option value="Perfumaria - 3ª Estação">3ª Estação</option>
-                                        <option value="Perfumaria - 4ª Estação">4ª Estação</option>
-                                        <option value="Perfumaria - 5ª Estação">5ª Estação</option>
-                                    </optgroup>
-                                    <optgroup label="Demais Setores">
-                                        <option value="Volumoso">Volumoso</option>
-                                        <option value="Controlado">Controlado</option>
-                                        <option value="Dermo">Dermo</option>
-                                        <option value="Ruas">Ruas</option>
-                                        <option value="Alimento">Alimento</option>
-                                        <option value="VM/VH">VM/VH</option>
-                                        <option value="Latas">Latas</option>
-                                    </optgroup>
-                                </select>
+                        <div class="hr-grid">
+                            <div class="hr-box">
+                                <div class="hr-title">Dados da Auditoria</div>
+                                <div class="input-group"><label>Setor</label><select id="aud-setor"><option value="RECEBIMENTO">RECEBIMENTO</option><option value="EXPEDIÇÃO">EXPEDIÇÃO</option><option value="RESSUPRIMENTO">RESSUPRIMENTO</option><option value="QUALIDADE">QUALIDADE</option><option value="PICKING">PICKING</option><option value="LOGÍSTICA REVERSA">LOGÍSTICA REVERSA</option></select></div>
+                                <div class="input-group"><label>Data</label><input type="date" id="aud-data"></div>
+                                <div class="input-group"><label>Responsável</label><input type="text" id="aud-resp" placeholder="Nome do Gestor"></div>
+                            </div>
+                            <div class="hr-box">
+                                <div class="hr-title">Fotos de Evidência (Opcional)</div>
+                                <div style="text-align:center;">
+                                    <label for="aud-foto-input" class="btn btn-outline" id="txt-btn-foto" style="display:inline-block; cursor:pointer;">Adicionar Foto</label>
+                                    <input type="file" id="aud-foto-input" accept="image/*" style="display:none;" onchange="processarFotoEvidencia(event)">
+                                    <div class="fotos-container" id="fotos-preview-container"></div>
+                                </div>
                             </div>
                         </div>
 
-                        <div style="margin-bottom: 20px; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #f59e0b;">
-                            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #b45309;">Anexar Múltiplas Evidências (Opcional)</label>
-                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 10px;">Tire fotos para registrar irregularidades. (Máximo 5).</p>
-                            <button class="btn-outline" style="border-color: #f59e0b; color: #b45309; width: 100%; margin-top: 0;" onclick="document.getElementById('aud-foto-input').click()">
-                                📸 <span id="txt-btn-foto">Adicionar Foto</span>
-                            </button>
-                            <input type="file" id="aud-foto-input" accept="image/*" capture="environment" style="display: none;" onchange="processarFotoEvidencia(event)">
-                            <div id="fotos-preview-container" class="fotos-container"></div>
-                        </div>
-
-                        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px;">
-                            <h3 style="font-size: 0.95rem; color: var(--purple-dark); margin-bottom: 15px;">Critérios de Avaliação</h3>
-                            <div id="container-criterios"></div>
-                        </div>
-
-                        <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 2px dashed #f59e0b; margin-bottom: 20px;">
-                            <h3 style="font-size: 0.95rem; color: #b45309; margin-bottom: 5px;">⭐ Ponto Extra (Diferencial do Dia)</h3>
-                            <p style="font-size: 0.8rem; color: #92400e; margin-bottom: 12px;">Para equipes que se destacaram ajudando outros setores ou enfrentaram grau de dificuldade elevado no turno.</p>
-                            <div style="display: flex; gap: 10px; margin-bottom: 12px; justify-content: center;">
-                                <button id="pe-btn-0" class="pe-btn" onclick="setPontoExtra(0)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">0</button>
-                                <button id="pe-btn-1" class="pe-btn" onclick="setPontoExtra(1)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">+1</button>
-                                <button id="pe-btn-2" class="pe-btn" onclick="setPontoExtra(2)" style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; background:#fff; font-weight:700; font-size:1rem; cursor:pointer; transition:0.2s;">+2</button>
+                        <div class="hr-box">
+                            <div class="hr-title">Critérios de Avaliação</div>
+                            <div id="container-criterios-auditoria"></div>
+                            
+                            <div style="margin-top:20px; padding:15px; background:#f8fafc; border:1px solid var(--border); border-radius:8px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-weight:700; color:var(--purple-dark);">Nota Final Calculada:</span>
+                                    <span id="aud-nota-display" class="nota-badge">10.0</span>
+                                </div>
+                                <div class="input-group" style="margin-top:15px; margin-bottom:0;">
+                                    <label>Pontos Extras (Opcional - Ex: 5S Impecável)</label>
+                                    <div style="display:flex; gap:10px;">
+                                        <input type="number" id="aud-ponto-extra" value="0" min="0" max="2" step="0.5" style="width:80px;" onchange="calcularNotaAuditoria()">
+                                        <input type="text" id="aud-ponto-extra-just" placeholder="Justificativa do ponto extra" style="flex:1;">
+                                    </div>
+                                </div>
                             </div>
-                            <div id="pe-justificativa-area" style="display:none;">
-                                <label style="font-weight:600; font-size:0.85rem; color:#b45309;">Justificativa (obrigatória):</label>
-                                <input type="text" id="pe-justificativa" placeholder="Ex: Ajudou o setor de Ruas durante pico + dificuldade alta no abastecimento" style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; margin-top:6px; font-family:inherit;" oninput="salvarRascunhoLocal()">
+
+                            <div style="display:flex; gap:10px; margin-top:20px;">
+                                <button class="btn btn-outline" style="flex:1; margin-top:0;" onclick="limparTelaAuditoria()">Limpar / Cancelar</button>
+                                <button class="btn" style="flex:1; margin-top:0;" id="btn-salvar-auditoria" onclick="salvarAuditoria()">Salvar Auditoria ✅</button>
                             </div>
                         </div>
-
-                        <button class="btn btn-acao" style="background:#0ea5e9; width: 100%; margin-bottom: 15px; padding: 16px; font-size: 1rem;" onclick="processarAuditoria()">✨ Calcular Nota Final</button>
-                        
-                        <div id="resultado-auditoria" style="display: none; background: #fff; border: 2px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                            <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 5px;">Nota Diária do Setor</div>
-                            <div class="nota-badge" id="aud-nota-final">0.0</div>
-                            <div style="margin-top: 15px; text-align: left;">
-                                <label style="font-weight: 600; font-size: 0.85rem; color: var(--purple-dark);">Feedback Automático Multi-Nível (IA):</label>
-                                <textarea id="aud-feedback" rows="6" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 5px;" oninput="salvarRascunhoLocal()"></textarea>
-                            </div>
-                        </div>
-                        <button class="btn" id="btn-salvar-auditoria" style="display: none;" onclick="salvarAuditoria()">Transmitir e Finalizar Setor</button>
                     </div>
 
-                    <div id="aud-resumo" style="display: none;">
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; flex-wrap: wrap;">
-                            <div style="flex: 1; min-width: 150px;">
-                                <label style="font-size: 0.85rem; font-weight: bold; color: #166534;">Data do Fechamento</label>
-                                <input type="date" id="filtro-dia-resumo" class="input-group" style="padding: 10px; width: 100%; border: 1px solid #bbf7d0; border-radius: 6px; margin-bottom: 0;" onchange="gerarResumoDiario()">
-                            </div>
-                            <div style="display: flex; gap: 5px; flex: 2; margin-top: 22px;">
-                                <button class="btn-whatsapp" style="flex: 1; height: 42px; margin: 0;" onclick="compartilharRankingDiario()">📲 Zap Dia</button>
-                                <button class="btn-whatsapp" style="flex: 1; height: 42px; margin: 0; background:#10b981;" onclick="compartilharMediaMes()">📲 Zap Mês</button>
-                                <button class="btn-print" style="flex: 1; height: 42px; margin: 0;" onclick="imprimirRelatorioFechamento()">🖨️ PDF</button>
+                    <div id="aud-resumo" style="display:none;">
+                        <div class="hr-box" style="margin-bottom:20px;">
+                            <div class="hr-title">Filtro de Resumo</div>
+                            <div style="display:flex; gap:10px; align-items:flex-end;">
+                                <div class="input-group" style="flex:1; margin-bottom:0;"><label>Data</label><input type="date" id="filtro-dia-resumo" onchange="gerarResumoDiario()"></div>
+                                <button class="btn" style="width:auto; padding:12px 20px;" onclick="imprimirResumoDiario()">🖨️ Imprimir PDF</button>
                             </div>
                         </div>
-
-                        <!-- Cards Média Dia e Mês -->
-                        <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
-                            <div id="card-media-dia" style="flex:1; min-width:140px; background:#fff; border:2px solid #6366f1; border-radius:10px; padding:14px; text-align:center;">
-                                <div style="font-size:0.75rem; font-weight:700; color:#6366f1; text-transform:uppercase; letter-spacing:0.5px;">📅 Média do Dia</div>
-                                <div id="val-media-dia" style="font-size:2rem; font-weight:900; color:#1e1b4b; margin:4px 0;">—</div>
-                                <div id="sub-media-dia" style="font-size:0.72rem; color:#64748b;">aguardando...</div>
-                            </div>
-                            <div id="card-media-mes" style="flex:1; min-width:180px; background:#fff; border:2px solid #10b981; border-radius:10px; padding:14px;">
-                                <div style="font-size:0.75rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px;">📆 Média do Mês</div>
-                                <div style="font-size:0.82rem; color:#64748b; margin-top:6px;">aguardando dados...</div>
-                            </div>
-                        </div>
-
-                        <h3 style="font-size: 1rem; color: var(--purple-dark); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px;">🏆 Fechamento Unificado por Equipe</h3>
-                        <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px;">Nota média calculada juntando Medicamentos e Perfumaria da mesma estação.</p>
-                        <div id="lista-resumo-diario"></div>
+                        <div id="container-resumo-diario"></div>
                     </div>
 
-                    <div id="aud-hist" style="display: none;">
-                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-                            <div style="flex:1; min-width:140px;">
-                                <label style="font-size:0.85rem; font-weight:bold; color:var(--text-main);">Data Específica</label>
-                                <input type="date" id="filtro-dia-hist" class="input-group" style="padding:10px; width:100%; margin-bottom:0;" onchange="carregarHistoricoAuditoria()">
-                            </div>
-                            <div style="flex:1; min-width:140px;">
-                                <label style="font-size:0.85rem; font-weight:bold; color:var(--text-main);">Filtrar por Setor</label>
-                                <select id="filtro-setor-hist" class="input-group" style="padding:10px; width:100%; margin-bottom:0;" onchange="carregarHistoricoAuditoria()">
-                                    <option value="">Todos os setores</option>
-                                </select>
+                    <div id="aud-hist" style="display:none;">
+                        <div class="hr-box" style="margin-bottom:20px;">
+                            <div class="hr-title">Histórico de Auditorias</div>
+                            <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                                <div class="input-group" style="flex:1; min-width:150px; margin-bottom:0;"><label>Data</label><input type="date" id="filtro-dia-hist" onchange="carregarHistoricoAuditoria()"></div>
+                                <div class="input-group" style="flex:1; min-width:150px; margin-bottom:0;"><label>Setor</label><select id="filtro-setor-hist" onchange="carregarHistoricoAuditoria()"><option value="">Todos</option></select></div>
                             </div>
                         </div>
-                        <div id="medias-mes-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;"></div>
+                        <div id="medias-mes-container" style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;"></div>
                         <div id="lista-historico-auditoria"></div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <button class="btn btn-outline" style="margin-top: 20px;" onclick="location.reload()">Sair do Painel</button>
+        <div id="view-sucesso-bvi" class="view">
+            <div class="card" style="text-align: center; padding: 50px 30px;">
+                <div style="width: 80px; height: 80px; background: #f0fdf4; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px;">
+                    <svg style="width: 40px; height: 40px; fill: #16a34a;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                </div>
+                <h2 style="color: #166534; margin-bottom: 10px;">Inscrição Realizada!</h2>
+                <p style="color: #475569; margin-bottom: 30px;">Seus dados foram enviados com sucesso para a coordenação da Brigada Vena144.</p>
+                <button class="btn" onclick="location.reload()">Voltar ao Início</button>
+            </div>
+        </div>
+
+        <div id="view-form-bvi" class="view">
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: var(--red-sesmt);">Inscrição BVI</h2>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Brigada Voluntária de Incêndio · Vena144</p>
+                </div>
+
+                <div class="input-group"><label>Nome Completo</label><input type="text" id="bvi-nome" placeholder="Seu nome"></div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1;"><label>Matrícula</label><input type="text" id="bvi-matricula" placeholder="12345" inputmode="numeric"></div>
+                    <div style="flex: 1;"><label>WhatsApp</label><input type="text" id="bvi-telefone" placeholder="(21) 99999-9999"></div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1;"><label>Turno</label><select id="bvi-turno"><option value="TURNO A">TURNO A</option><option value="TURNO B">TURNO B</option><option value="TURNO C">TURNO C</option><option value="COMERCIAL">COMERCIAL</option></select></div>
+                    <div style="flex: 1;"><label>Setor Atual</label><input type="text" id="bvi-setor" placeholder="Ex: Ressuprimento"></div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid var(--border);">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px;">Questionário Técnico</h3>
+                    <div class="input-group"><label>Já possui experiência ou curso de Brigadista/Bombeiro?</label><select id="bvi-exp"><option value="">Selecione...</option><option value="Sim, curso ativo">Sim, curso ativo</option><option value="Sim, mas está vencido">Sim, mas está vencido</option><option value="Não possuo experiência">Não possuo experiência</option></select></div>
+                    <div class="input-group"><label>Possui alguma fobia (altura, sangue, lugares fechados)?</label><select id="bvi-fobia"><option value="">Selecione...</option><option value="Não possuo fobias">Não possuo fobias</option><option value="Sim (Altura)">Sim (Altura)</option><option value="Sim (Sangue/Ferimentos)">Sim (Sangue/Ferimentos)</option><option value="Sim (Lugares Fechados)">Sim (Lugares Fechados)</option></select></div>
+                    <div class="input-group"><label>Tamanho do Fardamento (Gola Polo)</label><select id="bvi-fardamento"><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option></select></div>
+                    <div class="input-group"><label>Possui CNH?</label><select id="bvi-cnh"><option value="Não">Não</option><option value="Sim (A)">Sim (A)</option><option value="Sim (B)">Sim (B)</option><option value="Sim (AB)">Sim (AB)</option><option value="Sim (D/E)">Sim (D/E)</option></select></div>
+                    <div class="input-group"><label>Disponibilidade para treinamentos fora do horário?</label><select id="bvi-disp"><option value="Sim, total">Sim, total</option><option value="Apenas em dias específicos">Apenas em dias específicos</option><option value="Não possuo disponibilidade">Não possuo disponibilidade</option></select></div>
+                    <div class="input-group"><label>Liste outros cursos técnicos que possui (Ex: Empilhadeira, NR35, etc):</label><textarea id="bvi-cursos" rows="2" placeholder="Opcional"></textarea></div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 10px; align-items: flex-start;">
+                    <input type="checkbox" id="bvi-termo" style="width: 20px; height: 20px; margin-top: 3px;">
+                    <label for="bvi-termo" style="font-size: 0.85rem; color: var(--text-light); line-height: 1.4;">Declaro que as informações acima são verdadeiras e que desejo voluntariamente participar do processo seletivo para a Brigada Vena144.</label>
+                </div>
+
+                <button class="btn btn-red" style="margin-top: 30px;" onclick="enviarInscricaoBVI()">Enviar Minha Inscrição</button>
+                <button class="btn btn-outline" onclick="location.reload()">Cancelar</button>
             </div>
         </div>
 
         <div id="view-avalia-estrelas" class="view">
             <div class="card">
-                <h2 style="color: var(--purple-dark); margin-bottom: 5px;">Avaliação Final da Liderança</h2>
-                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">Atribua as notas. A Inteligência do sistema calculará a média ponderada e o parecer.</p>
-                
-                <h3 id="estrela-nome-candidato" style="margin-bottom: 10px; color: var(--red-sesmt);">Candidato: -</h3>
-                <div id="mini-curriculo" style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; margin-bottom: 20px; font-size: 0.85rem; border-radius: 8px;"></div>
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <h2 style="color: var(--purple-dark);">Avaliação de Desempenho</h2>
+                    <p id="estrela-nome-candidato" style="font-weight: 700; color: var(--purple-light); font-size: 1.2rem; margin-top: 5px;"></p>
+                </div>
+
+                <div id="mini-curriculo" style="background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px solid #fde68a; margin-bottom: 25px; font-size: 0.85rem; line-height: 1.5;"></div>
 
                 <div class="star-row">
                     <span class="star-label">1. Desenvolvimento Técnico (Peso: 35%)</span>
@@ -628,7 +544,7 @@
     function gerarParecerIA() {
         const n = avaliacaoAtualBVI.notas;
         if(Object.values(n).includes(0)) return alert("Preencha todas as estrelas.");
-        const media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.iniciativa * 1.0) + (n.aptidao * 1.0)) / 10;
+        const media = ((n.desenvolvimento * 3.5) + (n.assiduidade * 2.5) + (n.postura * 2.0) + (n.initiativa * 1.0) + (n.aptidao * 1.0)) / 10;
         let p = "Análise da Liderança Logística:\n\n";
         if(media >= 3.5) p += "Perfil com alta aderência técnica e comportamental. Demonstra confiabilidade.\n\nParecer: APTO.";
         else p += "Perfil com pontos de atenção nos pilares críticos operacionais.\n\nParecer: INAPTO.";
@@ -699,16 +615,35 @@
 
     let quizQuestions = [], currentQ = 0, selectedDim = null, myChartRadar = null, scores = { D: 0, I: 0, S: 0, C: 0 };
 
+    let tapGestorCount = 0, tapGestorTimer = null;
+    function contarTapGestor() {
+        tapGestorCount++;
+        clearTimeout(tapGestorTimer);
+        tapGestorTimer = setTimeout(() => { tapGestorCount = 0; }, 3000);
+        if(tapGestorCount >= 5) {
+            tapGestorCount = 0;
+            document.getElementById('gestor-secret-area').style.display = 'block';
+            document.getElementById('gestor-senha').focus();
+        }
+    }
+
+    function tentarAcessoGestor() {
+        const senha = document.getElementById('gestor-senha').value;
+        if(senha === '144') {
+            document.getElementById('login-wrapper').style.display = 'none';
+            switchTab('gestor'); loadAdminData();
+        } else {
+            alert('Senha incorreta.');
+            document.getElementById('gestor-senha').value = '';
+        }
+    }
+
     function startQuiz() {
         const nome = document.getElementById('user-name').value.trim();
         const mat = document.getElementById('user-id').value.trim();
-        if(nome.toLowerCase() === 'gestor' && mat === '144') {
-            document.getElementById('login-wrapper').style.display = 'none';
-            switchTab('gestor'); loadAdminData(); return;
-        }
-        if(!nome || !mat) return alert('Preencha os dados.');
+        if(!nome || !mat) return alert('Preencha nome e matrícula.');
         database.ref('avaliacoes').orderByChild('matricula').equalTo(mat).once('value').then(snapshot => {
-            if(snapshot.exists()) return alert("Mapeamento já realizado.");
+            if(snapshot.exists()) return alert("Avaliação já realizada para esta matrícula.");
             sessionStorage.setItem('tempName', nome); sessionStorage.setItem('tempMat', mat);
             quizQuestions = [...allQuestions]; scores = { D: 0, I: 0, S: 0, C: 0 }; currentQ = 0;
             document.getElementById('login-wrapper').style.display = 'none'; document.getElementById('main-tabs').style.display = 'flex'; 
@@ -720,56 +655,111 @@
         const q = quizQuestions[currentQ]; document.getElementById('q-counter').innerText = `Análise ${currentQ + 1} de ${quizQuestions.length}`;
         document.getElementById('q-text').innerText = q.q; const container = document.getElementById('options-container'); container.innerHTML = '';
         document.getElementById('next-btn').disabled = true;
-        q.opts.forEach(opt => {
-            const div = document.createElement('div'); div.className = 'option-card'; div.innerText = opt.t;
-            div.onclick = () => { document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected')); div.classList.add('selected'); selectedDim = opt.dim; document.getElementById('next-btn').disabled = false; };
+        q.opts.forEach(o => {
+            const div = document.createElement('div'); div.className = 'option-card'; div.innerText = o.t;
+            div.onclick = () => {
+                document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected'); selectedDim = o.dim; document.getElementById('next-btn').disabled = false;
+            };
             container.appendChild(div);
         });
     }
 
     function nextQuestion() {
-        scores[selectedDim] += 1; currentQ++;
-        if(currentQ < quizQuestions.length) { loadQuestion(); }
-        else { mostrarObservacaoFinal(); }
+        scores[selectedDim]++; currentQ++;
+        if (currentQ < quizQuestions.length) { loadQuestion(); window.scrollTo(0,0); }
+        else { finalizeQuiz(); }
     }
 
-    function mostrarObservacaoFinal() {
-        const quizSec = document.getElementById('quiz-section');
-        quizSec.innerHTML = `
-            <div style="background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:20px; margin-bottom:20px;">
-                <h3 style="color:#92400e; margin-bottom:8px;">✍️ Sua voz importa!</h3>
-                <p style="font-size:0.85rem; color:#78350f; margin-bottom:15px;">Antes de finalizar, compartilhe com a liderança:</p>
-                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">O que te incomoda no trabalho hoje?</label>
-                <textarea id="obs-incomoda" rows="3" placeholder="Ex: Falta de organização, comunicação ruim, sobrecarga..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit; margin-bottom:12px;"></textarea>
-                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">O que você acredita que precisa melhorar (em você ou no setor)?</label>
-                <textarea id="obs-melhora" rows="3" placeholder="Ex: Quero me desenvolver em X, o processo Y poderia melhorar..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit; margin-bottom:12px;"></textarea>
-                <label style="font-size:0.85rem; font-weight:700; color:#92400e; display:block; margin-bottom:6px;">Algo mais que queira dizer à liderança? (opcional)</label>
-                <textarea id="obs-livre" rows="2" placeholder="Fique à vontade..." style="width:100%; padding:10px; border:1px solid #f59e0b; border-radius:6px; font-family:inherit;"></textarea>
-            </div>
-            <button class="btn btn-acao" style="width:100%; padding:16px; background:#10b981;" onclick="generateDevolutiva()">✅ Finalizar Avaliação</button>
-        `;
-        quizSec.style.display = 'block';
+    function finalizeQuiz() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('loading-section').style.display = 'block';
+        
+        const total = quizQuestions.length;
+        const pct = {
+            D: Math.round((scores.D / total) * 100),
+            I: Math.round((scores.I / total) * 100),
+            S: Math.round((scores.S / total) * 100),
+            C: Math.round((scores.C / total) * 100)
+        };
+
+        const dados = {
+            nome: sessionStorage.getItem('tempName'),
+            matricula: sessionStorage.getItem('tempMat'),
+            scores: scores,
+            percentuais: pct,
+            data: new Date().toLocaleDateString('pt-BR'),
+            timestamp: Date.now()
+        };
+
+        database.ref('avaliacoes').push(dados).then(() => {
+            setTimeout(() => {
+                document.getElementById('loading-section').style.display = 'none';
+                renderDossie(dados.nome, pct, true);
+            }, 2000);
+        });
     }
 
-    function generateDevolutiva() {
-        const nome = sessionStorage.getItem('tempName'), mat = sessionStorage.getItem('tempMat'), total = quizQuestions.length;
-        const pctScores = { D: Math.round((scores.D/total)*100), I: Math.round((scores.I/total)*100), S: Math.round((scores.S/total)*100), C: Math.round((scores.C/total)*100) };
-        const incomoda = document.getElementById('obs-incomoda') ? document.getElementById('obs-incomoda').value.trim() : '';
-        const melhora = document.getElementById('obs-melhora') ? document.getElementById('obs-melhora').value.trim() : '';
-        const livre = document.getElementById('obs-livre') ? document.getElementById('obs-livre').value.trim() : '';
-        const obsColaborador = [incomoda ? `Incomoda: ${incomoda}` : '', melhora ? `Precisa melhorar: ${melhora}` : '', livre ? `Outros: ${livre}` : ''].filter(Boolean).join(' | ');
-        const resultData = { nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), pctScores, obsColaborador };
-        document.getElementById('quiz-section').style.display = 'none'; document.getElementById('loading-section').style.display = 'block';
-        database.ref('avaliacoes').push(resultData).then(() => { document.getElementById('loading-section').style.display = 'none'; renderDevolutivaView(nome, pctScores, true, obsColaborador); });
+    function loadAdminData() {
+        database.ref('avaliacoes').on('value', snap => {
+            const container = document.getElementById('lista-avaliacoes'); container.innerHTML = '';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação realizada.</p>';
+            
+            let html = '<div style="margin-top:10px;">';
+            let records = [];
+            snap.forEach(c => records.push({id: c.key, val: c.val()}));
+            records.reverse().forEach(item => {
+                const r = item.val;
+                html += `<div class="gestor-item">
+                    <div style="flex:1;"><strong>${r.nome}</strong><br><small>${r.data} — Mat: ${r.matricula}</small></div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-acao" onclick='renderDossie("${r.nome}", ${JSON.stringify(r.percentuais)}, false, "${r.obs || ''}")'>Ver Dossiê</button>
+                        <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${item.id}')">X</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html + '</div>';
+        });
+
+        database.ref('inscricoes_bvi').on('value', snap => {
+            const container = document.getElementById('lista-bvi'); container.innerHTML = '';
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma inscrição BVI.</p>';
+            
+            let records = []; snap.forEach(c => records.push({id: c.key, val: c.val()}));
+            records.sort((a,b) => {
+                let mA = a.val.avaliacao_gestor ? ((a.val.avaliacao_gestor.desenvolvimento * 3.5) + (a.val.avaliacao_gestor.assiduidade * 2.5) + (a.val.avaliacao_gestor.postura * 2.0) + (a.val.avaliacao_gestor.iniciativa * 1.0) + (a.val.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
+                let mB = b.val.avaliacao_gestor ? ((b.val.avaliacao_gestor.desenvolvimento * 3.5) + (b.val.avaliacao_gestor.assiduidade * 2.5) + (b.val.avaliacao_gestor.postura * 2.0) + (b.val.avaliacao_gestor.iniciativa * 1.0) + (b.val.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
+                return mB - mA;
+            });
+
+            let html = '<div style="margin-top:10px;">';
+            records.forEach(item => {
+                const r = item.val;
+                const media = r.avaliacao_gestor ? ((r.avaliacao_gestor.desenvolvimento * 3.5) + (r.avaliacao_gestor.assiduidade * 2.5) + (r.avaliacao_gestor.postura * 2.0) + (r.avaliacao_gestor.iniciativa * 1.0) + (r.avaliacao_gestor.aptidao * 1.0)) / 10 : 0;
+                const statusCor = media >= 3.5 ? '#10b981' : media > 0 ? '#ef4444' : '#94a3b8';
+                const statusTxt = media >= 3.5 ? 'APTO' : media > 0 ? 'INAPTO' : 'PENDENTE';
+
+                html += `<div class="gestor-item gestor-item-bvi">
+                    <div style="flex:1;"><strong>${r.nome}</strong><br><small>Setor: ${r.setor} | Mat: ${r.matricula}</small></div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:800; color:${statusCor}; font-size:0.8rem; border:1px solid ${statusCor}; padding:2px 6px; border-radius:4px;">${statusTxt}</span>
+                        <button class="btn-editar" onclick='abrirTelaEstrelas("${item.id}", "${encodeURIComponent(JSON.stringify(r))}")'>Avaliar</button>
+                        <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${item.id}')">X</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html + '</div>';
+        });
     }
 
-    window.abrirDossieAdmin = function(nome, pctEncoded, obsEncoded) {
-        const obs = obsEncoded ? decodeURIComponent(obsEncoded) : '';
-        renderDevolutivaView(nome, JSON.parse(decodeURIComponent(pctEncoded)), false, obs);
-    }
+    function renderDossie(nome, pct, isColaborador, obsColaborador = '') {
+        const order = [
+            { id: 'D', name: 'Executante (D)', val: pct.D, color: 'var(--disc-d)' },
+            { id: 'I', name: 'Comunicador (I)', val: pct.I, color: 'var(--disc-i)' },
+            { id: 'S', name: 'Planejador (S)', val: pct.S, color: 'var(--disc-s)' },
+            { id: 'C', name: 'Analista (C)', val: pct.C, color: 'var(--disc-c)' }
+        ].sort((a, b) => b.val - a.val);
 
-    function renderDevolutivaView(nome, pct, isColaborador = false, obsColaborador = '') {
-        const order = [{ id: 'D', val: pct.D, name: "Executor (D)", color: "var(--disc-d)" }, { id: 'I', val: pct.I, name: "Comunicador (I)", color: "var(--disc-i)" }, { id: 'S', val: pct.S, name: "Planejador (S)", color: "var(--disc-s)" }, { id: 'C', val: pct.C, name: "Analista (C)", color: "var(--disc-c)" }].sort((a, b) => b.val - a.val);
         const primario = order[0]; const secundario = order[1].val > 0 ? order[1] : { name: "Puro", val: 0 }; const combinacao = `${primario.name.split(' ')[0]}-${secundario.name.split(' ')[0]}`;
         const focoPessoas = pct.I + pct.S; const focoTarefas = pct.D + pct.C; const decisaoRapida = pct.D + pct.I; const decisaoCautelosa = pct.S + pct.C;
 
@@ -808,7 +798,7 @@
             feedback = "Tom calmo, seguro e privado. Nunca exponha em grupo. Ex: 'Eu confio em você, e por isso quero conversar sobre algo que pode nos ajudar...'";
             formaLidar = "Dê previsibilidade: avise mudanças com antecedência. Valorize a lealdade e consistência. Crie espaço seguro para ele expressar dificuldades.";
             areaAtuacao = "Funções de rotina de alto padrão · Mentoria de novatos · Controle de processos repetitivos · Suporte de equipe";
-            conselhos = "1. Nunca mude a rotina dele sem explicação prévia.\n2. Em conflito, dê tempo — não force uma resposta na hora.\n3. Pergunte diretamente como ele está — ele não virá até você.\n4. Em ausência de colega, redistribua formalmente e reconheça o esforço extra.\n5. Ofereça segurança antes de qualquer feedback corretivo.";
+            conselhos = "1. Nunca mude a rotina dele sem explicação prévia.\n2. Em conflito, deu tempo — não force uma resposta na hora.\n3. Pergunte diretamente como ele está — ele não virá até você.\n4. Em ausência de colega, redistribua formalmente e reconheça o esforço extra.\n5. Ofereça segurança antes de qualquer feedback corretivo.";
         } else {
             textoPerfil = "Analítico, focado em qualidade e exatidão. Referência técnica da equipe. Pode ser lento por excesso de análise, mas entrega com altíssima precisão.";
             pontosFortes = "Domínio técnico · Foco em conformidade · Atenção a detalhes · Solução de problemas complexos";
@@ -913,53 +903,35 @@
     window.rodarSimulacaoIA = function() {
         const cenario = document.getElementById('simulador-cenario').value;
         document.getElementById('area-ranking-ia').style.display = 'block'; document.getElementById('lista-ranking-ia').innerHTML = '<p>Processando...</p>';
+        
         database.ref('avaliacoes').once('value').then(snap => {
-            if(!snap.exists()) return document.getElementById('lista-ranking-ia').innerHTML = '<p>Não há perfis mapeados.</p>';
-            let candidatos = [];
-            snap.forEach(child => {
-                let d = child.val(); let pct = d.pctScores;
-                let scoreGeral = 100 - (Math.max(pct.D, pct.I, pct.S, pct.C) - Math.min(pct.D, pct.I, pct.S, pct.C)); 
-                let score = cenario === 'desenvoltura' ? pct.D + pct.I : (cenario === 'qualidade' ? pct.C + pct.S : (cenario === 'rotina' ? pct.S + pct.I : scoreGeral));
-                d.matchScore = score;
-                d.insight = score >= 65 ? "Alta aderência." : (score >= 40 ? "Aderência mediana." : "Baixa aderência para este cenário.");
-                candidatos.push(d);
+            if(!snap.exists()) return document.getElementById('lista-ranking-ia').innerHTML = '<p>Nenhuma avaliação na base.</p>';
+            let list = []; snap.forEach(c => list.push(c.val()));
+            
+            list.forEach(u => {
+                let score = 0; const p = u.percentuais;
+                if(cenario === 'desenvoltura') score = (p.D * 0.6) + (p.I * 0.4);
+                else if(cenario === 'qualidade') score = (p.C * 0.6) + (p.S * 0.4);
+                else if(cenario === 'rotina') score = (p.S * 0.6) + (p.I * 0.4);
+                else score = (p.D + p.I + p.S + p.C) / 4;
+                u.match = Math.round(score);
             });
-            candidatos.sort((a, b) => b.matchScore - a.matchScore);
+
+            list.sort((a,b) => b.match - a.match);
             let html = '';
-            candidatos.forEach((cand, index) => {
-                let medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
-                html += `<div class="gestor-item"><strong>${medalha} ${cand.nome}</strong> <span>Match: ${cand.matchScore.toFixed(1)}%</span></div>`;
+            list.forEach((u, idx) => {
+                const cor = u.match >= 70 ? '#10b981' : u.match >= 40 ? '#f59e0b' : '#ef4444';
+                html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid #e2e8f0; background:${idx < 3 ? '#f0f9ff' : 'transparent'};">
+                    <div><span style="font-weight:800; color:#64748b; margin-right:10px;">#${idx+1}</span><strong>${u.nome}</strong></div>
+                    <div style="font-weight:900; color:${cor};">${u.match}%</div>
+                </div>`;
             });
             document.getElementById('lista-ranking-ia').innerHTML = html;
         });
     }
 
-    function loadAdminData() {
-        database.ref('avaliacoes').on('value', snap => {
-            const container = document.getElementById('lista-avaliacoes'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação.</p>';
-            Object.entries(snap.val()).reverse().forEach(([key, item]) => {
-                const pctSeguro = encodeURIComponent(JSON.stringify(item.pctScores));
-                const obsSeguro = encodeURIComponent(item.obsColaborador || '');
-                const div = document.createElement('div'); div.className = 'gestor-item';
-                div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.matricula}</small></div><div><button class="btn-acao" onclick="abrirDossieAdmin('${item.nome}', '${pctSeguro}', '${obsSeguro}')">Dossiê</button> <button class="btn-excluir" onclick="excluirItem('avaliacoes', '${key}')">X</button></div>`;
-                container.appendChild(div);
-            });
-        });
-        database.ref('inscricoes_bvi').on('value', snap => {
-            const container = document.getElementById('lista-bvi'); container.innerHTML = '';
-            if(!snap.exists()) return container.innerHTML = '<p>Sem inscritos.</p>';
-            Object.entries(snap.val()).reverse().forEach(([key, item]) => {
-                const jaAvaliou = !!item.avaliacao_gestor;
-                const div = document.createElement('div'); div.className = 'gestor-item gestor-item-bvi';
-                div.innerHTML = `<div><strong style="color:var(--red-sesmt)">${item.nome}</strong><br><small>${item.setor}</small></div><div><button class="btn-acao" style="${jaAvaliou?'background:#f59e0b':''}" onclick="abrirTelaEstrelas('${key}', '${encodeURIComponent(JSON.stringify(item))}')">${jaAvaliou?'Editar':'Avaliar'}</button> <button class="btn-excluir" onclick="excluirItem('inscricoes_bvi', '${key}')">X</button></div>`;
-                container.appendChild(div);
-            });
-        });
-    }
-
     function switchGestorTab(t) {
-        document.querySelectorAll('.g-tab').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.gestor-tabs .g-tab').forEach(el => el.classList.remove('active'));
         document.getElementById('gtab-'+t).classList.add('active');
         document.getElementById('gcontent-avalia').style.display = 'none';
         document.getElementById('gcontent-simulador').style.display = 'none';
@@ -971,7 +943,9 @@
 
     function enviarWhatsAppLink(tipo) { 
         let linkFinal = window.location.href.split('?')[0] + (tipo === 'bvi' ? '?form=bvi' : '?form=disc');
-        let msg = tipo === 'bvi' ? `Inscrições para BVI:\n${linkFinal}` : `Mapeamento Profiler:\n${linkFinal}`;
+        let msg = tipo === 'bvi'
+            ? `📊 *AVALIAÇÃO COMPORTAMENTAL EQUIPE RESSUPRIMENTO*\n\nAcesse o link para se inscrever:\n🔗 ${linkFinal}\n\n_Preencha todos os campos com atenção._`
+            : `📊 *AVALIAÇÃO COMPORTAMENTAL EQUIPE RESSUPRIMENTO*\n\nOlá! 👋\n\nAcesse o link abaixo para realizar sua Avaliação Comportamental:\n🔗 ${linkFinal}\n\n_Preencha com seu nome completo e matrícula. Leva cerca de 5 minutos._`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -1018,475 +992,238 @@
         { id: 'c6', nome: 'Organização de Paletes' },
         { id: 'c7', nome: 'Controle de Gaiolas' },
         { id: 'c8', nome: 'Pausa do Café (Retorno no Horário)' },
-        { id: 'c9', nome: 'Comportamental da Equipe' }
+        { id: 'c9', nome: 'Postura e Engajamento da Equipe' }
     ];
 
-    let notasAuditoria = {}; let idAuditoriaEmEdicao = null; let pontoExtra = 0;
+    let notasAuditoria = {};
+    let idAuditoriaEmEdicao = null;
 
     function renderizarCriteriosAuditoria() {
-        const container = document.getElementById('container-criterios'); container.innerHTML = ''; notasAuditoria = {};
+        const container = document.getElementById('container-criterios-auditoria'); container.innerHTML = '';
         criteriosAuditoria.forEach(c => {
-            notasAuditoria[c.id] = 0; 
-            const div = document.createElement('div'); div.style.marginBottom = '15px'; div.style.borderBottom = '1px dashed var(--border)'; div.style.paddingBottom = '15px';
-            div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:600; font-size:0.9rem;">${c.nome}</span>
-                <div class="star-rating" id="stars-aud-${c.id}"><span class="star" onclick="setStarAuditoria('${c.id}', 1)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 2)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 3)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 4)">★</span><span class="star" onclick="setStarAuditoria('${c.id}', 5)">★</span></div>
-            </div><input type="text" id="obs-aud-${c.id}" placeholder="Observação..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:6px;" oninput="salvarRascunhoLocal()">`;
+            const nota = notasAuditoria[c.id] || 10;
+            const div = document.createElement('div'); div.className = 'star-row';
+            div.innerHTML = `
+                <span class="star-label">${c.nome}</span>
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <select onchange="atualizarNotaCriterio('${c.id}', this.value)" style="padding:5px; border-radius:4px; border:1px solid var(--border); font-weight:bold; color:${nota < 10 ? 'var(--red-sesmt)' : 'var(--purple-dark)'};">
+                        <option value="10" ${nota == 10 ? 'selected' : ''}>10.0 (OK)</option>
+                        <option value="9" ${nota == 9 ? 'selected' : ''}>9.0</option>
+                        <option value="8" ${nota == 8 ? 'selected' : ''}>8.0</option>
+                        <option value="7" ${nota == 7 ? 'selected' : ''}>7.0</option>
+                        <option value="6" ${nota == 6 ? 'selected' : ''}>6.0</option>
+                        <option value="5" ${nota == 5 ? 'selected' : ''}>5.0 (Crítico)</option>
+                        <option value="0" ${nota == 0 ? 'selected' : ''}>0.0 (Grave)</option>
+                    </select>
+                </div>
+            `;
             container.appendChild(div);
         });
-        document.getElementById('resultado-auditoria').style.display = 'none'; document.getElementById('btn-salvar-auditoria').style.display = 'none';
-        fotosEvidencia = []; renderizarMiniaturasFotos();
-        // reset ponto extra
-        pontoExtra = 0; setPontoExtra(0, true);
+        calcularNotaAuditoria();
     }
 
-    function setPontoExtra(val, silencioso) {
-        pontoExtra = val;
-        [0,1,2].forEach(v => {
-            const btn = document.getElementById(`pe-btn-${v}`);
-            if(!btn) return;
-            btn.style.background = v === val && val > 0 ? '#f59e0b' : '#fff';
-            btn.style.color = v === val && val > 0 ? '#fff' : '#334155';
-            btn.style.borderColor = v === val && val > 0 ? '#f59e0b' : '#e2e8f0';
-        });
-        const areaJust = document.getElementById('pe-justificativa-area');
-        if(areaJust) areaJust.style.display = val > 0 ? 'block' : 'none';
-        if(val === 0) { const j = document.getElementById('pe-justificativa'); if(j) j.value = ''; }
-        if(!silencioso) salvarRascunhoLocal();
-    }
+    function atualizarNotaCriterio(id, val) { notasAuditoria[id] = parseFloat(val); calcularNotaAuditoria(); salvarRascunhoLocal(); }
 
-    function setStarAuditoria(id, nota) {
-        notasAuditoria[id] = nota;
-        const spans = document.getElementById(`stars-aud-${id}`).getElementsByTagName('span');
-        for(let i=0; i<5; i++) spans[i].classList[i<nota ? 'add' : 'remove']('active');
-        salvarRascunhoLocal(); 
+    function calcularNotaAuditoria() {
+        let soma = 0; criteriosAuditoria.forEach(c => { soma += (notasAuditoria[c.id] || 10); });
+        let media = soma / criteriosAuditoria.length;
+        let extra = parseFloat(document.getElementById('aud-ponto-extra').value) || 0;
+        let final = Math.min(10, media + extra);
+        const display = document.getElementById('aud-nota-display');
+        display.innerText = final.toFixed(1);
+        display.style.background = final >= 8.5 ? '#10b981' : final >= 7.0 ? '#f59e0b' : '#ef4444';
     }
 
     function salvarRascunhoLocal() {
-        if (idAuditoriaEmEdicao) return; const setor = document.getElementById('aud-setor').value; if(!setor) return;
-        let obs = {}; criteriosAuditoria.forEach(c => { let inputObs = document.getElementById(`obs-aud-${c.id}`); if(inputObs) obs[c.id] = inputObs.value; });
-        let feedback = document.getElementById('aud-feedback') ? document.getElementById('aud-feedback').value : "";
-        let peJust = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value : "";
-        localStorage.setItem('rascunho_aud_' + setor, JSON.stringify({ notas: notasAuditoria, observacoes: obs, feedbackGerado: feedback, fotos: fotosEvidencia, pontoExtra, peJustificativa: peJust }));
-        const status = document.getElementById('status-rascunho'); status.innerText = "Salvo..."; status.style.opacity = 1; setTimeout(() => { status.style.opacity = 0; }, 2000);
+        const rascunho = {
+            setor: document.getElementById('aud-setor').value,
+            resp: document.getElementById('aud-resp').value,
+            notas: notasAuditoria,
+            fotos: fotosEvidencia,
+            pontoExtra: document.getElementById('aud-ponto-extra').value,
+            peJustificativa: document.getElementById('aud-ponto-extra-just').value
+        };
+        localStorage.setItem('rascunho_auditoria', JSON.stringify(rascunho));
     }
 
     function carregarRascunhoLocal() {
-        if (idAuditoriaEmEdicao) return; const setor = document.getElementById('aud-setor').value; renderizarCriteriosAuditoria(); if(!setor) return;
-        const rascunho = localStorage.getItem('rascunho_aud_' + setor);
-        if(rascunho) {
-            const dados = JSON.parse(rascunho); notasAuditoria = dados.notas || {};
-            criteriosAuditoria.forEach(c => {
-                if(notasAuditoria[c.id] > 0) { const spans = document.getElementById(`stars-aud-${c.id}`).getElementsByTagName('span'); for(let i=0; i<5; i++) spans[i].classList[i < notasAuditoria[c.id] ? 'add' : 'remove']('active'); }
-                if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id];
-            });
-            fotosEvidencia = dados.fotos || []; renderizarMiniaturasFotos();
-            if(dados.pontoExtra) { setPontoExtra(dados.pontoExtra, true); if(dados.peJustificativa) { const j = document.getElementById('pe-justificativa'); if(j) j.value = dados.peJustificativa; } }
-            if(dados.feedbackGerado) processarAuditoria();
-        }
-    }
-
-    // ---- Funções de Feedback Dinâmico e Contextual ----
-    function getSugestaoContextual(critId, obs) {
-        if (obs && obs.trim().length > 5) return obs.trim();
-        const sugestoes = {
-            c1: 'Revisar a organização das posições e cobrar a devolução dos itens ao local correto após o uso.',
-            c2: 'Caixas acumuladas no piso representam risco de segurança e bloqueio de corredor. Descartar ou realocar antes do fechamento.',
-            c3: 'Verificar se o padrão de armazenamento está sendo seguido pela equipe durante todo o processo.',
-            c4: 'Identificar gargalos no abastecimento e priorizar as posições críticas com estoque baixo ou zerado.',
-            c5: 'Carrinhos devem retornar ao ponto padrão após o uso. Cobrar devolução ao final de cada ciclo.',
-            c6: 'Paletes fora de alinhamento ou sem identificação comprometem a rastreabilidade. Corrigir antes do fechamento.',
-            c7: 'Conferir o controle de gaiolas: identificação, integridade e posição correta nos locais designados.',
-            c8: 'Monitorar o retorno pontual das pausas — atrasos frequentes comprometem a produtividade e a distribuição de tarefas.',
-            c9: 'Avaliar postura, comunicação e trabalho em equipe. Identificar conflitos, desengajamento ou comportamentos que impactam negativamente o clima operacional do setor.'
-        };
-        return sugestoes[critId] || 'Verificar e alinhar conforme padrão operacional estabelecido.';
-    }
-
-    function getAcaoRecomendada(notaFinal, maiorGap) {
-        if (notaFinal >= 9.5) return `✅ Manter o padrão atual e compartilhar as boas práticas com os demais setores.`;
-        if (notaFinal >= 8.5) return `📌 Ação de melhoria: reforçar o critério "${maiorGap.nome}" no início do próximo turno. Um ajuste pontual é suficiente para alcançar a excelência.`;
-        if (notaFinal >= 7.5) return `🔧 Plano corretivo: realizar uma parada rápida de 5 minutos com a equipe para nivelar o critério "${maiorGap.nome}". Verificar se houve falha de comunicação no início do turno.`;
-        if (notaFinal >= 6.5) return `🚨 Ação imediata: o critério "${maiorGap.nome}" está comprometendo o setor. Liderança deve intervir diretamente e monitorar a recuperação antes do fechamento.`;
-        return `🛑 Intervenção direta exigida. Parar, organizar e relançar o setor. O critério "${maiorGap.nome}" e os demais desvios indicam falha sistêmica no turno — não é um caso isolado.`;
-    }
-
-    function gerarFeedbackDinamico(notaFinal) {
-        let obsMap = {};
-        criteriosAuditoria.forEach(c => {
-            let inputEl = document.getElementById(`obs-aud-${c.id}`);
-            obsMap[c.id] = inputEl ? inputEl.value.trim() : '';
-        });
-        let criteriosSorted = criteriosAuditoria.map(c => ({
-            ...c, nota: notasAuditoria[c.id] || 0, obs: obsMap[c.id]
-        })).sort((a, b) => a.nota - b.nota);
-
-        let maiorGap = criteriosSorted[0];
-        let linhas = [];
-
-        if (notaFinal >= 9.5) linhas.push(`Setor com desempenho excepcional (${notaFinal.toFixed(1)}). A operação está alinhada ao padrão exigido em praticamente todos os pontos.`);
-        else if (notaFinal >= 8.5) linhas.push(`Bom desempenho geral (${notaFinal.toFixed(1)}), com pontos específicos que precisam de atenção para sustentar o padrão.`);
-        else if (notaFinal >= 7.5) linhas.push(`Desempenho regular (${notaFinal.toFixed(1)}). Há desvios identificados que precisam de ação corretiva ainda neste turno.`);
-        else if (notaFinal >= 6.5) linhas.push(`Desempenho abaixo do aceitável (${notaFinal.toFixed(1)}). O setor apresenta múltiplos pontos de não conformidade que comprometem a operação.`);
-        else linhas.push(`Situação crítica (${notaFinal.toFixed(1)}). O setor está fora dos padrões operacionais em praticamente todos os critérios avaliados.`);
-
-        linhas.push('');
-        linhas.push(`📍 MAIOR GAP DO SETOR: ${maiorGap.nome} (Nota ${maiorGap.nota}/5)`);
-        linhas.push(`→ ${getSugestaoContextual(maiorGap.id, maiorGap.obs)}`);
-
-        let demaisProblemas = criteriosSorted.slice(1).filter(c => c.nota <= 3);
-        if (demaisProblemas.length > 0) {
-            linhas.push('');
-            linhas.push(`⚠️ OUTROS PONTOS DE MELHORIA:`);
-            demaisProblemas.forEach(c => {
-                linhas.push(`• ${c.nome} (${c.nota}/5) — ${getSugestaoContextual(c.id, c.obs)}`);
-            });
-        }
-
-        let pontosBons = criteriosSorted.filter(c => c.nota >= 4).reverse();
-        if (pontosBons.length > 0 && notaFinal < 9.5) {
-            linhas.push('');
-            linhas.push(`✅ O QUE ESTÁ BEM HOJE:`);
-            pontosBons.forEach(c => { linhas.push(`• ${c.nome} (${c.nota}/5)`); });
-        }
-
-        linhas.push('');
-        linhas.push(getAcaoRecomendada(notaFinal, maiorGap));
-
-        if(pontoExtra > 0) {
-            const just = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value.trim() : '';
-            linhas.push('');
-            linhas.push(`⭐ PONTO EXTRA CONCEDIDO: +${pontoExtra} ponto(s)`);
-            if(just) linhas.push(`→ ${just}`);
-        }
-
-        return linhas.join('\n');
-    }
-
-    function processarAuditoria() {
-        const setor = document.getElementById('aud-setor').value; if(!setor) return alert("Selecione o setor.");
-        let soma = 0; let algumZero = false;
-        criteriosAuditoria.forEach(c => { let nota = notasAuditoria[c.id]; if(!nota || nota === 0) { if(!algumZero) alert(`Critério "${c.nome}" sem nota.`); algumZero = true; } else soma += nota; });
-        if(algumZero) return;
-
-        if(pontoExtra > 0) {
-            const just = document.getElementById('pe-justificativa').value.trim();
-            if(!just) { alert('Justificativa do Ponto Extra é obrigatória.'); document.getElementById('pe-justificativa').focus(); return; }
-        }
-
-        let notaBase = (soma / 45) * 10;
-        let notaFinal = Math.round((notaBase + pontoExtra) * 10) / 10;
-        document.getElementById('aud-nota-final').innerText = notaFinal.toFixed(1);
-
-        let textareaFeed = document.getElementById('aud-feedback');
-        textareaFeed.value = gerarFeedbackDinamico(notaFinal);
-        textareaFeed.removeAttribute('data-gerado');
-
-        document.getElementById('resultado-auditoria').style.display = 'block'; document.getElementById('btn-salvar-auditoria').style.display = 'block'; salvarRascunhoLocal();
-    }
-
-    function salvarAuditoria() {
-        const data = document.getElementById('aud-data').value; const setor = document.getElementById('aud-setor').value;
-        const feedback = document.getElementById('aud-feedback').value; const notaFinal = parseFloat(document.getElementById('aud-nota-final').innerText);
-        let observacoes = {}; criteriosAuditoria.forEach(c => { observacoes[c.id] = document.getElementById(`obs-aud-${c.id}`).value.trim(); });
-        const peJustificativa = document.getElementById('pe-justificativa') ? document.getElementById('pe-justificativa').value.trim() : "";
-        const payload = { data, setor, notas: notasAuditoria, observacoes, notaFinal, feedback, fotos: fotosEvidencia, pontoExtra, peJustificativa, timestamp: Date.now() };
-
-        if (idAuditoriaEmEdicao) { database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao).update(payload).then(() => { alert("Atualizado!"); limparTelaAuditoria(); }); } 
-        else { database.ref('avaliacoes_setores').push(payload).then(() => { alert("Transmitido!"); localStorage.removeItem('rascunho_aud_' + setor); limparTelaAuditoria(); }); }
+        const raw = localStorage.getItem('rascunho_auditoria'); if(!raw) return;
+        try {
+            const r = JSON.parse(raw);
+            document.getElementById('aud-setor').value = r.setor || 'RESSUPRIMENTO';
+            document.getElementById('aud-resp').value = r.resp || '';
+            notasAuditoria = r.notas || {};
+            fotosEvidencia = r.fotos || [];
+            document.getElementById('aud-ponto-extra').value = r.pontoExtra || 0;
+            document.getElementById('aud-ponto-extra-just').value = r.peJustificativa || '';
+            renderizarCriteriosAuditoria(); renderizarMiniaturasFotos();
+        } catch(e) {}
     }
 
     function limparTelaAuditoria() {
-        idAuditoriaEmEdicao = null; document.getElementById('btn-salvar-auditoria').innerText = "Transmitir e Finalizar Setor";
-        document.getElementById('aud-setor').value = ''; document.getElementById('aud-feedback').value = '';
-        renderizarCriteriosAuditoria(); 
-        if(document.getElementById('filtro-dia-resumo').value) gerarResumoDiario();
-        if(document.getElementById('filtro-dia-hist').value) carregarHistoricoAuditoria();
-        switchAuditoriaSubTab('resumo'); 
+        if(!confirm("Limpar todos os campos?")) return;
+        localStorage.removeItem('rascunho_auditoria');
+        idAuditoriaEmEdicao = null;
+        document.getElementById('aud-resp').value = '';
+        document.getElementById('aud-ponto-extra').value = 0;
+        document.getElementById('aud-ponto-extra-just').value = '';
+        document.getElementById('btn-salvar-auditoria').innerText = "Salvar Auditoria ✅";
+        notasAuditoria = {}; fotosEvidencia = [];
+        renderizarCriteriosAuditoria(); renderizarMiniaturasFotos();
     }
 
-    window.editarAuditoria = function(id, dadosEncoded) {
-        const dados = JSON.parse(decodeURIComponent(dadosEncoded)); idAuditoriaEmEdicao = id; switchAuditoriaSubTab('nova');
-        document.getElementById('aud-data').value = dados.data; document.getElementById('aud-setor').value = dados.setor; document.getElementById('aud-feedback').value = dados.feedback || "";
-        renderizarCriteriosAuditoria(); notasAuditoria = dados.notas || {};
-        criteriosAuditoria.forEach(c => { const spans = document.getElementById(`stars-aud-${c.id}`).getElementsByTagName('span'); for(let i=0; i<5; i++) spans[i].classList[i < (notasAuditoria[c.id]||0) ? 'add' : 'remove']('active'); if(dados.observacoes && dados.observacoes[c.id]) document.getElementById(`obs-aud-${c.id}`).value = dados.observacoes[c.id]; });
-        fotosEvidencia = dados.fotos || []; renderizarMiniaturasFotos();
-        document.getElementById('btn-salvar-auditoria').innerText = "Atualizar Modificação"; processarAuditoria();
+    function salvarAuditoria() {
+        const setor = document.getElementById('aud-setor').value;
+        const data = document.getElementById('aud-data').value;
+        const resp = document.getElementById('aud-resp').value.trim();
+        const notaFinal = parseFloat(document.getElementById('aud-nota-display').innerText);
+        const pontoExtra = parseFloat(document.getElementById('aud-ponto-extra').value) || 0;
+        const peJustificativa = document.getElementById('aud-ponto-extra-just').value.trim();
+
+        if(!data || !resp) return alert("Preencha data e responsável.");
+
+        const dados = { setor, data, resp, notas: notasAuditoria, notaFinal, pontoExtra, peJustificativa, fotos: fotosEvidencia, timestamp: Date.now() };
+        
+        const ref = idAuditoriaEmEdicao ? database.ref('avaliacoes_setores/' + idAuditoriaEmEdicao) : database.ref('avaliacoes_setores').push();
+        
+        ref.set(dados).then(() => {
+            alert("Auditoria salva com sucesso!");
+            localStorage.removeItem('rascunho_auditoria');
+            limparTelaAuditoria();
+        });
     }
 
-    let resumoDiarioGlobal = []; let rankingEquipesGlobal = []; 
+    function editarAuditoria(id, encoded) {
+        idAuditoriaEmEdicao = id;
+        const r = JSON.parse(decodeURIComponent(encoded));
+        document.getElementById('aud-setor').value = r.setor;
+        document.getElementById('aud-data').value = r.data;
+        document.getElementById('aud-resp').value = r.resp;
+        document.getElementById('aud-ponto-extra').value = r.pontoExtra || 0;
+        document.getElementById('aud-ponto-extra-just').value = r.peJustificativa || '';
+        notasAuditoria = r.notas || {};
+        fotosEvidencia = r.fotos || [];
+        document.getElementById('btn-salvar-auditoria').innerText = "Atualizar Auditoria ✏️";
+        switchAuditoriaSubTab('nova');
+        renderizarCriteriosAuditoria(); renderizarMiniaturasFotos();
+    }
 
     function gerarResumoDiario() {
-        let diaFiltro = document.getElementById('filtro-dia-resumo').value; if(!diaFiltro) return;
-        database.ref('avaliacoes_setores').orderByChild('data').equalTo(diaFiltro).once('value').then(snap => {
-            const container = document.getElementById('lista-resumo-diario'); container.innerHTML = ''; resumoDiarioGlobal = []; rankingEquipesGlobal = [];
-            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma avaliação no dia.</p>';
-
-            let equipes = {};
-            snap.forEach(child => {
-                let rec = { id: child.key, ...child.val() }; resumoDiarioGlobal.push(rec);
-                let nomeEquipe = rec.setor; let areaOrigem = rec.setor;
-                if (rec.setor.includes("Estação")) { let parts = rec.setor.split(" - "); if(parts.length === 2) { areaOrigem = parts[0]; nomeEquipe = "Equipe " + parts[1]; } }
-                if(!equipes[nomeEquipe]) equipes[nomeEquipe] = { nome: nomeEquipe, somaNotas: 0, qtd: 0, avaliacoesOriginais: [], pontosAtencao: [] };
-                equipes[nomeEquipe].somaNotas += rec.notaFinal; equipes[nomeEquipe].qtd += 1; equipes[nomeEquipe].avaliacoesOriginais.push(rec);
-                let critRuins = []; for (let critId in rec.notas) { if (rec.notas[critId] <= 2) { critRuins.push(criteriosAuditoria.find(c => c.id === critId).nome); } }
-                if (critRuins.length > 0) equipes[nomeEquipe].pontosAtencao.push(`*${areaOrigem}*: ${critRuins.join(', ')}`);
+        const dia = document.getElementById('filtro-dia-resumo').value; if(!dia) return;
+        database.ref('avaliacoes_setores').orderByChild('data').equalTo(dia).once('value').then(snap => {
+            const container = document.getElementById('container-resumo-diario');
+            if(!snap.exists()) return container.innerHTML = '<p>Nenhuma auditoria realizada nesta data.</p>';
+            
+            let dadosSetor = {};
+            snap.forEach(c => {
+                const r = c.val();
+                if(!dadosSetor[r.setor]) dadosSetor[r.setor] = { soma: 0, qtd: 0, itens: [] };
+                dadosSetor[r.setor].soma += r.notaFinal;
+                dadosSetor[r.setor].qtd += 1;
+                dadosSetor[r.setor].itens.push(r);
             });
 
-            rankingEquipesGlobal = Object.values(equipes).map(eq => { eq.notaMedia = eq.somaNotas / eq.qtd; return eq; }).sort((a, b) => b.notaMedia - a.notaMedia);
-
-            let html = '';
-            rankingEquipesGlobal.forEach((eq, index) => {
-                let cor = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
-                let icone = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
-                let txtAtencao = eq.pontosAtencao.length > 0 ? `<div style="margin-top:10px; padding:10px; background:#fffbeb; border-left:3px solid #f59e0b; font-size:0.8rem; color:#92400e;"><strong>⚠️ Desvios Identificados:</strong><br>${eq.pontosAtencao.join('<br>')}</div>` : '';
-                let botoesAcao = '<div style="margin-top: 10px; display:flex; gap: 5px; flex-wrap:wrap;">';
-                eq.avaliacoesOriginais.forEach(av => { botoesAcao += `<button class="btn-editar" onclick="editarAuditoria('${av.id}', '${encodeURIComponent(JSON.stringify(av))}')">✏️ Editar ${av.setor.split('-')[0].trim()} (${av.notaFinal.toFixed(1)})</button>`; });
-                html += `<div class="historico-item" style="border-left: 5px solid ${cor}; align-items: flex-start; flex-direction:column; padding: 15px;"><div style="width: 100%; display:flex; justify-content: space-between;"><strong style="font-size:1.1rem;">${icone} ${eq.nome}</strong><strong style="color: ${cor}; font-size: 1.2rem;">${eq.notaMedia.toFixed(1)} ⭐</strong></div><div style="width:100%;">${txtAtencao}${botoesAcao}</div></div>`;
-            });
-            container.innerHTML = html;
-            atualizarCardMediaDia();
-        });
-    }
-
-    function compartilharRankingDiario() {
-        if(rankingEquipesGlobal.length === 0) return alert("Sem dados.");
-        const dataFmt = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
-        const mediaDia = document.getElementById('val-media-dia').innerText;
-        let msg = `📊 *FECHAMENTO DIÁRIO — RESSUPRIMENTO*\n📅 *${dataFmt}*\n\n`;
-        msg += `📈 *Média Geral do Dia: ${mediaDia !== '—' ? mediaDia + ' ⭐' : 'N/D'}*\n\n`;
-        msg += `🏆 *Ranking por Equipe:*\n\n`;
-        rankingEquipesGlobal.forEach((eq, i) => {
-            let icone = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🔹';
-            msg += `${icone} *${eq.nome}* — ${eq.notaMedia.toFixed(1)} ⭐\n`;
-            if (eq.pontosAtencao.length > 0) { msg += `   ⚠️ _Atenção:_\n`; eq.pontosAtencao.forEach(p => { msg += `   - ${p}\n`; }); }
-            msg += `\n`;
-        });
-        msg += `_Gerado automaticamente pelo sistema de auditoria._`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function calcularMediaMes(dataRef, callback) {
-        const d = new Date(dataRef + 'T00:00:00');
-        const ano = d.getFullYear();
-        const mes = String(d.getMonth() + 1).padStart(2, '0');
-        const prefixo = `${ano}-${mes}`;
-        // busca todas avaliações do mês
-        database.ref('avaliacoes_setores').orderByChild('data').startAt(prefixo + '-01').endAt(prefixo + '-31').once('value', snap => {
-            if (!snap.exists()) return callback(null, prefixo);
-            let soma = 0; let qtd = 0;
-            let porSetor = {};
-            snap.forEach(child => {
-                const rec = child.val();
-                // confirma que é do mesmo mês (endAt não é exato com strings)
-                if (!rec.data.startsWith(prefixo)) return;
-                soma += rec.notaFinal; qtd++;
-                if (!porSetor[rec.setor]) porSetor[rec.setor] = { soma: 0, qtd: 0 };
-                porSetor[rec.setor].soma += rec.notaFinal; porSetor[rec.setor].qtd++;
-            });
-            if (qtd === 0) return callback(null, prefixo);
-            callback({ media: soma / qtd, qtd, porSetor, prefixo }, prefixo);
-        });
-    }
-
-    function atualizarCardMediaDia() {
-        if (rankingEquipesGlobal.length === 0) {
-            document.getElementById('val-media-dia').innerText = '—';
-            document.getElementById('sub-media-dia').innerText = 'sem dados';
-            return;
-        }
-        let soma = 0; let qtd = 0;
-        rankingEquipesGlobal.forEach(eq => { soma += eq.notaMedia; qtd++; });
-        const media = soma / qtd;
-        const el = document.getElementById('val-media-dia');
-        el.innerText = media.toFixed(1);
-        el.style.color = media >= 8.5 ? '#10b981' : media >= 7.0 ? '#f59e0b' : '#ef4444';
-        document.getElementById('sub-media-dia').innerText = `${qtd} equipe(s) avaliada(s)`;
-
-        // atualiza card de média do mês por setor
-        const dataFiltro = document.getElementById('filtro-dia-resumo').value;
-        calcularMediaMes(dataFiltro, (resultado) => {
-            const cardMes = document.getElementById('card-media-mes');
-            if (!resultado) {
-                document.getElementById('val-media-mes').innerText = '—';
-                document.getElementById('sub-media-mes').innerText = 'sem dados no mês';
-                return;
-            }
-            const d = new Date(resultado.prefixo + '-01T00:00:00');
-            const nomeMes = d.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-
-            // monta lista de setores ordenada
-            let linhasHtml = '';
-            Object.keys(resultado.porSetor).sort().forEach(setor => {
-                const s = resultado.porSetor[setor];
-                const m = (s.soma / s.qtd);
-                const cor = m >= 8.5 ? '#10b981' : m >= 7.0 ? '#f59e0b' : '#ef4444';
-                const emoji = m >= 8.5 ? '🟢' : m >= 7.0 ? '🟡' : '🔴';
-                linhasHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid #f1f5f9; font-size:0.78rem;">
-                    <span>${emoji} ${setor}</span>
-                    <strong style="color:${cor}; font-size:0.9rem;">${m.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">(${s.qtd}x)</span></strong>
+            let html = '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">';
+            Object.keys(dadosSetor).sort().forEach(s => {
+                const media = dadosSetor[s].soma / dadosSetor[s].qtd;
+                const cor = media >= 8.5 ? '#10b981' : media >= 7.0 ? '#f59e0b' : '#ef4444';
+                html += `<div class="hr-box" style="border-top: 4px solid ${cor};">
+                    <div style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase;">${s}</div>
+                    <div style="font-size:2rem; font-weight:900; color:${cor};">${media.toFixed(1)}</div>
+                    <div style="font-size:0.8rem; color:#94a3b8;">Média de ${dadosSetor[s].qtd} avaliações</div>
                 </div>`;
             });
-
-            cardMes.innerHTML = `
-                <div style="font-size:0.75rem; font-weight:700; color:#10b981; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">📆 Média do Mês — ${nomeMes}</div>
-                ${linhasHtml}
-                <div style="font-size:0.7rem; color:#94a3b8; margin-top:6px; text-align:right;">${resultado.qtd} avaliação(ões) no total</div>
-            `;
+            container.innerHTML = html + '</div>';
         });
     }
 
-    function compartilharMediaMes() {
-        const dataFiltro = document.getElementById('filtro-dia-resumo').value || new Date().toISOString().split('T')[0];
-        calcularMediaMes(dataFiltro, (resultado, prefixo) => {
-            if (!resultado) return alert('Sem avaliações registradas neste mês.');
-            const d = new Date(prefixo + '-01T00:00:00');
-            const nomeMes = d.toLocaleString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase();
-            let msg = `📆 *MÉDIA DO MÊS — RESSUPRIMENTO*\n🗓️ *${nomeMes}*\n\n`;
-            msg += `📊 *Média Geral: ${resultado.media.toFixed(1)} ⭐*\n`;
-            msg += `📋 Total de avaliações: ${resultado.qtd}\n\n`;
-            msg += `*Desempenho por Setor:*\n`;
-            Object.keys(resultado.porSetor).sort().forEach(setor => {
-                const s = resultado.porSetor[setor];
-                const m = (s.soma / s.qtd).toFixed(1);
-                const emoji = m >= 8.5 ? '🟢' : m >= 7.0 ? '🟡' : '🔴';
-                msg += `${emoji} ${setor}: *${m}* (${s.qtd} aval.)\n`;
+    function imprimirResumoDiario() {
+        const dia = document.getElementById('filtro-dia-resumo').value; if(!dia) return alert("Selecione um dia.");
+        database.ref('avaliacoes_setores').orderByChild('data').equalTo(dia).once('value').then(snap => {
+            if(!snap.exists()) return alert("Sem dados para imprimir.");
+            
+            let dadosSetor = {};
+            snap.forEach(c => {
+                const r = c.val();
+                if(!dadosSetor[r.setor]) dadosSetor[r.setor] = { soma: 0, qtd: 0, avaliacoes: [] };
+                dadosSetor[r.setor].soma += r.notaFinal;
+                dadosSetor[r.setor].qtd += 1;
+                dadosSetor[r.setor].avaliacoes.push(r);
             });
-            msg += `\n_Gerado automaticamente pelo sistema de auditoria._`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-        });
-    }
 
-    function imprimirChecklistAuditoria() {
-        let html = `<html><head><title>Checklist</title><style>body{font-family:Arial; font-size:13px; padding:20px;} table{width:100%; border-collapse:collapse; margin-top:20px;} th,td{border:1px solid #000; padding:12px;} th{background:#e2e8f0; font-size:11px; text-transform:uppercase;}</style></head><body><div style="border-bottom: 2px solid #000; padding-bottom: 10px; text-align:center;"><h1>Equipe Ressuprimento</h1><h2>Checklist Diário</h2></div><table><tr><th style="width:35%">Critério</th><th style="width:15%">Nota</th><th style="width:50%">Observações</th></tr>`;
-        criteriosAuditoria.forEach(c => { html += `<tr><td><strong>${c.nome}</strong></td><td></td><td style="height: 45px;"></td></tr>`; });
-        let win = window.open('','_blank'); win.document.write(html + `</table></body></html>`); win.document.close(); setTimeout(() => { win.print(); }, 1000); 
-    }
+            let html = `<html><head><title>Relatório Diário de Auditoria</title><style>
+                body{font-family:Arial; padding:30px; color:#1e293b;}
+                .cabecalho{border-bottom:4px solid #1e1b4b; padding-bottom:15px; margin-bottom:30px; display:flex; justify-content:space-between; align-items:center;}
+                .setor-card{border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin-bottom:25px; page-break-inside:avoid;}
+                .setor-nome{font-size:18px; font-weight:bold; color:#1e1b4b; text-transform:uppercase; margin-bottom:10px;}
+                .nota-media{font-size:32px; font-weight:900; margin-bottom:15px;}
+                .crit-item{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #f1f5f9; font-size:12px;}
+                .ok-box{background:#f0fdf4; border-left:4px solid #10b981; padding:10px; margin-top:10px; font-size:11px;}
+                .secao-titulo{background:#f8fafc; padding:8px; font-weight:bold; font-size:13px; margin-top:15px; border-radius:4px;}
+                .foto-grid{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;}
+                .foto-grid img{width:150px; height:150px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0;}
+            </style></head><body>
+            <div class="cabecalho">
+                <div><h1 style="margin:0;">RELATÓRIO DE AUDITORIA</h1><span style="color:#64748b;">Vena144 · Equipe Ressuprimento</span></div>
+                <div style="text-align:right;"><div style="font-size:24px; font-weight:bold;">${dia.split('-').reverse().join('/')}</div></div>
+            </div>`;
 
-    function gerarCorNota(nota) {
-        if (nota >= 4.5) return '#10b981';
-        if (nota >= 3.5) return '#3b82f6';
-        if (nota >= 2.5) return '#f59e0b';
-        return '#ef4444';
-    }
+            Object.keys(dadosSetor).sort().forEach(s => {
+                const info = dadosSetor[s];
+                const media = info.soma / info.qtd;
+                const cor = media >= 8.5 ? '#10b981' : media >= 7.0 ? '#f59e0b' : '#ef4444';
+                
+                html += `<div class="setor-card">
+                    <div class="setor-nome">${s}</div>
+                    <div class="nota-media" style="color:${cor};">Média: ${media.toFixed(1)}</div>`;
+                
+                info.avaliacoes.forEach((av, idx) => {
+                    html += `<div style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:15px;">
+                        <div style="font-weight:bold; margin-bottom:10px;">Avaliação #${idx+1} — Resp: ${av.resp}</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                            <div>`;
+                    
+                    criteriosAuditoria.forEach(c => {
+                        const n = av.notas[c.id] || 10;
+                        const nCor = n >= 8.5 ? '#10b981' : n >= 7.0 ? '#f59e0b' : '#ef4444';
+                        html += `<div class="crit-item"><span>${c.nome}</span><span style="font-weight:bold; color:${nCor};">${n.toFixed(1)}</span></div>`;
+                    });
 
-    function imprimirRelatorioFechamento() {
-        if(rankingEquipesGlobal.length === 0) return alert("Sem dados.");
-        const dataFormatada = document.getElementById('filtro-dia-resumo').value.split('-').reverse().join('/');
-        const criteriosNomes = {};
-        criteriosAuditoria.forEach(c => { criteriosNomes[c.id] = c.nome; });
+                    html += `</div><div>`;
+                    
+                    // Sugestões automáticas baseadas em notas baixas
+                    let temProblema = false;
+                    let sugestoesHTML = '<div class="ok-box"><strong>💡 Plano de Ação Sugerido:</strong><br>';
+                    criteriosAuditoria.forEach(c => {
+                        if((av.notas[c.id] || 10) < 10) {
+                            temProblema = true;
+                            sugestoesHTML += `• ${c.nome}: ${getSugestaoContextual_PDF(c.id)}<br>`;
+                        }
+                    });
+                    if(!temProblema) sugestoesHTML += "• Manter o padrão atual de excelência no setor.";
+                    sugestoesHTML += '</div>';
+                    html += sugestoesHTML;
 
-        let styles = `
-            body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; color: #1e293b; }
-            h1 { text-align: center; font-size: 16px; border-bottom: 3px solid #1e1b4b; padding-bottom: 8px; margin-bottom: 5px; }
-            .subtitulo { text-align: center; font-size: 11px; color: #64748b; margin-bottom: 20px; }
-            .equipe-bloco { border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 18px; overflow: hidden; page-break-inside: avoid; }
-            .equipe-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; color: white; }
-            .equipe-body { padding: 12px 15px; }
-            .badge-nota { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.25); padding: 4px 10px; border-radius: 5px; }
-            .secao-titulo { font-size: 10px; text-transform: uppercase; font-weight: bold; color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin: 10px 0 6px; letter-spacing: 0.5px; }
-            .gap-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
-            .gap-box strong { color: #991b1b; }
-            .melhoria-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
-            .ok-box { background: #f0fdf4; border-left: 4px solid #10b981; padding: 8px 10px; margin: 8px 0; font-size: 11px; }
-            .acao-box { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 8px 10px; margin: 8px 0; font-size: 11px; font-weight: bold; }
-            table.criterios { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 11px; }
-            table.criterios th { background: #f1f5f9; padding: 5px 8px; text-align: left; font-size: 10px; text-transform: uppercase; }
-            table.criterios td { padding: 5px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
-            .nota-estrela { font-weight: bold; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
-            .feedback-area { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; margin-top: 8px; font-size: 11px; line-height: 1.6; white-space: pre-line; }
-            .foto-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-            .foto-grid img { width: 120px; height: 90px; object-fit: cover; border: 1px solid #cbd5e1; border-radius: 4px; }
-            @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
-        `;
-
-        let html = `<html><head><title>Fechamento Operacional - ${dataFormatada}</title><style>${styles}</style></head><body>`;
-        html += `<h1>Equipe Ressuprimento — Fechamento Operacional</h1>`;
-        html += `<p class="subtitulo">Data: ${dataFormatada} &nbsp;|&nbsp; Gerado em: ${new Date().toLocaleString('pt-BR')}</p>`;
-
-        rankingEquipesGlobal.forEach((eq, idx) => {
-            let corHeader = eq.notaMedia >= 8.5 ? '#10b981' : (eq.notaMedia >= 7.0 ? '#f59e0b' : '#ef4444');
-            let icone = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}º`;
-
-            html += `<div class="equipe-bloco">`;
-            html += `<div class="equipe-header" style="background:${corHeader};">`;
-            html += `<strong style="font-size:14px;">${icone} ${eq.nome}</strong>`;
-            html += `<span class="badge-nota">Média: ${eq.notaMedia.toFixed(1)} / 10</span>`;
-            html += `</div><div class="equipe-body">`;
-
-            eq.avaliacoesOriginais.forEach(av => {
-                let critOrdenados = Object.entries(av.notas || {}).map(([id, nota]) => ({
-                    id, nota, nome: criteriosNomes[id] || id, obs: (av.observacoes || {})[id] || ''
-                })).sort((a, b) => a.nota - b.nota);
-
-                let maiorGapAv = critOrdenados[0];
-                let critBaixos = critOrdenados.filter(c => c.nota <= 2);
-                let critMedios = critOrdenados.filter(c => c.nota === 3);
-                let critBons = critOrdenados.filter(c => c.nota >= 4).reverse();
-
-                if (eq.avaliacoesOriginais.length > 1) {
-                    html += `<div class="secao-titulo">📋 ${av.setor} — Nota: ${av.notaFinal.toFixed(1)}</div>`;
-                } else {
-                    html += `<div class="secao-titulo">📋 Detalhamento dos Critérios</div>`;
-                }
-
-                html += `<table class="criterios"><tr><th>Critério</th><th>Nota</th><th>Observação Registrada</th></tr>`;
-                critOrdenados.forEach(c => {
-                    let cor = gerarCorNota(c.nota);
-                    let obsTexto = c.obs || '—';
-                    html += `<tr><td>${c.nome}</td><td><span class="nota-estrela" style="background:${cor};">${c.nota}/5</span></td><td style="color:#475569;">${obsTexto}</td></tr>`;
-                });
-                html += `</table>`;
-
-                if (maiorGapAv) {
-                    html += `<div class="secao-titulo">📍 Análise de Gap e Melhorias</div>`;
-                    html += `<div class="gap-box"><strong>MAIOR GAP: ${maiorGapAv.nome} (${maiorGapAv.nota}/5)</strong><br>`;
-                    let sugestaoGap = maiorGapAv.obs ? maiorGapAv.obs : getSugestaoContextual_PDF(maiorGapAv.id);
-                    html += `→ ${sugestaoGap}</div>`;
-                }
-
-                if (critBaixos.length > 1 || critMedios.length > 0) {
-                    let demais = critOrdenados.slice(1).filter(c => c.nota <= 3);
-                    if (demais.length > 0) {
-                        html += `<div class="melhoria-box"><strong>⚠️ Outros pontos de melhoria:</strong><br>`;
-                        demais.forEach(c => {
-                            let txt = c.obs ? c.obs : getSugestaoContextual_PDF(c.id);
-                            html += `• <strong>${c.nome}</strong> (${c.nota}/5): ${txt}<br>`;
-                        });
+                    if (av.pontoExtra > 0) {
+                        html += `<div class="ok-box" style="background:#fffbeb; border-left:4px solid #f59e0b;"><strong>⭐ Ponto Extra Concedido: +${av.pontoExtra} ponto(s)</strong>`;
+                        if (av.peJustificativa) html += `<br>→ ${av.peJustificativa}`;
                         html += `</div>`;
                     }
-                }
 
-                if (critBons.length > 0) {
-                    html += `<div class="ok-box"><strong>✅ O que está bem:</strong> `;
-                    html += critBons.map(c => `${c.nome} (${c.nota}/5)`).join(' · ');
-                    html += `</div>`;
-                }
+                    if (av.fotos && av.fotos.length > 0) {
+                        html += `<div class="secao-titulo">📸 Evidências Fotográficas (${av.fotos.length})</div>`;
+                        html += `<div class="foto-grid">`;
+                        av.fotos.forEach(foto => { html += `<img src="${foto}" alt="evidência">`; });
+                        html += `</div>`;
+                    }
+                });
 
-                if (av.feedback && av.feedback.trim()) {
-                    html += `<div class="secao-titulo">📝 Parecer da Liderança</div>`;
-                    html += `<div class="feedback-area">${av.feedback.trim()}</div>`;
-                }
-
-                if (av.pontoExtra > 0) {
-                    html += `<div class="ok-box" style="background:#fffbeb; border-left:4px solid #f59e0b;"><strong>⭐ Ponto Extra Concedido: +${av.pontoExtra} ponto(s)</strong>`;
-                    if (av.peJustificativa) html += `<br>→ ${av.peJustificativa}`;
-                    html += `</div>`;
-                }
-
-                if (av.fotos && av.fotos.length > 0) {
-                    html += `<div class="secao-titulo">📸 Evidências Fotográficas (${av.fotos.length})</div>`;
-                    html += `<div class="foto-grid">`;
-                    av.fotos.forEach(foto => { html += `<img src="${foto}" alt="evidência">`; });
-                    html += `</div>`;
-                }
+                html += `</div></div>`;
             });
 
-            html += `</div></div>`;
+            html += `</body></html>`;
+            let win = window.open('', '_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); }, 1200);
         });
-
-        html += `</body></html>`;
-        let win = window.open('', '_blank'); win.document.write(html); win.document.close(); setTimeout(() => { win.print(); }, 1200);
     }
 
     function getSugestaoContextual_PDF(critId) {

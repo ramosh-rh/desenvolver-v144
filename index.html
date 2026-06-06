@@ -176,14 +176,7 @@
                     
                     <button class="btn" onclick="startQuiz()">Iniciar Avaliação</button>
 
-                    <!-- Acesso gestor oculto: clicar 5x no ponto abaixo -->
-                    <div style="text-align:center; margin-top:18px;">
-                        <span id="logo-secret-tap" onclick="contarTapGestor()" style="font-size:0.6rem; color:#e2e8f0; cursor:default; user-select:none;" title="">●</span>
-                    </div>
-                    <div id="gestor-secret-area" style="display:none; margin-top:12px;">
-                        <input type="password" id="gestor-senha" placeholder="Senha de gestão" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; font-family:inherit; margin-bottom:10px;">
-                        <button class="btn btn-outline" style="width:100%; padding:12px;" onclick="tentarAcessoGestor()">Entrar como Gestor</button>
-                    </div>
+                    <!-- O acesso de gestor agora é feito via link direto para maior segurança e praticidade -->
                 </div>
             </div>
 
@@ -466,6 +459,11 @@
             document.getElementById('main-tabs').style.display = 'none';
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('view-inicio').classList.add('active');
+        }
+        else if (formType === 'gestor') {
+            document.getElementById('login-wrapper').style.display = 'none';
+            switchTab('gestor'); 
+            loadAdminData();
         }
     });
 

@@ -309,15 +309,27 @@
                 <div id="gcontent-simulador" style="display: none;">
                     <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border);">
                         <h3 style="color: #166534; margin-bottom: 10px;">🤖 Robô de Análise Preditiva</h3>
-                        <p style="font-size: 0.9rem; color: #14532d; margin-bottom: 15px;">Selecione um cenário logístico. A Inteligência Artificial vai cruzar os perfis DISC de toda a base e gerar um Ranking de Afinidade apontando os mais bem colocados.</p>
+                        <p style="font-size: 0.9rem; color: #14532d; margin-bottom: 15px;">Selecione um cenário/função. A Inteligência Artificial vai cruzar os perfis comportamentais de toda a base e gerar um Ranking de Afinidade apontando os mais bem colocados para a função.</p>
                         
                         <div class="input-group">
-                            <label>Selecione o Cenário Desejado:</label>
+                            <label>Selecione a Função / Cenário Desejado:</label>
                             <select id="simulador-cenario">
-                                <option value="desenvoltura">Cenário 1: Desenvoltura, Liderança e Agilidade (Foco em D e I)</option>
-                                <option value="qualidade">Cenário 2: Qualidade, Auditoria e Regras SESMT (Foco em C e S)</option>
-                                <option value="rotina">Cenário 3: Resiliência em Alta Demanda e Harmonia (Foco em S e I)</option>
-                                <option value="geral" style="font-weight: bold; background: #e0f2fe;">🏆 Cenário 4: CAMPEÃO GERAL (Média de todos os cenários)</option>
+                                <optgroup label="🏭 Operação">
+                                    <option value="desenvoltura">Executor de Alta Demanda (Foco em D e I)</option>
+                                    <option value="qualidade">Conferente / Auditoria de Qualidade (Foco em C e S)</option>
+                                    <option value="recebimento">Recebimento / Entrada de Mercadorias (Foco em C e D)</option>
+                                    <option value="rotina">Resiliência em Alta Demanda e Harmonia (Foco em S e I)</option>
+                                </optgroup>
+                                <optgroup label="👥 Liderança e Gestão">
+                                    <option value="lider_apoio">Líder de Apoio / Multiplicador (Foco em S e I)</option>
+                                    <option value="supervisor">Supervisor de Turno (Foco em D e C)</option>
+                                    <option value="gerente">Gerente / Diretor de Operação (Foco em D, equilíbrio geral)</option>
+                                </optgroup>
+                                <optgroup label="🧠 Inteligência e Administrativo">
+                                    <option value="inteligencia">Inteligência Operacional / Analista de Dados (Foco em C)</option>
+                                    <option value="administrativo">Administrativo / Backoffice (Foco em S e C)</option>
+                                </optgroup>
+                                <option value="geral" style="font-weight: bold; background: #e0f2fe;">🏆 CAMPEÃO GERAL (Média de todos os cenários)</option>
                             </select>
                         </div>
                         <button class="btn" style="background: #0ea5e9;" onclick="rodarSimulacaoIA()">Rodar Simulação & Gerar Ranking ✨</button>
@@ -326,6 +338,19 @@
                     <div id="area-ranking-ia" style="display: none;">
                         <h3 style="color: var(--purple-dark); border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px;">🏆 Ranking de Afinidade (Match)</h3>
                         <div id="lista-ranking-ia"></div>
+                    </div>
+
+                    <!-- DASHBOARD MAPA DE TALENTOS + TENDÊNCIAS -->
+                    <div style="margin-top:30px; border-top:3px solid var(--purple-dark); padding-top:20px;">
+                        <h3 style="color: var(--purple-dark); margin-bottom:5px;">🗺️ Mapa de Talentos da Equipe</h3>
+                        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:15px;">Visão geral de aderência de cada colaborador às funções estratégicas — útil para identificar futuros líderes, supervisores, conferentes e apoio.</p>
+                        <button class="btn btn-outline" style="margin-bottom:15px;" onclick="gerarMapaTalentos()">🔄 Gerar / Atualizar Mapa</button>
+                        <div id="mapa-talentos-container"></div>
+
+                        <h3 style="color: var(--purple-dark); margin:25px 0 5px;">📈 Curva de Tendências Comportamentais</h3>
+                        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:15px;">Evolução do perfil médio do time (D, I, S, C) com base na data de cada avaliação registrada.</p>
+                        <div class="chart-container" style="max-width:100%;"><canvas id="trendChart"></canvas></div>
+                        <div id="trend-empty-msg" style="display:none; text-align:center; color:var(--text-light); padding:20px;">Sem dados suficientes para gerar a curva ainda.</div>
                     </div>
                 </div>
 
@@ -786,7 +811,7 @@
         const melhora = document.getElementById('obs-melhora') ? document.getElementById('obs-melhora').value.trim() : '';
         const livre = document.getElementById('obs-livre') ? document.getElementById('obs-livre').value.trim() : '';
         const obsColaborador = [incomoda ? `Incomoda: ${incomoda}` : '', melhora ? `Precisa melhorar: ${melhora}` : '', livre ? `Outros: ${livre}` : ''].filter(Boolean).join(' | ');
-        const resultData = { nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), pctScores, obsColaborador };
+        const resultData = { nome, matricula: mat, date: new Date().toLocaleDateString('pt-BR'), timestamp: Date.now(), pctScores, obsColaborador };
         document.getElementById('quiz-section').style.display = 'none'; document.getElementById('loading-section').style.display = 'block';
         database.ref('avaliacoes').push(resultData).then(() => { document.getElementById('loading-section').style.display = 'none'; renderDevolutivaView(nome, pctScores, true, obsColaborador); });
     }
@@ -938,6 +963,28 @@
         else { areaBotao.innerHTML = `<button class="btn-print" style="flex:1;" onclick="window.print()">🖨️ Imprimir Dossiê</button><button class="btn btn-outline" style="flex:1;" onclick="switchTab('gestor')">← Voltar</button>`; }
     }
 
+    // Definição de perfis ideais por função (pesos D, I, S, C)
+    const perfisFuncao = {
+        desenvoltura:  { D: 0.35, I: 0.35, S: 0.15, C: 0.15, label: "Executor de Alta Demanda" },
+        qualidade:     { D: 0.10, I: 0.10, S: 0.35, C: 0.45, label: "Conferente / Auditoria de Qualidade" },
+        recebimento:   { D: 0.30, I: 0.10, S: 0.15, C: 0.45, label: "Recebimento / Entrada de Mercadorias" },
+        rotina:        { D: 0.10, I: 0.35, S: 0.45, C: 0.10, label: "Resiliência em Alta Demanda e Harmonia" },
+        lider_apoio:   { D: 0.15, I: 0.35, S: 0.40, C: 0.10, label: "Líder de Apoio / Multiplicador" },
+        supervisor:    { D: 0.35, I: 0.15, S: 0.15, C: 0.35, label: "Supervisor de Turno" },
+        gerente:       { D: 0.30, I: 0.25, S: 0.20, C: 0.25, label: "Gerente / Diretor de Operação" },
+        inteligencia:  { D: 0.10, I: 0.10, S: 0.20, C: 0.60, label: "Inteligência Operacional / Analista" },
+        administrativo:{ D: 0.10, I: 0.20, S: 0.35, C: 0.35, label: "Administrativo / Backoffice" }
+    };
+
+    function calcularMatch(pct, perfilDesejado) {
+        // similaridade: 100 - distância percentual ponderada
+        const dims = ['D','I','S','C'];
+        let diffTotal = 0;
+        dims.forEach(d => { diffTotal += Math.abs((pct[d]/100) - perfilDesejado[d]); });
+        const distanciaMax = 2; // máximo teórico de diferença somada
+        return Math.max(0, 100 - (diffTotal / distanciaMax) * 100);
+    }
+
     window.rodarSimulacaoIA = function() {
         const cenario = document.getElementById('simulador-cenario').value;
         document.getElementById('area-ranking-ia').style.display = 'block'; document.getElementById('lista-ranking-ia').innerHTML = '<p>Processando...</p>';
@@ -946,19 +993,112 @@
             let candidatos = [];
             snap.forEach(child => {
                 let d = child.val(); let pct = d.pctScores;
-                let scoreGeral = 100 - (Math.max(pct.D, pct.I, pct.S, pct.C) - Math.min(pct.D, pct.I, pct.S, pct.C)); 
-                let score = cenario === 'desenvoltura' ? pct.D + pct.I : (cenario === 'qualidade' ? pct.C + pct.S : (cenario === 'rotina' ? pct.S + pct.I : scoreGeral));
+                let score;
+                if (cenario === 'geral') {
+                    const scores = Object.keys(perfisFuncao).map(k => calcularMatch(pct, perfisFuncao[k]));
+                    score = scores.reduce((a,b) => a+b, 0) / scores.length;
+                } else {
+                    score = calcularMatch(pct, perfisFuncao[cenario]);
+                }
                 d.matchScore = score;
-                d.insight = score >= 65 ? "Alta aderência." : (score >= 40 ? "Aderência mediana." : "Baixa aderência para este cenário.");
+                d.insight = score >= 70 ? "Alta aderência." : (score >= 50 ? "Aderência mediana." : "Baixa aderência para esta função.");
                 candidatos.push(d);
             });
             candidatos.sort((a, b) => b.matchScore - a.matchScore);
             let html = '';
             candidatos.forEach((cand, index) => {
                 let medalha = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🔹';
-                html += `<div class="gestor-item"><strong>${medalha} ${cand.nome}</strong> <span>Match: ${cand.matchScore.toFixed(1)}%</span></div>`;
+                let cor = cand.matchScore >= 70 ? '#10b981' : cand.matchScore >= 50 ? '#f59e0b' : '#ef4444';
+                html += `<div class="gestor-item"><strong>${medalha} ${cand.nome}</strong> <span style="color:${cor}; font-weight:700;">Match: ${cand.matchScore.toFixed(1)}%</span></div>`;
             });
             document.getElementById('lista-ranking-ia').innerHTML = html;
+        });
+    }
+
+    function gerarMapaTalentos() {
+        const container = document.getElementById('mapa-talentos-container');
+        container.innerHTML = '<p style="color:var(--text-light);">Calculando...</p>';
+        database.ref('avaliacoes').once('value').then(snap => {
+            if(!snap.exists()) { container.innerHTML = '<p>Sem dados.</p>'; return; }
+            let registros = []; snap.forEach(c => registros.push(c.val()));
+
+            // calcula melhor função por colaborador
+            let html = `<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; font-size:0.8rem;">
+                <thead><tr style="background:#f8fafc; text-align:left;">
+                    <th style="padding:8px; border-bottom:2px solid var(--border);">Colaborador</th>
+                    <th style="padding:8px; border-bottom:2px solid var(--border);">Perfil Primário</th>
+                    <th style="padding:8px; border-bottom:2px solid var(--border);">🎯 Função com Maior Aderência</th>
+                    <th style="padding:8px; border-bottom:2px solid var(--border);">Match</th>
+                </tr></thead><tbody>`;
+
+            registros.forEach(rec => {
+                const pct = rec.pctScores;
+                const order = [{id:'D',val:pct.D,name:'Executor (D)'},{id:'I',val:pct.I,name:'Comunicador (I)'},{id:'S',val:pct.S,name:'Planejador (S)'},{id:'C',val:pct.C,name:'Analista (C)'}].sort((a,b)=>b.val-a.val);
+                const primario = order[0];
+
+                let melhorFuncao = null, melhorScore = -1;
+                Object.keys(perfisFuncao).forEach(k => {
+                    const s = calcularMatch(pct, perfisFuncao[k]);
+                    if (s > melhorScore) { melhorScore = s; melhorFuncao = perfisFuncao[k].label; }
+                });
+
+                const cor = melhorScore >= 70 ? '#10b981' : melhorScore >= 50 ? '#f59e0b' : '#ef4444';
+                html += `<tr>
+                    <td style="padding:8px; border-bottom:1px solid #f1f5f9;"><strong>${rec.nome}</strong><br><small style="color:#94a3b8;">${rec.matricula}</small></td>
+                    <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${primario.name}</td>
+                    <td style="padding:8px; border-bottom:1px solid #f1f5f9;">${melhorFuncao}</td>
+                    <td style="padding:8px; border-bottom:1px solid #f1f5f9; color:${cor}; font-weight:700;">${melhorScore.toFixed(0)}%</td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+
+            gerarCurvaTendencias(registros);
+        });
+    }
+
+    let myChartTrend = null;
+    function gerarCurvaTendencias(registros) {
+        // agrupa por mês (ano-mes) e calcula média D, I, S, C
+        const grupos = {};
+        registros.forEach(rec => {
+            let ref;
+            if (rec.timestamp) { const d = new Date(rec.timestamp); ref = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+            else if (rec.date) { const partes = rec.date.split('/'); ref = `${partes[2]}-${partes[1]}`; }
+            else return;
+            if (!grupos[ref]) grupos[ref] = { D:0, I:0, S:0, C:0, qtd:0 };
+            grupos[ref].D += rec.pctScores.D; grupos[ref].I += rec.pctScores.I; grupos[ref].S += rec.pctScores.S; grupos[ref].C += rec.pctScores.C; grupos[ref].qtd++;
+        });
+
+        const labels = Object.keys(grupos).sort();
+        if (labels.length < 2) {
+            document.getElementById('trend-empty-msg').style.display = 'block';
+            document.getElementById('trendChart').style.display = 'none';
+            return;
+        }
+        document.getElementById('trend-empty-msg').style.display = 'none';
+        document.getElementById('trendChart').style.display = 'block';
+
+        const dataD = labels.map(l => Math.round(grupos[l].D / grupos[l].qtd));
+        const dataI = labels.map(l => Math.round(grupos[l].I / grupos[l].qtd));
+        const dataS = labels.map(l => Math.round(grupos[l].S / grupos[l].qtd));
+        const dataC = labels.map(l => Math.round(grupos[l].C / grupos[l].qtd));
+        const labelsFmt = labels.map(l => { const [y,m] = l.split('-'); return `${m}/${y}`; });
+
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        if (myChartTrend) myChartTrend.destroy();
+        myChartTrend = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labelsFmt,
+                datasets: [
+                    { label: 'D - Executor', data: dataD, borderColor: '#dc2626', backgroundColor: 'rgba(220,38,38,0.1)', tension: 0.3 },
+                    { label: 'I - Comunicador', data: dataI, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3 },
+                    { label: 'S - Planejador', data: dataS, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3 },
+                    { label: 'C - Analista', data: dataC, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3 }
+                ]
+            },
+            options: { scales: { y: { min: 0, max: 100 } }, plugins: { legend: { position: 'bottom' } } }
         });
     }
 
